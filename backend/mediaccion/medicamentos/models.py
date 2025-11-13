@@ -4,9 +4,17 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import ProfileUser
 
 # Create your models here.
+
+class Usuarios(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    nombre = models.CharField(max_length=45)
+    email = models.EmailField()
+    telf = models.CharField(max_length=9)
+
+    def __str__(self):
+        return self.nombre
 
 class ProfileUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -47,16 +55,7 @@ class RecetasMedicas(models.Model):
 
 
 class Alimentos(models.Model):
-    nombre = models.Charfield(max_length=100)
-
-    def __str__(self):
-        return self.nombre
-
-class Usuarios(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    nombre = models.CharField(max_length=45)
-    email = models.EmailField()
-    telf = models.CharField(max_length=9)
+    nombre = models.CharField(max_length=100)
 
     def __str__(self):
         return self.nombre
@@ -67,7 +66,6 @@ class Medicamentos(models.Model):
     descripcion = models.CharField(max_length=200)
     f_caducidad = models.DateField(null=True, blank=True)
     alimento = models.ForeignKey(Alimentos, on_delete=models.CASCADE, related_name='medicamentos')
-    categoria = models.ForeignKey(CategoriaAlimentos, on_delete=models.CASCADE, related_name='medicamentos')
 
     def __str__(self):
         return self.nombre_medicamento
