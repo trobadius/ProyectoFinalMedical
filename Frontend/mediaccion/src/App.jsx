@@ -11,6 +11,7 @@ import Perfil from './pages/Perfil.jsx';
 import Login from './pages/Login.jsx';
 import Registration from './pages/Registration.jsx';
 import StickyButton from "./components/StickyButton.jsx";
+import CameraOCR from "./components/CameraOCR";
 
 
 
@@ -41,6 +42,9 @@ export default function App() {
         </main>
         <StickyButton />
       </Router>
+      <div>
+        <CameraOCR />
+      </div>
     </div>
   );
 }
