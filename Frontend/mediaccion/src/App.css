@@ -60,7 +60,7 @@ h2 {
 
 /* ========== NAVBAR (Bootstrap adaptada) ========== */
 .navbar {
-  background-color: var(--color-primary) !important;
+  background-color: #D98566 !important;
 }
 
 .navbar-brand {
@@ -77,6 +77,11 @@ h2 {
 .nav-link:hover,
 .nav-link:focus {
   color: var(--color-highlight) !important;
+}
+img {
+  width: 250px;
+  height: 70px;
+  margin-right: 8px;
 }
 
 /* ========== BOTONES ========== */
@@ -207,6 +212,7 @@ button:hover,
   background-color: #e1f4f7;
 }
 
+
 /* ==== Medication section ==== */
 .med-section {
   margin-top: 1.5rem;
@@ -257,6 +263,8 @@ button:hover,
   margin-bottom: 6px;
   font-size: 0.95rem;
 }
+
+
 
 /* ==== Responsive desktop view ==== */
 @media (min-width: 600px) {
@@ -533,9 +541,6 @@ button:hover,
   }
 }
 
-/* ================================
-   FIN DEL CSS DE LOGIN PAGE
-   ================================ */
 
 
 /* ================================
@@ -873,5 +878,111 @@ button:hover,
     border-radius: 30px; /* 🔹 redondeado completo */
     padding: 0.6rem 1rem;
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  }
+}
+
+
+/* --- Bottom Sheet Card --- */
+.notifications-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #ffffff;
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.15);
+  transform: translateY(72%);
+  transition: transform 0.35s ease-in-out;
+  z-index: 9999;
+}
+
+/* Abierta */
+.notifications-sheet.open {
+  transform: translateY(0%);
+}
+
+/* Barra superior */
+.sheet-handle {
+  width: 100%;
+  text-align: center;
+  padding: 8px 0;
+  cursor: pointer;
+  background-color: #eaf4f6;
+  border-radius: 20px 20px 0 0;
+}
+
+.sheet-handle .arrow {
+  font-size: 1.3rem;
+  color: #366a73;
+}
+
+/* Contenido interno */
+.sheet-content {
+  padding: 16px;
+  background: #ffffff;
+}
+
+.sheet-title {
+  margin: 0 0 12px 0;
+  font-size: 1.1rem;
+  color: #2d5460;
+  font-weight: 600;
+}
+
+/* Lista de notificaciones */
+.notif-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.notif-item {
+  background: #f5fafb;
+  padding: 12px 14px;
+  border-radius: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.notif-text {
+  color: #2d5460;
+  font-size: 0.95rem;
+}
+
+.notif-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.ok {
+  font-size: 1.2rem;
+  color: #4ba3c7;
+}
+
+.del {
+  font-size: 1.2rem;
+  color: #d46d6d;
+}
+
+.empty {
+  color: #6c8a92;
+  font-size: 0.9rem;
+  opacity: 0.8;
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* --- Desktop improvements --- */
+@media (min-width: 768px) {
+  .notifications-sheet {
+    width: 420px;
+    left: 50%;
+    transform: translate(-50%, 72%);
+  }
+
+  .notifications-sheet.open {
+    transform: translate(-50%, 0%);
   }
 }

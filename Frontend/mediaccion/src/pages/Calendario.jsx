@@ -1,5 +1,6 @@
-// ...existing code...
 import React, { useState, useEffect } from "react";
+
+
 
 const CalendarMedicamentosResponsive = () => {
   const [showResumen, setShowResumen] = useState(false);

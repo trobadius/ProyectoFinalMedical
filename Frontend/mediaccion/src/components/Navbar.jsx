@@ -1,14 +1,19 @@
 import React from "react";
 import { Link } from "react-router-dom";
-
+import logo from "../assets/logo.svg";
 
 export default function Navbar() {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light fixed-top shadow-sm">
       <div className="container-fluid">
         {/* LOGO o NOMBRE */}
-        <Link className="navbar-brand fw-bold text-primary" to="/">
-          MediAccion
+                <Link className="navbar-brand d-flex align-items-center" to="/">
+          <img
+            src={logo}
+            alt="MediAccion Logo"
+            style={{ height: "38px", marginRight: "8px" }}
+          />
+          
         </Link>
 
         {/* BOTÓN HAMBURGUESA  */}
