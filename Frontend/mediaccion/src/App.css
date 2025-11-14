@@ -15,6 +15,15 @@
   font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
 }
 
+.app-root {
+  margin-top: 25px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+}
+
+
 body {
   margin: 0;
   /* fallback color */
@@ -796,17 +805,73 @@ button:hover,
   font-size: 0.9rem;
 }
 
-/* === RESPONSIVE — TABLET/DESKTOP === */
-@media (min-width: 600px) {
-  .perfil-card {
-    padding: 40px;
+/* StickyButton.css */
+/* ============ ESTILOS BASE ============ */
+
+.sticky-button-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: #f8fafb; /* blanco perlado */
+  border-top: 2px solid rgba(101, 159, 166, 0.15);
+  padding: 0.6rem 0;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+/* Botones individuales */
+.sticky-btn {
+  background-color: #659fa6;
+  border: none;
+  border-radius: 50%;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #f8fafb;
+  font-size: 1.4rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
+}
+
+.sticky-btn:hover {
+  background-color: #4e9a99;
+  transform: translateY(-3px);
+}
+
+.sticky-btn:active {
+  transform: scale(0.95);
+}
+
+/* ============ MOBILE FIRST ============ */
+@media (max-width: 600px) {
+  .sticky-button-container {
+    padding: 0.4rem 0;
   }
 
-  .perfil-title {
-    font-size: 2rem;
+  .sticky-btn {
+    width: 46px;
+    height: 46px;
+    font-size: 1.2rem;
   }
+}
 
-  .med-item {
-    padding: 14px 18px;
+/* ============ TABLET Y DESKTOP ============ */
+@media (min-width: 601px) {
+  .sticky-button-container {
+    position: fixed;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 340px;
+    background-color: #f8fafb;
+    border-radius: 30px; /* 🔹 redondeado completo */
+    padding: 0.6rem 1rem;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
   }
 }

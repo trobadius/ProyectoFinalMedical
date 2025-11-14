@@ -10,6 +10,7 @@ import Camara from './pages/Camara.jsx';
 import Perfil from './pages/Perfil.jsx';
 import Login from './pages/Login.jsx';
 import Registration from './pages/Registration.jsx';
+import StickyButton from "./components/StickyButton.jsx";
 
 
 
@@ -38,6 +39,7 @@ export default function App() {
             <Route path="/registration" element={<Registration />} />
           </Routes>
         </main>
+        <StickyButton />
       </Router>
     </div>
   );
