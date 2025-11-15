@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import ProfileUser, Notificaciones, RecetasMedicas, Alimentos, Usuarios, Medicamentos
+from .models import ProfileUser, Notificaciones, RecetasMedicas, Alimentos, Medicamentos
 
 class ProfileUserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -22,12 +22,6 @@ class RecetasMedicasSerializer(serializers.ModelSerializer):
 class AlimentosSerializer(serializers.ModelSerializer):
     class Meta:
         model = Alimentos
-        fields = '__all__'
-
-
-class UsuariosSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Usuarios
         fields = '__all__'
 
 

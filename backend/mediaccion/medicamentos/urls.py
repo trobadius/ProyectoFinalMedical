@@ -14,9 +14,6 @@ urlpatterns = [
     path('alimentos/', views.AlimentosView),
     path('alimentos/<int:pk>/', views.AlimentosView),
 
-    path('usuarios/', views.UsuariosView),
-    path('usuarios/<int:pk>/', views.UsuariosView),
-
     path('medicamentos/', views.MedicamentosView),
     path('medicamentos/<int:pk>/', views.MedicamentosView),
 ]
