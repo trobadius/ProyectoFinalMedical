@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .models import ProfileUser, Notificaciones, RecetasMedicas, Alimentos, Usuarios, Medicamentos
-from .serializers import ProfileUserSerializer, NotificacionesSerializer, RecetasMedicasSerializer, AlimentosSerializer, UsuariosSerializer, MedicamentosSerializer
+from .models import ProfileUser, Notificaciones, RecetasMedicas, Alimentos, Medicamentos
+from .serializers import ProfileUserSerializer, NotificacionesSerializer, RecetasMedicasSerializer, AlimentosSerializer, MedicamentosSerializer
 
 # Create your views here.
 
@@ -34,8 +34,7 @@ def ProfileUserView(request, pk=None):
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         if request.method == 'DELETE':
             user.delete()
@@ -68,8 +67,7 @@ def NotificacionesView(request, pk=None):
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         if request.method == 'DELETE':
             Notificaciones.delete()
@@ -102,8 +100,7 @@ def RecetasMedicasView(request, pk=None):
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         if request.method == 'DELETE':
             RecetasMedicas.delete()
@@ -136,45 +133,10 @@ def AlimentosView(request, pk=None):
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         if request.method == 'DELETE':
             Alimentos.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-
-# class UsuariosViewSet(viewsets.ModelUsuarios):
-#     queryset = Usuarios.objects.all()
-#     serializer_class = UsuariosSerializer
-
-@api_view(['GET', 'POST', 'PUT', 'DELETE'])
-def UsuariosView(request, pk=None):
-    if request.method == 'GET':
-        usuarios = Usuarios.objects.all()
-        serializer = UsuariosSerializer(usuarios, many=True)
-        return Response(serializer.data)
-
-    if request.method == 'POST':
-        serializer = UsuariosSerializer(usuarios, many=True)
-        if serializer.is_valid():
-            serializer.save()
-        return Response(serializer.data)
-
-    if request.method in ['PUT', 'DELETE']:
-        if not pk:
-            return Response({'error': 'Se necesita ID'}, status=status.HTTP_404_BAD_REQUEST)
-        user = get_object_or_404(usuarios, pk = pk)
-        
-        if request.method == 'PUT':
-            serializer = UsuariosSerializer(user, data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data)
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        if request.method == 'DELETE':
-            user.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
 
 # class MedicamentosViewSet(viewsets.ModelMedicamentos):
@@ -184,7 +146,7 @@ def UsuariosView(request, pk=None):
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
 def MedicamentosView(request, pk=None):
     if request.method == 'GET':
-        meidcamentos = Medicamentos.objects.all()
+        medicamentos = Medicamentos.objects.all()
         serializer = MedicamentosSerializer(medicamentos, many=True)
         return Response(serializer.data)
 
@@ -204,7 +166,6 @@ def MedicamentosView(request, pk=None):
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
-            return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         if request.method == 'DELETE':
