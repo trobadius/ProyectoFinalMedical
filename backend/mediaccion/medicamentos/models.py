@@ -7,19 +7,9 @@ from rest_framework import serializers
 
 # Create your models here.
 
-class Usuarios(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    nombre = models.CharField(max_length=45)
-    email = models.EmailField()
-    telf = models.CharField(max_length=9)
-    contraseña = models.CharField(max_length=9)
-
-    def __str__(self):
-        return self.nombre
-
 class ProfileUser(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    edad = models.DateField
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True, related_name='user')
+    edad = models.DateField(null=True, blank=True)
     es_principal = models.BooleanField
     ROLES = [
         ("admin", "Administrador"),
@@ -41,7 +31,7 @@ class ProfileUser(models.Model):
 
 class Notificaciones(models.Model):
     notificacion = models.CharField(max_length=50)
-    usuario = models.ForeignKey(Usuarios, on_delete=models.CASCADE, related_name='notificaciones')
+    user = models.ForeignKey(ProfileUser, on_delete=models.CASCADE, null=True, blank=True, related_name='notificaciones')
 
     def __str__(self):
         return self.notificacion
@@ -49,7 +39,7 @@ class Notificaciones(models.Model):
 
 class RecetasMedicas(models.Model):
     recetas_medicas = models.CharField(max_length=100)
-    usuario = models.ForeignKey(Usuarios, on_delete=models.CASCADE, related_name = 'recetasmedicas')
+    user = models.ForeignKey(ProfileUser, on_delete=models.CASCADE, null=True, blank=True, related_name = 'recetasmedicas')
 
     def __str__(self):
         return self.recetas_medicas
@@ -66,7 +56,7 @@ class Medicamentos(models.Model):
     categoria = models.CharField(max_length=50)
     descripcion = models.CharField(max_length=200)
     f_caducidad = models.DateField(null=True, blank=True)
-    alimento = models.ForeignKey(Alimentos, on_delete=models.CASCADE, related_name='medicamentos')
+    alimento = models.ForeignKey(Alimentos, on_delete=models.CASCADE, null=True, blank=True, related_name='medicamentos')
 
     def __str__(self):
         return self.nombre_medicamento
