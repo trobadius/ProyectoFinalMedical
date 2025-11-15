@@ -12,6 +12,7 @@ class Usuarios(models.Model):
     nombre = models.CharField(max_length=45)
     email = models.EmailField()
     telf = models.CharField(max_length=9)
+    contraseña = models.CharField(max_length=9)
 
     def __str__(self):
         return self.nombre
