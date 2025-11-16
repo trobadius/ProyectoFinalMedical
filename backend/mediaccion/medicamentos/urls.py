@@ -2,8 +2,8 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('profile/', views.ProfileUserView), #get y post
-    path('profile/<int:pk>/', views.ProfileUserView), #put y delete
+    path('users/', views.UserCrud),
+    path('users/<int:pk>/', views.UserCrud),
 
     path('notificaciones/', views.NotificacionesView),
     path('notificaciones/<int:pk>/', views.NotificacionesView),
