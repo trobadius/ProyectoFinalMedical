@@ -1,8 +1,6 @@
 from rest_framework import serializers
 from .models import ProfileUser, Notificaciones, RecetasMedicas, Alimentos, Medicamentos
 from django.contrib.auth.models import User
-#Se tiene que añadir revisar para cuando este hecho el front
-#from rest_framework.permissions import IsAuthenticated, AllowAny
 
 #Serializer ProfileUser y campos User en una sola
 class ProfileUserSerializer(serializers.ModelSerializer):
@@ -45,12 +43,10 @@ class RecetasMedicasSerializer(serializers.ModelSerializer):
         model = RecetasMedicas
         fields = '__all__'
 
-
 class AlimentosSerializer(serializers.ModelSerializer):
     class Meta:
         model = Alimentos
         fields = '__all__'
-
 
 class MedicamentosSerializer(serializers.ModelSerializer):
     class Meta:
