@@ -13,8 +13,39 @@ import Registration from './pages/Registration.jsx';
 import StickyButton from "./components/StickyButton.jsx";
 import CameraOCR from "./components/CameraOCR";
 
-
-
+//frontend_jwt/////////////
+import ProtectedRoute from './components/ProtectedRoute.jsx'
+import NotFound from './pages/NotFound.jsx'
+//Al cerrar sesión se borra cache local y redirigimos a login
+function Logout(){
+  localStorage.clear()
+  return <Navigate to="/login" />
+}
+//al registrarse, borramos cache para evitar que envie token si se habia iniciado sesion con anterioridad
+function RegisterandLogout(){
+  localStorage.clear()
+  return <Registration />
+}
+//cambiar por export default
+function App1(){
+  return(
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <Home/>
+          </ProtectedRoute>
+        }
+      />
+      <Route path="/login" element={<Login />} />
+      <Route path="/logout" element={<Logout />}/>
+      <Route path="/register" element={<RegisterandLogout />} />
+      <Route path="*" element={<NotFound />}/>
+    </Routes>
+  )
+}
+///////////////////////////////
 export default function App() {
   return (
     <div
