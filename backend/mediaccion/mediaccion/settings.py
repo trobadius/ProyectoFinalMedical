@@ -22,20 +22,20 @@ ALLOWED_HOSTS = ["*"]
 
 #Se comenta JWT para cuando tengamos el frontend para enviar tokens si no da error
 #Rest framework
-#REST_FRAMEWORK = {
-#    'DEFAULT_AUTHENTICATION_CLASSES': (
-#        'rest_framework_simplejwt.authentication.JWTAuthentication',
-#    ),
-#    'DEFAULT_PERMISSION_CLASSES': (
-#        'rest_framework.permissions.IsAuthenticated',
-#    ),
-#}
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+}
 
 #JWT
-#SIMPLE_JWT = {
-#    'ACCES_TOKEN_LIFETIME': timedelta(minutes=30),
-#    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-#}
+SIMPLE_JWT = {
+    'ACCES_TOKEN_LIFETIME': timedelta(minutes=30),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+}
 
 # Application definition
 
