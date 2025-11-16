@@ -1,9 +1,5 @@
 from django.db import models
-from rest_framework import viewsets, status
-from rest_framework.decorators import action
-from rest_framework.response import Response
 from django.contrib.auth.models import User
-from rest_framework import serializers
 
 # Create your models here.
 
@@ -28,7 +24,6 @@ class ProfileUser(models.Model):
     def __str__(self):
         return self.user.username
 
-
 class Notificaciones(models.Model):
     notificacion = models.CharField(max_length=50)
     user = models.ForeignKey(ProfileUser, on_delete=models.CASCADE, null=True, blank=True, related_name='notificaciones')
@@ -36,14 +31,12 @@ class Notificaciones(models.Model):
     def __str__(self):
         return self.notificacion
 
-
 class RecetasMedicas(models.Model):
     recetas_medicas = models.CharField(max_length=100)
     user = models.ForeignKey(ProfileUser, on_delete=models.CASCADE, null=True, blank=True, related_name = 'recetasmedicas')
 
     def __str__(self):
         return self.recetas_medicas
-
 
 class Alimentos(models.Model):
     nombre = models.CharField(max_length=100)
