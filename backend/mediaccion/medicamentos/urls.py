@@ -3,6 +3,7 @@ from . import views
 
 urlpatterns = [
     path('users/', views.UserCrud),
+    path('users/crear', views.CrearUser),
     path('users/<int:pk>/', views.UserCrud),
 
     path('notificaciones/', views.NotificacionesView),
