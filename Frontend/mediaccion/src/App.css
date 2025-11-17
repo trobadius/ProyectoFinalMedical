@@ -1,0 +1,988 @@
+/* ========== VARIABLES DE COLOR ========== */
+:root {
+  --color-primary: rgb(105, 141, 27);      /* Verde saludable */
+  --color-secondary: #659FA6;    /* Azul calmante */
+  --color-accent: #BFB415;       /* Lima cálido para botones o avisos */
+  --color-bg: #F9FBF9;           /* Fondo claro */
+  --color-card: #B0D1D9;         /* Fondo de tarjetas */
+  --color-text: #2E4031;         /* Texto oscuro natural */
+  --color-highlight: #D9D382;    /* Amarillo verdoso para detalles */
+}
+
+/* ========== BASE GLOBAL ========== */
+* {
+  box-sizing: border-box;
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+}
+
+.app-root {
+  margin-top: 25px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+}
+
+
+body {
+  margin: 0;
+  /* fallback color */
+  background-color: var(--color-bg);
+  /* background image + overlay (ajusta opacidad si hace falta) */
+  background-image: linear-gradient(rgba(255,255,255,0.0), rgba(255,255,255,0.4)), url('/static/background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  color: var(--color-text);
+  overflow-x: hidden;
+  
+}
+
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* ========== TIPOGRAFÍA ========== */
+h1 {
+  color: var(--color-primary);
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+}
+
+h2 {
+  color: var(--color-secondary);
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+}
+
+/* ========== NAVBAR (Bootstrap adaptada) ========== */
+.navbar {
+  background-color: #D98566 !important;
+}
+
+.navbar-brand {
+  color: #fff !important;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.nav-link {
+  color: #f9f9f9 !important;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover,
+.nav-link:focus {
+  color: var(--color-highlight) !important;
+}
+img {
+  width: 250px;
+  height: 70px;
+  margin-right: 8px;
+}
+
+/* ========== BOTONES ========== */
+button,
+.btn-primary {
+  background-color: var(--color-accent);
+  color: var(--color-text);
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.2rem;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+button:hover,
+.btn-primary:hover {
+  background-color: var(--color-highlight);
+}
+
+/* ========== TARJETAS Y SECCIONES ========== */
+.card {
+  background-color: var(--color-card);
+  border: none;
+  border-radius: 12px;
+  padding: 1rem;
+  margin: 1rem 0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+}
+
+.section {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+/* ========== ESTILOS DE ALARMAS Y MENSAJES ========== */
+.alert-success {
+  background-color: var(--color-primary);
+  color: #fff;
+}
+
+.alert-warning {
+  background-color: var(--color-highlight);
+  color: var(--color-text);
+}
+
+.alert-danger {
+  background-color: #E74C3C;
+  color: #fff;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (min-width: 768px) {
+  h1 { font-size: 2.2rem; }
+  h2 { font-size: 1.6rem; }
+  .card { padding: 1.5rem 2rem; }
+}
+
+@media (min-width: 1024px) {
+  #root { padding: 2rem; }
+}
+
+
+/* ========== Calendario ========= */
+/* ==== Mobile-first layout ==== */
+.calendar-app {
+  max-width: 420px;
+  margin: auto;
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  padding: 16px;
+  color: #659fa6;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+}
+
+/* ==== Header ==== */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.nav-btn {
+  background-color: transparent;
+  border: none;
+  color: #659fa6;
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+/* ==== Calendar grid ==== */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  text-align: center;
+}
+
+.day-name {
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.day {
+  background: #f9fcfc;
+  border-radius: 12px;
+  padding: 8px 0;
+  transition: all 0.2s;
+  font-size: 1rem;
+}
+
+.day:hover {
+  background-color: #659fa6;
+  color: white;
+  cursor: pointer;
+}
+
+.day.selected {
+  background-color: #659fa6;
+  color: white;
+}
+
+.day.has-meds {
+  background-color: #e1f4f7;
+}
+
+
+/* ==== Medication section ==== */
+.med-section {
+  margin-top: 1.5rem;
+  background: #f6fbfb;
+  border-radius: 16px;
+  padding: 12px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.input-group input {
+  border: 1px solid #659fa6;
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.input-group button {
+  background-color: #659fa6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.input-group button:hover {
+  opacity: 0.9;
+}
+
+/* ==== Medication list ==== */
+.med-list {
+  margin-top: 12px;
+  list-style: none;
+  padding: 0;
+}
+
+.med-list li {
+  background-color: #e1f4f7;
+  border-radius: 10px;
+  padding: 8px;
+  margin-bottom: 6px;
+  font-size: 0.95rem;
+}
+
+
+
+/* ==== Responsive desktop view ==== */
+@media (min-width: 600px) {
+  .calendar-app {
+    max-width: 700px;
+    padding: 24px;
+  }
+
+  .calendar-grid {
+    gap: 10px;
+  }
+
+  .day {
+    padding: 12px 0;
+    font-size: 1.1rem;
+  }
+
+  .input-group {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .input-group input {
+    flex: 1;
+  }
+
+  .input-group button {
+    width: auto;
+  }
+}
+
+/* ==== Floating reminder button ==== */
+.floating-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #659fa6;
+  color: white;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  z-index: 1000;
+  transition: transform 0.2s ease, box-shadow 0.3s;
+}
+
+.floating-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.25);
+}
+
+@keyframes pulso {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(101, 159, 166, 0.6);
+  }
+  70% {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 12px rgba(101, 159, 166, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(101, 159, 166, 0);
+  }
+}
+
+.floating-btn.activo {
+  animation: pulso 1.8s infinite;
+}
+
+/* ==== Resumen overlay ==== */
+.resumen-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1100;
+}
+
+.resumen-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px;
+  width: 90%;
+  max-width: 340px;
+  color: #659fa6;
+  text-align: center;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.resumen-card h3 {
+  margin-bottom: 12px;
+  font-size: 1.3rem;
+}
+
+.resumen-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 12px 0;
+}
+
+.resumen-card li {
+  background-color: #e1f4f7;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  padding: 8px;
+}
+
+.cerrar-btn {
+  background-color: #659fa6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+
+
+/* ================================
+   LOGIN PAGE — MOBILE FIRST DESIGN
+   ================================ */
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #659fa6; /* color principal de la app */
+  padding: 20px;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* === CARD PRINCIPAL === */
+.login-card {
+  background-color: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 380px;
+  padding: 28px 24px;
+  color: #659fa6;
+  animation: fadeIn 0.6s ease;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  /* ADICION: transición para efecto hover (movido aquí desde duplicado) */
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.login-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.18);
+}
+
+/* === TITULOS === */
+.login-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #659fa6;
+  margin-bottom: 0.4rem;
+}
+
+.login-subtitle {
+  font-size: 0.95rem;
+  color: #80b7be;
+  margin-bottom: 1.5rem;
+}
+
+/* === FORMULARIO === */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  text-align: left;
+}
+
+.login-form label {
+  font-size: 0.9rem;
+  color: #659fa6;
+  font-weight: 500;
+}
+
+.login-form input {
+  border: 1px solid #659fa6;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 1rem;
+  outline: none;
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.login-form input:focus {
+  border-color: #80b7be;
+  box-shadow: 0 0 0 3px rgba(101, 159, 166, 0.25);
+}
+
+/* === RECORDAR SESIÓN === */
+.remember-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+
+.remember-row input[type="checkbox"] {
+  accent-color: #659fa6;
+}
+
+/* === MENSAJE DE ERROR === */
+.error-msg {
+  color: #d9534f;
+  font-size: 0.85rem;
+  text-align: center;
+  margin-top: 4px;
+}
+
+/* === BOTÓN DE LOGIN === */
+.login-btn {
+  background-color: #659fa6;
+  color: #ffffff;
+  border: none;
+  border-radius: 14px;
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: bold;
+  margin-top: 8px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.login-btn:hover {
+  background-color: #558c92;
+  transform: scale(1.03);
+}
+
+/* === FOOTER === */
+.login-footer {
+  margin-top: 20px;
+  color: #80b7be;
+  font-size: 0.85rem;
+}
+
+/* ================================
+   RESPONSIVE — TABLET & DESKTOP
+   ================================ */
+@media (min-width: 600px) {
+  .login-card {
+    padding: 40px 48px;
+    max-width: 420px;
+  }
+
+  .login-title {
+    font-size: 2rem;
+  }
+
+  .login-subtitle {
+    font-size: 1rem;
+  }
+
+  .login-btn {
+    padding: 14px;
+    font-size: 1.05rem;
+  }
+}
+
+
+
+/* ================================
+   REGISTER PAGE — MOBILE FIRST DESIGN
+   ================================ */
+
+.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #659fa6;
+  padding: 20px;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* === CARD PRINCIPAL === */
+.register-card {
+  background-color: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 400px;
+  padding: 28px 24px;
+  color: #659fa6;
+  text-align: center;
+  animation: fadeIn 0.6s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* === TITULOS === */
+.register-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #659fa6;
+  margin-bottom: 0.4rem;
+}
+
+.register-subtitle {
+  font-size: 0.95rem;
+  color: #80b7be;
+  margin-bottom: 1.5rem;
+}
+
+/* === FORMULARIO === */
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  text-align: left;
+}
+
+.register-form label {
+  font-size: 0.9rem;
+  color: #659fa6;
+  font-weight: 500;
+}
+
+.register-form input {
+  border: 1px solid #659fa6;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 1rem;
+  outline: none;
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.register-form input:focus {
+  border-color: #80b7be;
+  box-shadow: 0 0 0 3px rgba(101, 159, 166, 0.25);
+}
+
+/* === MENSAJE DE ERROR === */
+.error-msg {
+  color: #d9534f;
+  font-size: 0.85rem;
+  text-align: center;
+  margin-top: 4px;
+}
+
+/* === BOTÓN === */
+.register-btn {
+  background-color: #659fa6;
+  color: #ffffff;
+  border: none;
+  border-radius: 14px;
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: bold;
+  margin-top: 8px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.register-btn:hover {
+  background-color: #558c92;
+  transform: scale(1.03);
+}
+
+/* === FOOTER === */
+.register-footer {
+  margin-top: 20px;
+  color: #80b7be;
+  font-size: 0.85rem;
+}
+
+.register-link {
+  color: #659fa6;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.register-link:hover {
+  text-decoration: underline;
+}
+
+/* ================================
+   PERFIL PAGE — MOBILE FIRST DESIGN
+   ================================ */
+
+.perfil-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  background-color: #e1f4f7;
+  padding: 20px;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+
+.perfil-card {
+  background-color: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 450px;
+  padding: 24px;
+  color: #659fa6;
+  animation: fadeIn 0.5s ease;
+}
+
+.perfil-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.perfil-icon {
+  font-size: 4rem;
+  color: #659fa6;
+}
+
+.perfil-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #659fa6;
+  margin-top: 0.5rem;
+}
+
+.perfil-section {
+  margin-bottom: 1.8rem;
+}
+
+.perfil-section p {
+  margin: 6px 0;
+  font-size: 0.95rem;
+  color: #3a7078;
+}
+
+/* === BOTONES === */
+.edit-btn,
+.save-btn {
+  background-color: #659fa6;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 0.95rem;
+  font-weight: bold;
+  margin-top: 12px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.edit-btn:hover,
+.save-btn:hover {
+  background-color: #558c92;
+  transform: scale(1.03);
+}
+
+/* === INPUTS DE EDICIÓN === */
+.perfil-section input {
+  width: 100%;
+  border: 1px solid #659fa6;
+  border-radius: 12px;
+  padding: 10px;
+  font-size: 1rem;
+  margin-bottom: 10px;
+  outline: none;
+}
+
+.perfil-section input:focus {
+  border-color: #80b7be;
+  box-shadow: 0 0 0 3px rgba(101, 159, 166, 0.25);
+}
+
+/* === MEDICAMENTOS === */
+.meds-section h3 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #659fa6;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.meds-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.med-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f4fbfc;
+  border: 1px solid #c3e3e7;
+  border-radius: 14px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.med-item strong {
+  font-size: 1rem;
+  color: #3a7078;
+}
+
+.med-item p {
+  margin: 2px 0;
+  font-size: 0.9rem;
+  color: #659fa6;
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  color: #c94444;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: transform 0.2s ease;
+}
+
+.delete-btn:hover {
+  transform: scale(1.2);
+}
+
+.empty-text {
+  text-align: center;
+  color: #80b7be;
+  font-size: 0.9rem;
+}
+
+/* StickyButton.css */
+/* ============ ESTILOS BASE ============ */
+
+.sticky-button-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: #f8fafb; /* blanco perlado */
+  border-top: 2px solid rgba(101, 159, 166, 0.15);
+  padding: 0.6rem 0;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+/* Botones individuales */
+.sticky-btn {
+  background-color: #659fa6;
+  border: none;
+  border-radius: 50%;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #f8fafb;
+  font-size: 1.4rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
+}
+
+.sticky-btn:hover {
+  background-color: #4e9a99;
+  transform: translateY(-3px);
+}
+
+.sticky-btn:active {
+  transform: scale(0.95);
+}
+
+/* ============ MOBILE FIRST ============ */
+@media (max-width: 600px) {
+  .sticky-button-container {
+    padding: 0.4rem 0;
+  }
+
+  .sticky-btn {
+    width: 46px;
+    height: 46px;
+    font-size: 1.2rem;
+  }
+}
+
+/* ============ TABLET Y DESKTOP ============ */
+@media (min-width: 601px) {
+  .sticky-button-container {
+    position: fixed;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 340px;
+    background-color: #f8fafb;
+    border-radius: 30px; /* 🔹 redondeado completo */
+    padding: 0.6rem 1rem;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  }
+}
+
+
+/* --- Bottom Sheet Card --- */
+.notifications-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #ffffff;
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.15);
+  transform: translateY(72%);
+  transition: transform 0.35s ease-in-out;
+  z-index: 9999;
+}
+
+/* Abierta */
+.notifications-sheet.open {
+  transform: translateY(0%);
+}
+
+/* Barra superior */
+.sheet-handle {
+  width: 100%;
+  text-align: center;
+  padding: 8px 0;
+  cursor: pointer;
+  background-color: #eaf4f6;
+  border-radius: 20px 20px 0 0;
+}
+
+.sheet-handle .arrow {
+  font-size: 1.3rem;
+  color: #366a73;
+}
+
+/* Contenido interno */
+.sheet-content {
+  padding: 16px;
+  background: #ffffff;
+}
+
+.sheet-title {
+  margin: 0 0 12px 0;
+  font-size: 1.1rem;
+  color: #2d5460;
+  font-weight: 600;
+}
+
+/* Lista de notificaciones */
+.notif-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.notif-item {
+  background: #f5fafb;
+  padding: 12px 14px;
+  border-radius: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.notif-text {
+  color: #2d5460;
+  font-size: 0.95rem;
+}
+
+.notif-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.ok {
+  font-size: 1.2rem;
+  color: #4ba3c7;
+}
+
+.del {
+  font-size: 1.2rem;
+  color: #d46d6d;
+}
+
+.empty {
+  color: #6c8a92;
+  font-size: 0.9rem;
+  opacity: 0.8;
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* --- Desktop improvements --- */
+@media (min-width: 768px) {
+  .notifications-sheet {
+    width: 420px;
+    left: 50%;
+    transform: translate(-50%, 72%);
+  }
+
+  .notifications-sheet.open {
+    transform: translate(-50%, 0%);
+  }
+}
