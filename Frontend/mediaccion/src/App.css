@@ -985,4 +985,426 @@ button:hover,
   .notifications-sheet.open {
     transform: translate(-50%, 0%);
   }
+  
+}
+/* CSS PROGRESOS 1: */
+/* Contenedor principal */
+.page-container {
+  min-height: 100vh;
+  background: black;
+  color: white;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-label {
+  font-size: 14px;
+  color: #bdbdbd;
+}
+
+.header-right {
+  display: flex;
+  gap: 12px;
+}
+
+/* Icon Button */
+.icon-button {
+  width: 40px;
+  height: 40px;
+  background: #222;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0px 2px 4px rgba(0,0,0,0.3);
+}
+
+/* Lista de progresos */
+.progress-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.progress-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.progress-flex {
+  flex: 1;
+}
+
+.progress-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+/* Barra de progreso */
+.progress-bar-container {
+  width: 100%;
+  height: 16px;
+  background: #555;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: white;
+  border-radius: 20px;
+  transition: width 0.5s ease;
+}
+
+/* Menú inferior */
+.bottom-menu {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-around;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 12px;
+  border-radius: 20px;
+}
+
+.menu-button {
+  background: none;
+  border: none;
+  color: #bdbdbd;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.menu-icon {
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-text {
+  font-size: 12px;
+}
+
+/* CSS PROGRESOS2 */
+/* Contenedor principal */
+.page-container {
+  background: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
+  min-height: 100vh;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  font-family: sans-serif;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.header-left {
+  font-size: 16px;
+}
+
+.header-right {
+  display: flex;
+  gap: 10px;
+}
+
+.header-icon {
+  width: 30px;
+  height: 30px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+/* Progreso */
+.progress-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.progress-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.progress-bar-container {
+  flex: 1;
+  height: 16px;
+  background: #000000;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: #5397a0;
+  border-radius: 8px;
+  transition: width 0.3s;
+}
+
+.progress-icons {
+  display: flex;
+  gap: 5px;
+}
+
+.icon-button {
+  width: 30px;
+  height: 30px;
+  background: rgba(0, 0, 0, 0.2);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+/* Cupones/premios */
+.cupones-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.cupon-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cupon-bar {
+  flex: 1;
+  height: 24px;
+  background: #000000;
+  border-radius: 12px;
+}
+
+.cupon-arrow {
+  width: 24px;
+  height: 24px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+/* Menú inferior */
+.bottom-menu {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-around;
+  background: rgba(255,255,255,0.15);
+  padding: 10px;
+  border-radius: 20px;
+}
+
+.menu-button {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* CSS PROGRESOS Y PRMEIOS 3 */
+
+/* --- Variables de Color y Diseño Específicas del Componente --- */
+/* Estas variables facilitan la modificación de los tonos de gris y formas */
+.progress-screen-custom {
+    --bg-color-custom: #f1f1f1;
+    --light-grey-custom: #CCC;
+    --medium-grey-custom: #666;
+    --dark-grey-custom: #4a768e;
+    --text-color-custom: #FFF;
+    --border-radius-lg-custom: 30px;
+    --border-radius-sm-custom: 8px;
+    
+    /* Configuración de la pantalla (fondo, ancho, padding) */
+    background-color: var(--bg-color-custom);
+    color: var(--text-color-custom);
+    min-height: calc(100vh - 80px); /* Ajusta la altura si tu navbar mide 80px, por ejemplo */
+    width: 375px; 
+    margin: 0 auto;
+    padding: 20px 20px 0 20px; /* Padding inferior se maneja por el contenido */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- Estilos de Íconos Placeholders (Forma y color de fondo) --- */
+.progress-screen-custom .icon-placeholder {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: var(--medium-grey-custom);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px; 
+    padding: 2px;
+}
+
+/* --- Encabezado --- */
+.progress-screen-custom .header-custom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 20px;
+}
+
+/* Ajuste específico para el ícono superior derecho (cuadrado/rectángulo) */
+.progress-screen-custom .header-icon-right {
+    border-radius: var(--border-radius-sm-custom); 
+}
+
+/* --- Contenedor Principal (Cuerpo) --- */
+.progress-screen-custom .progress-container-custom {
+    flex-grow: 1; 
+    padding: 0 10px;
+}
+
+.progress-screen-custom .progress-title-custom {
+    font-size: 1.5rem;
+    color: var(--text-color-custom);
+    margin-bottom: 20px;
+}
+
+/* --- Barras de Progreso --- */
+.progress-screen-custom .progress-bars-custom {
+    margin-bottom: 40px;
+}
+
+.progress-screen-custom .progress-bar-short-custom {
+    height: 8px;
+    width: 40%;
+    background-color: var(--medium-grey-custom);
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+.progress-screen-custom .progress-bar-long-custom {
+    height: 8px;
+    width: 65%;
+    background-color: var(--medium-grey-custom);
+    border-radius: 4px;
+}
+
+/* --- Bloques Principales (Rectángulos de Contenido) --- */
+.progress-screen-custom .main-block-custom {
+    border-radius: var(--border-radius-lg-custom);
+    margin-bottom: 20px;
+    padding: 15px; 
+    display: flex; 
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+/* Bloque superior (claro, más corto) */
+.progress-screen-custom .primary-block-custom {
+    background-color: var(--light-grey-custom);
+    height: 60px; 
+}
+
+/* Simulación del contenido negro dentro del bloque claro */
+.progress-screen-custom .primary-block-content-custom {
+    background-color: var(--bg-color-custom); 
+    width: 70%;
+    height: 100%;
+    border-radius: 20px; 
+    margin-right: 10px;
+}
+
+.progress-screen-custom .block-icons-custom {
+    display: flex;
+    gap: 10px;
+    /* Asegura que los íconos no se "pegue" al borde del bloque */
+    margin-right: -5px; 
+}
+
+/* Ícono de estrella/documento pequeño */
+.progress-screen-custom .star-icon-custom, 
+.progress-screen-custom .doc-icon-small-custom {
+    width: 25px;
+    height: 25px;
+    background-color: var(--medium-grey-custom); 
+    border-radius: 50%;
+    font-size: 12px;
+}
+
+/* El ícono de documento es cuadrado con bordes redondeados */
+.progress-screen-custom .doc-icon-small-custom {
+    border-radius: var(--border-radius-sm-custom); 
+}
+
+/* Bloque inferior (oscuro y grande) */
+.progress-screen-custom .secondary-block-custom {
+    background-color: var(--dark-grey-custom);
+    height: 120px; 
+    justify-content: flex-start;
+}
+
+/* --- Explicación del Premio --- */
+.progress-screen-custom .award-explanation-custom {
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--light-grey-custom);
+    margin-top: 40px;
+    padding-bottom: 20px; 
 }
