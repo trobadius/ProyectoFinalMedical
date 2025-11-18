@@ -67,6 +67,21 @@ export default function Navbar() {
                 Registration
               </Link>
             </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/Progresos1">
+                Progresos1
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/Progresos2">
+                Progresos2
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/Progresos3">
+                Progresos3
+              </Link>
+            </li>
           </ul>
         </div>
       </div>
