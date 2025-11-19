@@ -28,7 +28,8 @@ export default function App() {
         minHeight: '100vh'
       }}
     >
-        <Navbar />
+      <Navbar />
+     
 
         {/* CONTENEDOR GLOBAL QUE IGUALA ANCHOS Y HACE TODO RESPONSIVE */}
         <main className="w-full max-w-screen-lg mx-auto px-0 py-6">

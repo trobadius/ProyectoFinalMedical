@@ -6,7 +6,7 @@ import { useState, useEffect } from "react"
 
 function ProtectedRoute({children}){
     const [isAuthorized, setIsAuthorized] = useState(null)
-
+    console.log("ProtectedRoute isAuthorized:", isAuthorized)
 //catch metodo auth en caso de que haya algun error 
     useEffect(() =>{
         auth().catch(() => setIsAuthorized(false))
