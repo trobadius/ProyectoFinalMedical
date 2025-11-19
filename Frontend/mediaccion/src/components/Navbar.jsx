@@ -37,11 +37,7 @@ export default function Navbar() {
                 Home
               </Link>
             </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/medicamentos">
-                Medicamentos
-              </Link>
-            </li>
+  
             <li className="nav-item">
               <Link className="nav-link" to="/calendario">
                 Calendario
