@@ -1465,7 +1465,7 @@ button:hover,
   border-radius: var(--border-radius-sm-custom);
 }
 
-.overlay-box {
+/* .overlay-box {
   position: absolute;
   top: 30%;
   left: 10%;
@@ -1473,9 +1473,9 @@ button:hover,
   height: 40%;
   border: 3px dashed white;
   border-radius: var(--border-radius-sm-custom);
-  box-shadow: 0 0 25px rgba(0,0,0,0.6) inset;
+  box-shadow: 0 0 25px rgba(255, 6, 6, 0.6) inset;
   pointer-events: none;
-}
+} */
 
 .camera-ocr-button {
   margin: 10px;
@@ -1496,4 +1496,44 @@ button:hover,
 
 .camera-ocr-canvas {
   display: none;
+}
+
+
+
+/* prueba */
+
+.camera-ocr-video-container {
+  position: relative; /* Muy importante */
+  width: 100%;
+  max-width: 600px;
+}
+
+/* .overlay-box {
+  position: absolute;
+  top: 30%;
+  left: 10%;
+  width: 80%;
+  height: 40%;
+  border: 3px dashed white;
+  border-radius: 10px;
+  box-shadow: 0 0 25px rgba(0,0,0,0.6) inset;
+  pointer-events: none;
+} */
+
+.overlay-img {
+  position: absolute; /* Posicionamiento sobre el video */
+  top: 0;             /* Ajusta según necesites */
+  left: 0;            /* Ajusta según necesites */
+  width: 100%;        /* O el tamaño que quieras */
+  height: 100%;       /* O el tamaño que quieras */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none; /* Para que no bloquee clics */
+}
+
+.overlay-img img {
+  width: 250px;  /* Ajusta el tamaño de tu logo QR */
+  height: 200px;
+  object-fit: contain;
 }
