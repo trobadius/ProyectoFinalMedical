@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { createWorker } from "tesseract.js";
+import QR from "../assets/QR.png";
 
 export default function CameraOCR() {
   const videoRef = useRef(null);
@@ -75,55 +76,42 @@ export default function CameraOCR() {
     setResult(data.text);
   };
 
-//   return (
-//     <div className="camera-ocr-container">
-//     CameraOCR
-//     <div style={{ textAlign: "center" }}>
-//       <h2>Escanear Caja o Receta</h2>
 
-//       <select
-//         value={cameraMode}
-//         onChange={(e) => setCameraMode(e.target.value)}
-//         disabled={started}
-//         style={{ padding: 10, marginBottom: 15 }}
-//       >
-//         <option value="environment">Cámara Trasera</option>
-//         <option value="user">Cámara Frontal</option>
-//       </select>
 
-//       <div style={{ position: "relative", width: "100%", maxWidth: 600, margin: "auto" }}>
-//         <video ref={videoRef} style={{ width: "100%", borderRadius: 10 }} />
+// return (
+//   <div className="camera-ocr-container">
+//     <h2>Escanear Caja o Receta</h2>
 
-//         <div
-//           style={{
-//             position: "absolute",
-//             top: "30%",
-//             left: "10%",
-//             width: "80%",
-//             height: "40%",
-//             border: "3px dashed white",
-//             borderRadius: 10,
-//             boxShadow: "0 0 25px rgba(0,0,0,0.6) inset",
-//             pointerEvents: "none",
-//           }}
-//         />
-//       </div>
+//     <select
+//       value={cameraMode}
+//       onChange={(e) => setCameraMode(e.target.value)}
+//       disabled={started}
+//       className="camera-ocr-select"
+//     >
+//       <option value="environment">Cámara Trasera</option>
+//       <option value="user">Cámara Frontal</option>
+//     </select>
 
-//       <canvas ref={canvasRef} style={{ display: "none" }} />
-
-//       <button onClick={startCamera} disabled={started} style={{ margin: 10, padding: 10 }}>
-//         Activar Cámara
-//       </button>
-
-//       <button onClick={capture} disabled={!started} style={{ margin: 10, padding: 10 }}>
-//         Escanear Texto
-//       </button>
-
-//       <pre style={{ whiteSpace: "pre-wrap", padding: 10 }}>{result}</pre>
+//     <div className="camera-ocr-video-container">
+//       <video ref={videoRef} className="camera-ocr-video" />
+//       <div className="overlay-box" />
+//       <div className="overlay-img">
+//         <img src="/src/assets/QR" alt="QR" />
 //     </div>
-//    <div/>
-//   );
-// }
+
+//     <canvas ref={canvasRef} className="camera-ocr-canvas" />
+
+//     <button onClick={startCamera} disabled={started} className="camera-ocr-button">
+//       Activar Cámara
+//     </button>
+
+//     <button onClick={capture} disabled={!started} className="camera-ocr-button">
+//       Escanear Texto
+//     </button>
+
+//     <pre className="camera-ocr-result">{result}</pre>
+//   </div>
+// );}
 
 return (
   <div className="camera-ocr-container">
@@ -142,6 +130,9 @@ return (
     <div className="camera-ocr-video-container">
       <video ref={videoRef} className="camera-ocr-video" />
       <div className="overlay-box" />
+        <div className="overlay-img">
+          <img src={QR} alt="QR" className="qr-image" />
+        </div>
     </div>
 
     <canvas ref={canvasRef} className="camera-ocr-canvas" />
