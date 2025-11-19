@@ -8,7 +8,7 @@ export default function Home() {
   return (
     <div>      
       <Header />
-      <h1>Bienvenido a MediAccion</h1>
+      <h1>Hola ${`nombre`}</h1>
       <h2>Tu plataforma de salud amigable</h2>
       <Footer />
        <button className="btn btn-primary">Prueba</button>
