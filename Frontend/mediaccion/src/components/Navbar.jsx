@@ -44,7 +44,7 @@ export default function Navbar() {
               </Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/camara">
+              <Link className="nav-link" to="/cameraOCR">
                 Cámara
               </Link>
             </li>

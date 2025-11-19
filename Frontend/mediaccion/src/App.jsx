@@ -9,11 +9,10 @@ import StickyButton from "./components/StickyButton.jsx";
 
 import Home from './pages/Home.jsx';
 import Calendario from './pages/Calendario.jsx';
-import Camara from './pages/Camara.jsx';
+import CameraOCR from './components/CameraOCR.jsx';
 import Perfil from './pages/Perfil.jsx';
 import Login from './pages/Login.jsx';
 import Registration from './pages/Registration.jsx';
-import CameraOCR from "./components/CameraOCR";
 import Progresos1 from "./pages/Progresos1.jsx";
 import Progresos2 from "./pages/Progresos2.jsx";
 import Progresos3 from "./pages/Progresos3.jsx";
@@ -40,7 +39,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/calendario" element={<Calendario />} />
-            <Route path="/camara" element={<Camara />} />
+            <Route path="/cameraOCR" element={<CameraOCR />} />
             <Route path="/perfil" element={<Perfil />} />
             <Route path="/login" element={<Login />} />
             <Route path="/registration" element={<Registration />} />
@@ -49,7 +48,7 @@ export default function App() {
             <Route path="/Progresos2" element={<Progresos2 />} />
             <Route path="/Progresos3" element={<Progresos3 />} />
 
-            <Route path="/ocr" element={<CameraOCR />} />
+    
           </Routes>
 
         </main>
