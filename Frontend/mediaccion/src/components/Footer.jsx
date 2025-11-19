@@ -1,9 +1,19 @@
-
+import logoimg from "../assets/logo_svg.svg";
 
 export default function Footer() {
   return (
     <footer>
-      <p>© 2023 MediAccion. Todos los derechos reservados.</p>
+
+        <img
+          src={logoimg}
+          alt="MediAccion Logo"
+          style={{ height: "50px", margin: "0px", padding: "0px" }}/>    
+          <p style={{margin: "0px", padding: "0px"}}>
+
+          
+        © 2023 MediAccion. Todos los derechos reservados.
+
+      </p>
     </footer>
   )
 }
