@@ -23,7 +23,7 @@ export default function App() {
     <div
       className="app-root min-h-screen"
       style={{
-        backgroundImage: "url('/static/background.png')",
+        backgroundColor: 'white',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
