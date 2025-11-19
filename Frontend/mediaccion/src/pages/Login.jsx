@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-
+import logoimg from "../assets/logo_svg.svg";
 
 const Login = ({ onLogin }) => {
   const [email, setEmail] = useState("");
@@ -44,7 +44,13 @@ const Login = ({ onLogin }) => {
   return (
     <div className="login-container">
       <div className="login-card">
-        <h1 className="login-title">MediAcción 💊</h1>
+        <h1 className="login-title">MediAcción
+          <img
+            src={logoimg}
+            alt="MediAccion Logo"
+            style={{ height: "100px", marginRight: "8px" }}
+          />
+        </h1>
         <p className="login-subtitle">Tu calendario médico personal</p>
 
         <form className="login-form" onSubmit={handleSubmit}>
