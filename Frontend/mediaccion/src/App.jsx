@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import { Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar.jsx';
 import StickyButton from "./components/StickyButton.jsx";
 import Home from './pages/Home.jsx';
@@ -28,6 +28,7 @@ export default function App() {
         minHeight: '100vh'
       }}
     >
+      <Router>
       <Navbar />
      
 
@@ -52,7 +53,7 @@ export default function App() {
         </main>
 
         <StickyButton />
-
+</Router>
     </div>
   );
 }
