@@ -1,61 +1,107 @@
-import React from 'react'
-import Header from '../components/Header.jsx'
-import Footer from '../components/Footer.jsx'
-import Navbar from '../components/Navbar.jsx'
+import React from "react";
+import "../App.css";
 
 export default function Home() {
-  const nombre = "Nombre"
-
   return (
-    <div>
-      <Header />
+    <div className="home-app">
 
-      <div className="container mt-4 text-center"/>
+      {/* HEADER */}
+      <header className="home-header">
+        <div className="header-left">
+          <p className="date">19 de noviembre</p>
+        </div>
+        <div className="header-right">
+          <span className="icon">📅</span>
+        </div>
+      </header>
 
-        {/* Saludo */}
-        <h1>Hola {nombre}</h1>
-        <h2 className="text-muted mb-4">Tu plataforma de salud amigable</h2>
+{/* CALENDARIO HORIZONTAL */}
+<div className="calendar-scroll">
+  {["13", "14", "15", "16", "17", "18", "19", "20", "21"].map((day, i) => (
+    <div key={i} className={`calendar-day ${day === "19" ? "today" : ""}`}>
+      <p className="day-number">{day}</p>
+    </div>
+  ))}
+</div>
 
-        {/* acordeón flush tareas */}
-        <div>
+      {/* REGISTRO NUEVO MEDICAMENTO HOME */}
+      <section className="delay-block">
+        <h2 className="delay-title">
+          Tus tareas de <span>HOY</span>
+        </h2>
+        <button className="btn-register">Registrar nuevo medicamento💊</button>
+      </section>
 
-          <Header />
+      {/* CONSEJOS DIARIOS */}
+      <section className="daily-tips">
+        <h3>Mis consejos diarios · Hoy</h3>
 
-          <div className="accordion accordion-flush" id="accordionFlushExample" style={{ maxWidth: "373px", margin: "0 auto" }}>
-            <div className="accordion-item">
-              <h2 className="accordion-header">
-                <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-                  Recomendaciones diarias
-                </button>
-              </h2>
-              <div id="flush-collapseOne" className="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
-                <div className="accordion-body">Placeholder content for this accordion, which is intended to demonstrate the <code>.accordion-flush</code> class. This is the first item’s accordion body.</div>
-              </div>
-            </div>
-            <div className="accordion-item">
-              <h2 className="accordion-header">
-                <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
-                  Tus medicaciones de hoy
-                </button>
-              </h2>
-              <div id="flush-collapseTwo" className="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
-                <div className="accordion-body">Placeholder content for this accordion, which is intended to demonstrate the <code>.accordion-flush</code> class. This is the second item’s accordion body. Let’s imagine this being filled with some actual content.</div>
-              </div>
-            </div>
-            <div className="accordion-item">
-              <h2 className="accordion-header">
-                <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
-                  Tus recetas
-                </button>
-              </h2>
-              <div id="flush-collapseThree" className="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
-                <div className="accordion-body">Placeholder content for this accordion, which is intended to demonstrate the <code>.accordion-flush</code> class. This is the third item’s accordion body. Nothing more exciting happening here in terms of content, but just filling up the space to make it look, at least at first glance, a bit more representative of how this would look in a real-world application.</div>
-              </div>
-            </div>
+        <div className="tips-scroll">
+          <div className="tip-card symptoms">
+            <p>Registra tus síntomas</p>
+            <button className="plus">+</button>
           </div>
 
-          <Footer />
+          <div className="tip-card home-friday">
+            <p className="big">💊Medicamento 1</p>
+            <p>¡Se acaba en breves!</p>
+          </div>
+
+          <div className="tip-card stress">
+            <p>💊Medicamento 2</p>
+          </div>
         </div>
-      </div>
-        )
+      </section>
+
+      {/* NOTICIAS */}
+      <section className="delay-extras">
+        <h4>Puede interesarte...</h4>
+
+        <div className="extras-row">
+          <div className="extra">
+            <span>⭐️</span>
+            <p>Noticia 1</p>
+          </div>
+
+          <div className="extra">
+            <span>💊</span>
+            <p>Noticia 2</p>
+          </div>
+
+          <div className="extra">
+            <span>🩺</span>
+            <p>Noticia 3</p>
+          </div>
+        </div>
+      </section>
+
+      {/* SUGERENCIAS + PREMIUM */}
+      <section className="cycle-section">
+        <h4>Según tus recetas</h4>
+
+        <div className="cycle-scroll">
+          <div className="cycle-card">
+            <div className="card-img placeholder"></div>
+            <p>Sugerencia alimenticia 1</p>
+          </div>
+
+          <div className="cycle-card">
+            <div className="card-img placeholder"></div>
+            <p>Sugerencia alimenticia 2</p>
+          </div>
+
+          <div className="cycle-card">
+            <div className="card-img placeholder"></div>
+            <p>Remedios comprobados</p>
+          </div>
+
+          <div className="cycle-card">
+            <div className="card-img placeholder">¡¡Pásate a premium!!</div>
+            <p>¡¡Pásate a premium!!</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  );
 }
