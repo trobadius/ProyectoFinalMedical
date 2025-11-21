@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 
 
 
-const CalendarMedicamentosResponsive = () => {
+const Calendario = () => {
   const [showResumen, setShowResumen] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const [medicamentos, setMedicamentos] = useState({});
   const [nuevoMed, setNuevoMed] = useState({ nombre: "", intervalo: 8 });
 
@@ -208,4 +208,4 @@ const CalendarMedicamentosResponsive = () => {
   );
 };
 
-export default CalendarMedicamentosResponsive;
+export default Calendario;
