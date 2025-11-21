@@ -19,7 +19,7 @@ export default function App() {
   return (
     <div className="app-root min-h-screen"
       style={{
-        backgroundColor: 'white',
+        backgroundColor: '#d5ebedff',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
