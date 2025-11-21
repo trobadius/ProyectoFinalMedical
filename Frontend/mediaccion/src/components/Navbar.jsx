@@ -16,7 +16,7 @@ export default function Navbar() {
         <img src={logo} alt="Medicacción Logo" className="navbar-logo" />
       </Link>
 
-      <Link to="/TesseractOCR">
+      <Link to="/tesseractOCR">
         <button style={{marginRight:"1000px"}}>
           tesseract
         </button>
