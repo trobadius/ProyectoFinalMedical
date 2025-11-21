@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 #Solo permitimos a no usuarios registrados crearse la cuenta
 @api_view(['POST'])
 @permission_classes([AllowAny])
-def CrearUser(request, pk=None):
+def CrearUser(request):
     serializer = RegisterSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
