@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import api from "../api";
 import { ACCES_TOKEN, REFRESH_TOKEN } from "../constants";
 import { useNavigate } from "react-router-dom";
 import logoimg from "../assets/logo_svg.svg";
+import { Link } from "react-router-dom";
 
 function Login(){
   const [username, setUsername] = useState("");
@@ -28,7 +29,7 @@ function Login(){
   return (
     <div className="login-container">
       <div className="login-card">
-        <h1 className="login-title">MediAcción 💊</h1>
+        <h1 className="login-title">MediAcción</h1>
             <img
                 src={logoimg}
                 alt="MediAccion Logo"
@@ -36,7 +37,7 @@ function Login(){
             />
         <p className="login-subtitle">Tu calendario médico personal</p>
 
-        <h2>{name}</h2>
+        <h2>{username}</h2>
         <form className="login-form" onSubmit={handleSubmit}>
           <label htmlFor="user">Usuario</label>
           <input
@@ -59,6 +60,9 @@ function Login(){
             Iniciar sesión
           </button>
         </form>
+        <p className="register-footer">
+          ¿No tienes cuenta? <Link className="register-link" to="/register">Registrate!</Link>
+        </p>
         <footer className="login-footer">
           <small>© {new Date().getFullYear()} MediAcción</small>
         </footer>
