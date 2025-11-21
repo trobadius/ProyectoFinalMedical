@@ -1,12 +1,11 @@
-import {Navigate} from "react-router-dom"
+import {Navigate, Outlet} from "react-router-dom"
 import {jwtDecode} from "jwt-decode"
 import api from "../api"
 import { REFRESH_TOKEN, ACCES_TOKEN } from "../constants"
 import { useState, useEffect } from "react"
 
-function ProtectedRoute({children}){
+function ProtectedRoute(){
     const [isAuthorized, setIsAuthorized] = useState(null)
-    console.log("ProtectedRoute isAuthorized:", isAuthorized)
 //catch metodo auth en caso de que haya algun error 
     useEffect(() =>{
         auth().catch(() => setIsAuthorized(false))
@@ -34,7 +33,6 @@ function ProtectedRoute({children}){
 
     const auth = async () => {
         const token = localStorage.getItem(ACCES_TOKEN)
-        console.log("TOKEN:", token)
         if(!token){
             setIsAuthorized(false)
             return
@@ -54,7 +52,7 @@ function ProtectedRoute({children}){
         return <div>Cargando...</div>
     }
 
-    return isAuthorized ? children : <Navigate to="/login" />
+    return isAuthorized ? <Outlet /> : <Navigate to="/login" />
 }
 
 export default ProtectedRoute

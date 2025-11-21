@@ -5,11 +5,11 @@ from django.contrib.auth.models import User
 
 class ProfileUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True, related_name='user')
-    edad = models.DateField(null=True, blank=True)
-    es_principal = models.BooleanField
+    date_birth = models.DateField(null=True, blank=True)
     ROLES = [
         ("admin", "Administrador"),
         ("user", "Ususario"),
+        ("premium", "Usuario Premium"),
         ("usuario_secundario", "Usuario Secundario"),
     ]
     roles = models.CharField(max_length=20, choices=ROLES, default='user')
@@ -20,6 +20,8 @@ class ProfileUser(models.Model):
         ('no_decir', 'Prefiero no decirlo')
     ]
     genero = models.CharField(max_length=20, choices=GENEROS, default='no_decir')
+    pais = models.CharField(max_length=5, null=True)
+    telefono = models.CharField(max_length=16, null=True)
 
     def __str__(self):
         return self.user.username
