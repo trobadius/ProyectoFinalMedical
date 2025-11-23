@@ -14,37 +14,21 @@ export default function CameraOCR() {
   const [cameraMode, setCameraMode] = useState("environment");
 
   // Inicializa worker de Tesseract
-  // useEffect(() => {
-  //   const initWorker = async () => {
-  //     const worker = await createWorker({ logger: (m) => console.log(m) });
-  //     await worker.loadLanguage("spa");
-  //     await worker.initialize("spa");
-  //     workerRef.current = worker;
-  //   };
-  //   initWorker();
-
-  //   return () => {
-  //     if (workerRef.current && workerRef.current.terminate) {
-  //       workerRef.current.terminate();
-  //     }
-  //   };
-  // }, []);
   useEffect(() => {
-  const initWorker = async () => {
-    const worker = createWorker();  
-    await worker.load();
-    await worker.loadLanguage("spa");
-    await worker.initialize("spa");
-    workerRef.current = worker;
-    setWorkerReady(true);
-  };
+    const initWorker = async () => {
+      const worker = await createWorker({ logger: (m) => console.log(m) });
+      await worker.loadLanguage("spa");
+      await worker.initialize("spa");
+      workerRef.current = worker;
+    };
+    initWorker();
 
-  initWorker();
-
-  return () => {
-    if (workerRef.current) workerRef.current.terminate();
-  };
-}, []);
+    return () => {
+      if (workerRef.current && workerRef.current.terminate) {
+        workerRef.current.terminate();
+      }
+    };
+  }, []);
 
   // Detener cámara actual
   const stopCamera = () => {
@@ -157,12 +141,6 @@ export default function CameraOCR() {
 
       <canvas ref={canvasRef} className="camera-ocr-canvas" />
 
-      {/* <button
-        onClick={() => handleActivateCamera()}
-        className="camera-ocr-button"
-      >
-        Escanear 
-      </button> */}
       <button
         onClick={capture} // <-- Llama a la función capture
         className="camera-ocr-button"

@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { createWorker } from "tesseract.js";
+import QR from "../assets/QR.png";
 
 export default function TesseractOCR({ overlayImg }) {
   const videoRef = useRef(null);
@@ -9,10 +10,12 @@ export default function TesseractOCR({ overlayImg }) {
   const [workerReady, setWorkerReady] = useState(false);
   const [started, setStarted] = useState(false);
   const [result, setResult] = useState("");
+  const [cameraMode, setCameraMode] = useState("environment");
 
+  // Inicializar worker Tesseract
   useEffect(() => {
     const initWorker = async () => {
-      const worker = await createWorker(); // v5+ no necesita load()
+      const worker = await createWorker();
       workerRef.current = worker;
       setWorkerReady(true);
       console.log("Worker listo");
@@ -25,10 +28,22 @@ export default function TesseractOCR({ overlayImg }) {
     };
   }, []);
 
-  const startCamera = async () => {
+  // Activar cámara con confirmación
+  const handleActivateCamera = async (mode = cameraMode) => {
+    const userAccepted = window.confirm(
+      "Esta aplicación necesita acceder a tu cámara. ¿Deseas continuar?"
+    );
+    if (userAccepted) {
+      setCameraMode(mode);
+      await startCamera(mode);
+    }
+  };
+
+  // Iniciar cámara
+  const startCamera = async (mode = "environment") => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment" },
+        video: { facingMode: mode },
       });
       videoRef.current.srcObject = stream;
       await videoRef.current.play();
@@ -39,6 +54,7 @@ export default function TesseractOCR({ overlayImg }) {
     }
   };
 
+  // Capturar imagen y procesar OCR
   const captureAndScan = async () => {
     if (!workerReady) return;
 
@@ -55,15 +71,35 @@ export default function TesseractOCR({ overlayImg }) {
   };
 
   return (
-    <div>
-      <video ref={videoRef} style={{ width: "100%" }} />
-      {overlayImg && <img src={overlayImg} alt="Overlay" style={{ position: "absolute", top:0, left:0}} />}
-      <canvas ref={canvasRef} style={{ display: "none" }} />
-      <button onClick={startCamera}>Iniciar Cámara</button>
-      <button onClick={captureAndScan} disabled={!workerReady || !started}>
+    <div className="camera-ocr-container">
+      <h2>Escanear</h2>
+
+      <select
+        value={cameraMode}
+        onChange={async (e) => {
+          await handleActivateCamera(e.target.value);
+        }}
+        className="camera-ocr-select"
+      >
+        <option value="environment">Escanear QR medicamento</option>
+        <option value="user">Escanear Receta medica</option>
+      </select>
+
+      <div className="camera-ocr-video-container">
+        <video ref={videoRef} className="camera-ocr-video" />
+        <div className="overlay-box" />
+        <div className="overlay-img" style={{ opacity: started ? 0 : 1 }}>
+          <img src={QR} alt="QR" className="qr-image" />
+        </div>
+      </div>
+
+      <canvas ref={canvasRef} className="camera-ocr-canvas" />
+
+      <button onClick={captureAndScan} className="camera-ocr-button">
         Escanear
       </button>
-      <pre>{result}</pre>
+
+      <pre className="camera-ocr-result">{result}</pre>
     </div>
   );
 }
