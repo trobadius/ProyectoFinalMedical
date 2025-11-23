@@ -257,30 +257,59 @@ h2 {
   margin-bottom: 0.5rem;
 }
 
-/* ========== NAVBAR (Bootstrap adaptada) ========== */
-.navbar {
-  background-color: #D98566 !important;
+/* === NAVBAR GENERAL === */
+.navbar-custom {
+  background-color: #D98566; /* tu color original */
+  height: 64px;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 50;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+
+  /* Si quieres efecto cristal:
+  backdrop-filter: blur(10px);
+  background-color: rgba(217,133,102,0.85); 
+  */
 }
 
-.navbar-brand {
-  color: #fff !important;
-  font-weight: 600;
-  letter-spacing: 0.5px;
+/* === LOGO CENTRADO === */
+.navbar-logo-wrapper {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
-.nav-link {
-  color: #f9f9f9 !important;
-  transition: color 0.3s ease;
+.navbar-logo {
+  height: 42px;
+  width: auto;
 }
 
-.nav-link:hover,
-.nav-link:focus {
-  color: var(--color-highlight) !important;
+/* === ICONOS LATERALES === */
+.navbar-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: white;
+  transition: opacity 0.2s ease;
 }
-img {
-  width: 250px;
-  height: 70px;
-  margin-right: 8px;
+
+.navbar-icon:hover {
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+/* === OPCIONAL: PULSACIÓN EN MÓVIL === */
+.navbar-icon:active {
+  transform: scale(0.92);
 }
 
 /* ========== BOTONES ========== */
@@ -850,6 +879,69 @@ button:hover,
   border-color: #80b7be;
   box-shadow: 0 0 0 3px rgba(101, 159, 166, 0.25);
 }
+/*FORM GENERO*/
+.genero{
+  border: 1px solid #659fa6;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 1rem;
+  outline: none;
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+}
+/*FORM TELEFONO*/
+/* Contenedor que une ambos campos */
+  .phone-combo {
+    display:flex;
+    align-items:stretch;
+    gap:var(0);
+    overflow:hidden;
+    border: 1px solid #659fa6;
+    border-radius: 12px;
+    padding: 1px 1px;
+    font-size: 1rem;
+    outline: none;
+    transition: box-shadow 0.25s ease, border-color 0.25s ease;
+  }
+  .phone-combo .select-wrap select:focus {
+    border-color: #030303;
+    box-shadow: 0 0 0 3px rgba(101, 159, 166, 0.25);
+  }
+/*input-tel*/
+  .phone-combo input {
+    border: none;
+    padding: 10px 12px;
+    font-size: 14px;
+    flex:1;
+
+  }
+/* Select (país) */
+  .phone-combo select {
+    appearance: none;
+    border: none;
+    padding: 10px 14px;
+    padding-right: 25px; /* espacio para flecha */
+    background: transparent;
+    outline: none;
+    font-size: 14px;
+    cursor: pointer;
+  }
+/* Flecha simple para select (solo visual) */
+  .phone-combo .select-wrap{
+    position:relative;
+    display:flex;
+    align-items:center;
+    background:transparent;
+    border-right:1px solid var(#cbd5e1);
+  }
+
+  .phone-combo .select-wrap::after{
+    content: "▾";
+    position:absolute;
+    right:10px;
+    pointer-events:none;
+    font-size:12px;
+    color:#334155;
+  }
 
 /* === MENSAJE DE ERROR === */
 .error-msg {

@@ -6,10 +6,13 @@ from django.contrib.auth.models import User
 class ProfileUserSerializer(serializers.ModelSerializer):
     id_user = serializers.IntegerField(source='user.id')
     username = serializers.CharField(source='user.username')
+    first_name = serializers.CharField(source='user.first_name')
+    last_name = serializers.CharField(source='user.last_name')
+    email = serializers.EmailField(source='user.email')
 
     class Meta:
         model = ProfileUser
-        fields = ['id_user', 'username', 'id', 'edad', 'roles', 'genero']
+        fields = ['id_user', 'username', 'first_name', 'last_name', 'email', 'id', 'date_birth', 'roles', 'genero', 'pais', 'telefono']
 
 #Serializer anidado
 class ProfileRegisterSerializer(serializers.ModelSerializer):
@@ -22,7 +25,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'password', 'profile']
+        fields = ['username', 'password', 'first_name', 'last_name', 'email', 'profile']
         extra_kwargs = {
             'password': {'write_only': True}
         }
