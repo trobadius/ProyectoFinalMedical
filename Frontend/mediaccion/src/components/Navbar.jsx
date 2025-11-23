@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { MessageCircle, LogOut } from "lucide-react";
 import logo from "../assets/logo.svg";
+import '../styles/Navbar.css';
 
 export default function Navbar() {
   return (

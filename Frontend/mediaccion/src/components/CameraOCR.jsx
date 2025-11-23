@@ -3,6 +3,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { createWorker } from "tesseract.js";
 import QR from "../assets/QR.png";
+import '../styles/CameraOCR.css';
 
 export default function CameraOCR() {
   const videoRef = useRef(null);

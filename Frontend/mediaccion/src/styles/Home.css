@@ -1,0 +1,184 @@
+/* HOME */
+.home-app {
+  font-family: 'Inter', sans-serif;
+  background: #f3f4f8;
+  min-height: 100vh;
+  padding: 15px;
+  box-sizing: border-box;
+}
+
+
+/* CALENDARIO HORIZONTAL */
+.calendar-scroll {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  margin: 10px 0 20px 0;
+  padding-bottom: 8px;
+  scrollbar-width: none; /* Firefox */
+}
+
+.calendar-scroll::-webkit-scrollbar {
+  display: none; /* Chrome */
+}
+
+.calendar-day {
+  flex: 0 0 auto;
+  width: 55px;
+  height: 70px;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calendar-day .day-number {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.calendar-day.today {
+  background: #5e989e;
+  color: white;
+  box-shadow: 0 2px 6px #5e989e;
+}
+
+
+.date {
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.icon {
+  font-size: 20px;
+}
+
+/* REGISTRO NUEVO MEDICAMENTO HOME */
+.delay-block {
+  text-align: center;
+  margin: 25px 0;
+}
+
+.delay-title span {
+  font-size: 30px;
+  font-weight: 600;
+}
+
+.btn-register {
+  margin-top: 12px;
+  background: #ffffff;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 25px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  cursor: pointer;
+  font-weight: 500;
+}
+
+/* CONSEJOS DIARIOS */
+.daily-tips > h3 {
+  margin-bottom: 12px;
+}
+
+.tips-scroll {
+  .tips-scroll {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+
+.tips-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+}
+
+.tip-card {
+  flex: 0 0 150px;
+  background: white;
+  border-radius: 16px;
+  padding: 15px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+}
+
+.symptoms {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.plus {
+  background: #5e989e;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  font-size: 24px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.home-friday {
+  background: #ffffff;
+  border: 2px solid #5e989e;
+}
+
+.stress {
+  background: #ffffff;
+  border: 2px solid #5e989e;
+}
+
+/* NOTICIAS */
+.delay-extras {
+  margin-top: 25px;
+}
+
+.extras-row {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 10px;
+}
+
+.extra {
+  text-align: center;
+}
+
+/* SUGERENCIAS + PREMIUM */
+.cycle-section {
+  margin-top: 25px;
+}
+
+
+.cycle-scroll {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+
+.cycle-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+
+
+.cycle-card {
+  flex: 0 0 140px;
+}
+
+.card-img {
+  width: 100%;
+  height: 100px;
+  border-radius: 12px;
+  background: #ddd;
+  margin-bottom: 6px;
+}
+
+

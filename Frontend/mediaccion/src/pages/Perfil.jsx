@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaUserCircle, FaPencilAlt, FaTrashAlt, FaCapsules } from 'react-icons/fa';
-
+import '../styles/Perfil.css';
 export default function Perfil() {
   const [userData, setUserData] = useState({
     nombre: '',

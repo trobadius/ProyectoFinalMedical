@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { validarUsuario, validarContraseña, validarNombre, validarApellido, validarEmail, validarFechaNacimiento, 
   actualizarPlaceholderTelefono, validarTelefonoNumero } from "../utils/Validaciones";
-
+import '../styles/Register.css';
 export default function Registration() {
   const [formData, setFormData] = useState({
     username: '',
