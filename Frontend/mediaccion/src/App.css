@@ -1392,6 +1392,13 @@ button:hover,
   transform: scale(1.03);
 }
 
+/* Cuando está deshabilitado */
+.register-btn:disabled {
+  background-color: #b5b5b5; /* gris */
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
 /* === FOOTER === */
 .register-footer {
   margin-top: 20px;
@@ -1498,6 +1505,13 @@ button:hover,
 .save-btn:hover {
   background-color: #558c92;
   transform: scale(1.03);
+}
+
+/* Cuando está deshabilitado */
+.save-btn:disabled {
+  background-color: #b5b5b5; /* gris */
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
 /* === INPUTS DE EDICIÓN === */

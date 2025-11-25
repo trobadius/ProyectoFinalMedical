@@ -2,18 +2,18 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('users/', views.UserCrud),
+    path('users/', views.UsersViews),
     path('users/crear', views.CrearUser),
-    path('users/<int:pk>/', views.UserCrud),
+    path('users/profile/me', views.ProfileView),
 
-    path('notificaciones/', views.NotificacionesView),
-    path('notificaciones/<int:pk>/', views.NotificacionesView),
+    path('notificaciones/profile/me', views.NotificacionesView),
+    path('notificaciones/profile/me/<int:pk>/', views.NotificacionesDetailView),
 
-    path('recetasmedicas/', views.RecetasMedicasView),
-    path('recetasmedicas/<int:pk>/', views.RecetasMedicasView),
+    path('recetasmedicas/profile/me', views.RecetasMedicasView),
+    path('recetasmedicas/profile/me/<int:pk>/', views.RecetasMedicasDetailView),
 
-    path('alimentos/', views.AlimentosView),
-    path('alimentos/<int:pk>/', views.AlimentosView),
+    path('alimentos/profile/me', views.AlimentosView),
+    path('alimentos/profile/me/<int:pk>/', views.AlimentosDetailView),
 
     path('medicamentos/', views.MedicamentosView),
     path('medicamentos/<int:pk>/', views.MedicamentosView),
