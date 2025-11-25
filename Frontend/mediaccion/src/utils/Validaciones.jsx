@@ -59,7 +59,7 @@ export function actualizarPlaceholderTelefono(country, phone) {
 
     function updatePlaceholder() {
         const code = pais.value || "";
-        telefono.placeholder = `${code} + Número de teléfono`;
+        telefono.placeholder = "Número de teléfono";
     }
 
     pais.addEventListener("change", updatePlaceholder);
@@ -72,8 +72,8 @@ export function actualizarPlaceholderTelefono(country, phone) {
 }
 
 export function validarTelefonoNumero(countryCode, number){
-
     const cleaned = number.replace(/\D/g, "");
+
     switch (countryCode) {
     case "+34":
         if (!/^[6789]\d{0,8}$/.test(cleaned)) {
@@ -90,4 +90,43 @@ export function validarTelefonoNumero(countryCode, number){
     }
 
     return "";
+}
+
+export function validarCamposRepetidos(name, value, copyValue){
+    switch (name) {
+    case "first_name":
+        if (value === copyValue) {
+            return "El nombre no puede ser el mismo que antes";
+        }
+        return validarNombre(value);
+
+    case "last_name":
+        if (value === copyValue) {
+            return "El apellido no puede ser el mismo que antes";
+        }
+        return validarApellido(value);
+
+    case "email":
+        if (value === copyValue) {
+            return "El email no puede ser el mismo que antes";
+        }
+        return validarEmail(value);
+
+    case "fecha_nacimiento":
+        if (value === copyValue) {
+            return "La fecha de nacimiento no puede ser el mismo que antes";
+        }
+        return validarFechaNacimiento(value);
+    
+    case "telefono":
+        if (value === copyValue) {
+            return "el número de telefono es el mismo que antes";
+        }
+        //Si se añaden mas paises hay que cambiar la variable
+        const p = "+34"
+        return validarTelefonoNumero(p, value);
+
+    default:
+      return "";
+  }
 }

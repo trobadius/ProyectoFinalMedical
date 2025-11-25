@@ -1,5 +1,5 @@
 import React from 'react';
-import './App.css';
+import './styles/App.css';
 import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home.jsx';
 import Calendario from './pages/Calendario.jsx';
@@ -30,7 +30,7 @@ export default function App() {
     >
 
       {/* CONTENEDOR GLOBAL QUE IGUALA ANCHOS Y HACE TODO RESPONSIVE */}
-      
+      {/*
       <main className="w-full max-w-screen-lg mx-auto px-0 py-6">
         <Routes>
           <Route element={<ProtectedRoute/>} >
@@ -53,6 +53,28 @@ export default function App() {
           <Route path="/registration" element={<Register />} />
           <Route path="*" element={<NotFound />}/>
           <Route path="/Chatbot" element={<Chatbot />} />
+        </Routes>
+      </main>
+      */}
+      <main className="w-full max-w-screen-lg mx-auto px-0 py-6">
+        <Routes>
+         <Route element={<ProtectedRoute/>} >
+            <Route element={<NavbarOutlet/>} >
+                <Route path="/" element={<Home />} />
+                <Route path="/calendario" element={<Calendario />} />
+                <Route path="/cameraOCR" element={<CameraOCR />} />
+                <Route path="/tesseractOCR" element={<TesseractOCR />} />
+                <Route path="/perfil" element={<Perfil />} />
+                <Route path="/Progresos1" element={<Progresos1 />} />
+                <Route path="/Progresos2" element={<Progresos2 />} />
+                <Route path="/Progresos3" element={<Progresos3 />} />
+            </Route>
+          </Route>
+          <Route path="/login" element={<Login />} />
+          <Route path="/logout" element={<Logout />}/>
+          <Route path="/register" element={<Logout metodo="register" />} />
+          <Route path="/registration" element={<Register />} />
+          <Route path="*" element={<NotFound />}/>
         </Routes>
       </main>
     

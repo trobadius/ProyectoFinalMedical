@@ -4,6 +4,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 // importar procesos 2
 import Progresos2 from "./Progresos2.jsx";
+import '../styles/Progresos.css';
 
 
 

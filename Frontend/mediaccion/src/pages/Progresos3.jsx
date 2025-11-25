@@ -1,6 +1,6 @@
 
 import React from 'react';
-
+import '../styles/Progresos.css';
 // Componente utilitario para simular los íconos con las formas requeridas
 const IconPlaceholder = ({ type, className }) => (
     <div className={`icon-placeholder ${className}`}>

@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { FaHome, FaCamera, FaCalendarAlt, FaUser, FaTrophy } from "react-icons/fa";
+import '../styles/Stickybutton.css';
 
 export default function StickyButton() {
   const navigate = useNavigate();
@@ -33,14 +34,23 @@ export default function StickyButton() {
       >
         <FaCalendarAlt />
       </button>
-
-      {/* Perfil */}
+      
+            {/* Cámara */}
       <button
         className="sticky-btn"
-        onClick={() => navigate("/perfil")}
-        aria-label="Perfil"
+        onClick={() => navigate("/cameraOCR")}
+        aria-label="Cámara"
       >
-        <FaUser />
+        <FaCamera />
+      </button>
+
+      {/* Cámara */}
+      <button
+        className="sticky-btn"
+        onClick={() => navigate("/cameraOCR")}
+        aria-label="Cámara"
+      >
+        <FaCamera />
       </button>
 
       {/* Progresos (icono de trofeo/copa) */}
@@ -50,6 +60,15 @@ export default function StickyButton() {
         aria-label="Progresos"
       >
         <FaTrophy />
+      </button>
+
+      {/* Perfil */}
+      <button
+        className="sticky-btn"
+        onClick={() => navigate("/perfil")}
+        aria-label="Perfil"
+      >
+        <FaUser />
       </button>
     </div>
   );

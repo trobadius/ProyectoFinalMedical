@@ -67,8 +67,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import Progresos3 from "./Progresos3.jsx";
-
-
+import '../styles/Progresos.css';
 function ProgressBar({ value }) {
   return (
     <div className="progress-bar-container">

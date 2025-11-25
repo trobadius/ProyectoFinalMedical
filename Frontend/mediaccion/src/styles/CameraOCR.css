@@ -1,0 +1,98 @@
+/* CAMARA CSS */
+.camera-ocr-container{
+    --bg-color-custom: #f1f1f1;
+    --light-grey-custom: #CCC;
+    --medium-grey-custom: #666;
+    --dark-grey-custom: #4a768e;
+    --text-color-custom: #010101;
+    --border-radius-lg-custom: 30px;
+    --border-radius-sm-custom: 8px;
+  
+    background-color: #fff;
+    color: #000;
+    min-height: calc(100vh - 80px); /* Ajusta la altura si tu navbar mide 80px, por ejemplo */
+    width: 375px; 
+    margin: 0 auto;
+    padding: 20px 20px 0 20px; /* Padding inferior se maneja por el contenido */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+.camera-ocr-select {
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: var(--border-radius-sm-custom);
+  border: 1px solid var(--medium-grey-custom);
+}
+
+.camera-ocr-video-container {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+}
+
+.camera-ocr-video {
+  width: 100%;
+  border-radius: var(--border-radius-sm-custom);
+}
+
+/* .overlay-box {
+  position: absolute;
+  top: 30%;
+  left: 10%;
+  width: 80%;
+  height: 40%;
+  border: 3px dashed white;
+  border-radius: var(--border-radius-sm-custom);
+  box-shadow: 0 0 25px rgba(255, 6, 6, 0.6) inset;
+  pointer-events: none;
+} */
+
+.camera-ocr-button {
+  margin: 10px;
+  padding: 10px 15px;
+  border-radius: var(--border-radius-sm-custom);
+  border: none;
+  background-color: var(--dark-grey-custom);
+  color: white;
+  cursor: pointer;
+}
+
+.camera-ocr-result {
+  white-space: pre-wrap;
+  padding: 10px;
+  width: 100%;
+  word-wrap: break-word;
+}
+
+.camera-ocr-canvas {
+  display: none;
+}
+
+
+
+/* prueba */
+
+.camera-ocr-video-container {
+  position: relative; /* Muy importante */
+  width: 100%;
+  max-width: 600px;
+}
+
+.overlay-img {
+  position: absolute; /* Posicionamiento sobre el video */
+  top: 0;             /* Ajusta según necesites */
+  left: 0;            /* Ajusta según necesites */
+  width: 100%;        /* O el tamaño que quieras */
+  height: 100%;       /* O el tamaño que quieras */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none; /* Para que no bloquee clics */
+}
+
+.overlay-img img {
+  width: 250px;  /* Ajusta el tamaño de tu logo QR */
+  height: 200px;
+  object-fit: contain;
+}
