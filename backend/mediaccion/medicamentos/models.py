@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 # Create your models here.
 
 class ProfileUser(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True, related_name='user')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True, related_name='profile')
     date_birth = models.DateField(null=True, blank=True)
     ROLES = [
         ("admin", "Administrador"),
@@ -51,7 +51,8 @@ class Medicamentos(models.Model):
     categoria = models.CharField(max_length=50)
     descripcion = models.CharField(max_length=200)
     f_caducidad = models.DateField(null=True, blank=True)
-    alimento = models.ForeignKey(Alimentos, on_delete=models.CASCADE, null=True, blank=True, related_name='medicamentos')
+    user = models.ForeignKey(ProfileUser, on_delete=models.CASCADE, null=True, blank=True, related_name = 'medicamentos_user')
+    alimento = models.ForeignKey(Alimentos, on_delete=models.CASCADE, null=True, blank=True, related_name='medicamentos_alimento')
 
     def __str__(self):
         return self.nombre_medicamento
