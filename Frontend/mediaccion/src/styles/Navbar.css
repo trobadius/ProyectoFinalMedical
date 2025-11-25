@@ -1,0 +1,54 @@
+/* === NAVBAR GENERAL === */
+.navbar-custom {
+  background-color: #D98566; /* tu color original */
+  height: 64px;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 50;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+
+  /* Si quieres efecto cristal:
+  backdrop-filter: blur(10px);
+  background-color: rgba(217,133,102,0.85); 
+  */
+}
+
+/* === LOGO CENTRADO === */
+.navbar-logo-wrapper {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.navbar-logo {
+  height: 42px;
+  width: auto;
+}
+
+/* === ICONOS LATERALES === */
+.navbar-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: white;
+  transition: opacity 0.2s ease;
+}
+
+.navbar-icon:hover {
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+/* === OPCIONAL: PULSACIÓN EN MÓVIL === */
+.navbar-icon:active {
+  transform: scale(0.92);
+}

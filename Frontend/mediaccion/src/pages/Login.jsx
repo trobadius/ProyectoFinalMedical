@@ -4,6 +4,7 @@ import { ACCES_TOKEN, REFRESH_TOKEN } from "../constants";
 import { useNavigate } from "react-router-dom";
 import logoimg from "../assets/logo_svg.svg";
 import { Link } from "react-router-dom";
+import '../styles/Login.css';
 
 function Login(){
   const [username, setUsername] = useState("");
