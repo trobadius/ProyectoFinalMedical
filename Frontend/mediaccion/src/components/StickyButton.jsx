@@ -16,14 +16,6 @@ export default function StickyButton() {
         <FaHome />
       </button>
 
-      {/* Cámara */}
-      <button
-        className="sticky-btn"
-        onClick={() => navigate("/cameraOCR")}
-        aria-label="Cámara"
-      >
-        <FaCamera />
-      </button>
 
       {/* Calendario (icono cambiado) */}
       <button
@@ -34,13 +26,13 @@ export default function StickyButton() {
         <FaCalendarAlt />
       </button>
 
-      {/* Perfil */}
+      {/* Cámara */}
       <button
         className="sticky-btn"
-        onClick={() => navigate("/perfil")}
-        aria-label="Perfil"
+        onClick={() => navigate("/cameraOCR")}
+        aria-label="Cámara"
       >
-        <FaUser />
+        <FaCamera />
       </button>
 
       {/* Progresos (icono de trofeo/copa) */}
@@ -50,6 +42,15 @@ export default function StickyButton() {
         aria-label="Progresos"
       >
         <FaTrophy />
+      </button>
+
+      {/* Perfil */}
+      <button
+        className="sticky-btn"
+        onClick={() => navigate("/perfil")}
+        aria-label="Perfil"
+      >
+        <FaUser />
       </button>
     </div>
   );
