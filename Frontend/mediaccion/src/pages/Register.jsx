@@ -1,141 +1,152 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import api from "../api";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
-import { validarUsuario, validarContraseña, validarNombre, validarApellido, validarEmail, validarFechaNacimiento, 
-  actualizarPlaceholderTelefono, validarTelefonoNumero } from "../utils/Validaciones";
+import { useNavigate, Link } from "react-router-dom";
+import {
+  validarUsuario,
+  validarContraseña,
+  validarNombre,
+  validarApellido,
+  validarEmail,
+  validarFechaNacimiento,
+  actualizarPlaceholderTelefono,
+  validarTelefonoNumero,
+} from "../utils/Validaciones";
 import '../styles/Register.css';
+
 export default function Registration() {
   const [formData, setFormData] = useState({
-    username: '',
-    password: '',
-    first_name: '',
-    last_name: '',
-    email: '',
-    profile: {
-      date_birth: '',
-      roles: 'user',
-      genero: '',
-      pais: '',
-      telefono: ''
-    }
-  });
-  const [errors, setErrors] = useState({
     username: "",
+    password: "",
     first_name: "",
     last_name: "",
     email: "",
-    date_birth: ""
+    profile: {
+      date_birth: "",
+      roles: "user",
+      genero: "",
+      pais: "+34",
+      telefono: "",
+    },
   });
+
+  const [errors, setErrors] = useState({});
+  const [passwordMessage, setPasswordMessage] = useState("");
+  const [passwordMessageType, setPasswordMessageType] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passChangeMessage, setPassChangeMessage] = useState("");
+  const [passChangeMessageType, setPassChangeMessageType] = useState("");
+  const [phoneError, setPhoneError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(true);
+
   const navigate = useNavigate();
 
-  const [error, setError] = useState('');
-  //validacion contraseña
-  const [passwordMessage, setPasswordMessage] = useState(""); // mensaje
-  const [passwordMessageType, setPasswordMessageType] = useState(""); // "error" | "ok"
-  //validacion change contraseña
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [passChangeMessage, setPassChangeMessage] = useState(""); // mensaje
-  const [passChangeMessageType, setPassChangeMessageType] = useState(""); // "error" | "ok"
-  //validacion telefono
-  const [phoneError, setPhoneError] = useState('');
-  
-  //placeholder por defecto al cambiar de pais si no hay nada en el input de telefono o al recargar la pagina
+  /** 🔹 Inicializar placeholder teléfono */
   useEffect(() => {
-      const cleanup = actualizarPlaceholderTelefono("pais", "telefono");
-      return cleanup;
+    const cleanup = actualizarPlaceholderTelefono("pais", "telefono");
+    return cleanup;
   }, []);
 
+  /** 🔹 Deshabilitar botón si:
+   * - Hay errores
+   * - Hay error en teléfono
+   * - No coinciden contraseñas
+   * - Falta algún campo obligatorio
+   */
+  useEffect(() => {
+    const hasFieldErrors = Object.values(errors).some((e) => e !== "");
+    const passDontMatch = formData.password !== confirmPassword;
+    const missingFields = !formData.username || !formData.email || !formData.profile.genero;
+
+    setIsDisabled(
+      hasFieldErrors ||
+        phoneError ||
+        passDontMatch ||
+        missingFields ||
+        loading
+    );
+  }, [errors, confirmPassword, phoneError, loading, formData]);
+
+  /** 🔸 VALIDACIONES en un diccionario */
+  const validators = {
+    username: validarUsuario,
+    first_name: validarNombre,
+    last_name: validarApellido,
+    email: validarEmail,
+    date_birth: validarFechaNacimiento,
+  };
+
+  /** 🔹 handleChange optimizado */
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    
-  /* Si es parte del perfil
-    Utilizamos "prev" ya que contiene el estado anterior mas reciente ya que si usamos formData podemos perder datos
-  En objetos anidados pasa mucho*/
-    if (["date_birth", "roles", "genero", "pais", "telefono"].includes(name)) {
-      setFormData(prev => ({
+    const isProfileField = ["date_birth", "roles", "genero", "pais", "telefono"].includes(name);
+
+    // Actualizar formData
+    setFormData((prev) =>
+      isProfileField
+        ? { ...prev, profile: { ...prev.profile, [name]: value } }
+        : { ...prev, [name]: value }
+    );
+
+    // Validación automática
+    if (validators[name]) {
+      setErrors((prev) => ({
         ...prev,
-        profile: {
-          ...prev.profile,
-          [name]: value
-        }
-      }));
-    } else {
-      // Si es un campo normal
-      setFormData(prev => ({
-        ...prev,
-        [name]: value
+        [name]: validators[name](value),
       }));
     }
 
-  //validaciones por campo
-  let errorMsg = "";
-    if (name === "username") {
-      errorMsg = validarUsuario(value);
-    }
-    if (name === "first_name") {
-      errorMsg = validarNombre(value);
-    } 
-    if (name === "last_name") {
-      errorMsg = validarApellido(value);
-    } 
-    if (name === "email") {
-      errorMsg = validarEmail(value);
-    }
-    if (name === "fecha_nacimiento") {
-      errorMsg = validarFechaNacimiento(value);
-    }
-
-  // Actualizar errores
-    setErrors(prev => ({
-      ...prev,
-      [name]: errorMsg
-    }));
-    
-  //Validacion contraseña
+    // Validar contraseña
     if (name === "password") {
-
-      if(!validarContraseña(value)){
-        setPasswordMessage("La contraseña debe tener min 8 caracteres, al menos una mayúscula, una minúscula, un número y un símbolo");
-        setPasswordMessageType("error")
+      if (!validarContraseña(value)) {
+        setPasswordMessage(
+          "Debe tener min 8 caracteres, mayúscula, minúscula, número y símbolo"
+        );
+        setPasswordMessageType("error");
       } else {
         setPasswordMessage("Contraseña válida");
-        setPasswordMessageType("ok")
+        setPasswordMessageType("ok");
       }
-      
+    }
+
+    // Validar teléfono
+    if (name === "telefono") {
+      const soloNumeros = value.replace(/[^0-9]/g, "");
+      const error = validarTelefonoNumero(formData.profile.pais, soloNumeros);
+      setPhoneError(error);
     }
   };
 
-  const handleChangePassword = (e) =>{
-    const value = e.target.value;
-    setConfirmPassword(value);
+  /** 🔹 Confirmación de contraseña */
+  const handleChangePassword = (e) => {
+    const val = e.target.value;
+    setConfirmPassword(val);
 
-    if (formData.password !== value) {
+    if (val !== formData.password) {
       setPassChangeMessage("Las contraseñas no coinciden");
       setPassChangeMessageType("error");
     } else {
       setPassChangeMessage("Las contraseñas coinciden");
       setPassChangeMessageType("ok");
     }
-  }
+  };
 
+  /** 🔹 Submit final */
   const handleSubmit = async (e) => {
-    setLoading(true);
-    e.preventDefault();
+    e.preventDefault();    setLoading(true);
+    console.log(formData);
+    try {
+      await api.post("/api/users/crear", formData);
 
-    setError('');
-    try{
-      const res = await api.post("/api/users/crear",formData)
-        alert('Registro completado con éxito 🩺');
-        navigate("/login")
-    }catch(error){
-      alert(error)
-    }finally{
-      setLoading(false)
+      alert("Registro completado con éxito 🩺");
+      navigate("/login");
+    } catch (error) {
+      alert("Error al registrarse");
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="register-container">
@@ -153,11 +164,7 @@ export default function Registration() {
             placeholder="Tu nombre"
             required
           />
-          {errors.first_name && (
-            <label style={{ color: "red", fontSize: "12px", display: "block", marginTop: "4px" }}>
-              {errors.first_name}
-            </label>
-          )}
+          {errors.first_name && <ErrorLabel msg={errors.first_name} />}
 
           <label>Apellidos</label>
           <input
@@ -168,11 +175,7 @@ export default function Registration() {
             placeholder="Tus apellidos"
             required
           />
-          {errors.last_name && (
-            <label style={{ color: "red", fontSize: "12px", display: "block", marginTop: "4px" }}>
-              {errors.last_name}
-            </label>
-          )}
+          {errors.last_name && <ErrorLabel msg={errors.last_name} />}
 
           <label>Usuario</label>
           <input
@@ -183,11 +186,7 @@ export default function Registration() {
             placeholder="Crea tu usuario"
             required
           />
-          {errors.username && (
-            <label style={{ color: "red", fontSize: "12px", display: "block", marginTop: "4px" }}>
-              {errors.username}
-            </label>
-          )}
+          {errors.username && <ErrorLabel msg={errors.username} />}
 
           <label>Contraseña</label>
           <input
@@ -199,13 +198,7 @@ export default function Registration() {
             required
           />
           {passwordMessage && (
-            <label style={{
-              color: passwordMessageType === "error" ? "red" : "green",
-              fontSize: "12px",
-              marginTop: "4px"
-            }}>
-              {passwordMessage}
-            </label>
+            <Message type={passwordMessageType} msg={passwordMessage} />
           )}
 
           <label>Confirmar contraseña</label>
@@ -218,13 +211,7 @@ export default function Registration() {
             required
           />
           {passChangeMessage && (
-            <label style={{
-              color: passChangeMessageType === "error" ? "red" : "green",
-              fontSize: "12px",
-              marginTop: "4px"
-            }}>
-              {passChangeMessage}
-            </label>
+            <Message type={passChangeMessageType} msg={passChangeMessage} />
           )}
 
           <label>Correo electrónico</label>
@@ -236,11 +223,7 @@ export default function Registration() {
             placeholder="ejemplo@correo.com"
             required
           />
-          {errors.email && (
-            <label style={{ color: "red", fontSize: "12px", display: "block", marginTop: "4px" }}>
-              {errors.email}
-            </label>
-          )}
+          {errors.email && <ErrorLabel msg={errors.email} />}
 
           <label>Fecha de nacimiento</label>
           <input
@@ -250,24 +233,20 @@ export default function Registration() {
             onChange={handleChange}
             required
           />
-          {errors.date_birth && (
-            <label style={{ color: "red", fontSize: "12px", display: "block", marginTop: "4px" }}>
-              {errors.date_birth}
-            </label>
-          )}
+          {errors.date_birth && <ErrorLabel msg={errors.date_birth} />}
 
           <label>Genero</label>
           <select 
             className="genero" 
             name="genero" 
             id="genero" 
-            value={formData.genero} 
+            value={formData.profile.genero} 
             onChange={handleChange}
             >
               <option value="" disabled>Selecciona genero...</option>
+              <option value="no_decir">Prefiero no decirlo</option>
               <option value="hombre">Hombre</option>
               <option value="mujer">Mujer</option>
-              <option value="no_decir">Prefiero no decirlo</option>
           </select>
 
           <label>Teléfono</label>
@@ -277,65 +256,50 @@ export default function Registration() {
                 name="pais" 
                 id="pais" 
                 aria-label="Seleccionar país"
-                value={formData.pais}
-                
-                onChange={(e) => {
-                const country = e.target.value; 
-                // handleChange ahora llama desde profile
+                value={formData.profile.pais || '+34'}
+                onChange={(e) =>
                 handleChange({
-                  target: {
-                    name: "pais",
-                    value: country
-                  }});
-                setPhoneError('');  
-              }}
+                  target: { name: "pais", value: e.target.value },
+                })
+              }
                 >
                   <option value="+34">🇪🇸 +34</option>
-                  <option value="+49">🇩🇪 +49</option>
               </select>
             </div>
+            
             <input
               type="tel"
               id="telefono"
               name="telefono"
               value={formData.profile.telefono}
-              onChange={(e) => {
-                const numeros = e.target.value.replace(/[^0-9]/g, ""); // filtra todo lo que no sea número
-                // handleChange ahora llama desde profile
-                handleChange({
-                  target: {
-                    name: "telefono",
-                    value: numeros
-                  }});
-                
-                // Validación en tiempo real
-                const countryCode = formData.profile.pais || "+34"; // default si no hay
-                const errorMsg = validarTelefonoNumero(countryCode, numeros);
-                setPhoneError(errorMsg);
-              }}
-
+              onChange={handleChange}
               required
             />
           </div>
-          {/* Mensaje de error debajo del input */}
-          {phoneError && (
-            <label style={{ color: 'red', fontSize: '12px', marginTop: '4px', display: 'block' }}>
-              {phoneError}
-            </label>
-          )}
+          {phoneError && <ErrorLabel msg={phoneError} />}
 
-          {error && <p className="error-msg">{error}</p>}
 
-          <button type="submit" className="register-btn">Registrarse</button>
+          <button type="submit" className="register-btn" disabled={isDisabled}>Registrarse</button>
         </form>
         
         <p className="login-footer">
           ¿Ya tienes cuenta? <Link className="register-link" to="/login">Inicia sesión</Link>
         </p>
-      </div>
         <footer className="login-footer">
           <small>© {new Date().getFullYear()} MediAcción</small>
         </footer>
+      </div>
     </div>
   );
 }
+
+/* 🔹 Componentes pequeños para limpiar JSX */
+const ErrorLabel = ({ msg }) => (
+  <label style={{ color: "red", fontSize: "12px", display: "block" }}>{msg}</label>
+);
+
+const Message = ({ msg, type }) => (
+  <label style={{ color: type === "error" ? "red" : "green", fontSize: "12px" }}>
+    {msg}
+  </label>
+);

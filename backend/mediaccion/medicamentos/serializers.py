@@ -13,7 +13,21 @@ class ProfileUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProfileUser
         fields = ['id_user', 'username', 'first_name', 'last_name', 'email', 'id', 'date_birth', 'roles', 'genero', 'pais', 'telefono']
-
+#Al haber datos anidados DRF necesita saber que datos actualizar
+    def update(self, instance, validated_data):
+        # separar los datos que pertenecen al user
+        user_data = validated_data.pop("user", {})
+        # actualizar los campos del profile
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        # actualizar los campos del user
+        user = instance.user
+        for attr, value in user_data.items():
+            setattr(user, attr, value)
+        user.save()
+        return instance
+    
 #Serializer anidado
 class ProfileRegisterSerializer(serializers.ModelSerializer):
     class Meta:
