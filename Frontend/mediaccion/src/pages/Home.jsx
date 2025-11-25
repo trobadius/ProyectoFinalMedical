@@ -1,6 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import '../styles/App.css';
-import '../styles/Home.css';
 // Importamos iconos de Lucide React
 import { Menu, Pill, Star, Stethoscope, ChevronRight, Cross } from 'lucide-react';
 // Importar el archivo de estilos

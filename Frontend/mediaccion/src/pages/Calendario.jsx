@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Pill, Plus } from 'lucide-react';
-import '../styles/Calendario.css';
 
-const Calendario = () => {
+const CalendarMedicamentosResponsive = () => {
   const [showResumen, setShowResumen] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());

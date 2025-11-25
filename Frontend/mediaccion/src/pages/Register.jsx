@@ -11,7 +11,6 @@ import {
   actualizarPlaceholderTelefono,
   validarTelefonoNumero,
 } from "../utils/Validaciones";
-import '../styles/Register.css';
 
 export default function Registration() {
   const [formData, setFormData] = useState({
