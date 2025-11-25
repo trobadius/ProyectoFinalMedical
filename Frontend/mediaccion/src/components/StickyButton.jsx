@@ -19,7 +19,7 @@ export default function StickyButton() {
       {/* Cámara */}
       <button
         className="sticky-btn"
-        onClick={() => navigate("/cameraOCR")}
+        onClick={() => navigate("/tesseractOCR")}
         aria-label="Cámara"
       >
         <FaCamera />

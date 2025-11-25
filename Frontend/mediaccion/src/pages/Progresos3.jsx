@@ -5,8 +5,6 @@ import React from 'react';
 const IconPlaceholder = ({ type, className }) => (
     <div className={`icon-placeholder ${className}`}>
         {/* Usamos emojis como marcadores visuales */}
-        {type === 'gear' && '⚙️'} 
-        {type === 'doc' && '🗃️'}
         {type === 'star' && '⭐️'}
         {type === 'file' && '📄'}
     </div>
@@ -45,13 +43,6 @@ const ProgressScreenContent = () => {
 
                 {/* Bloque inferior principal (Oscuro) */}
                 <div className="main-block-custom secondary-block-custom"></div>
-
-                {/* Texto de explicación del premio */}
-                <p className="award-explanation-custom">
-                    premio/cupón seleccionado 
-                    <br />
-                    y explicación del premio
-                </p>
             </main>
         </div>
     );
