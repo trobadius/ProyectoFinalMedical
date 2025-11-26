@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from .models import ProfileUser, Notificaciones, RecetasMedicas, Alimentos, Medicamentos
-from .serializers import ProfileUserSerializer, NotificacionesSerializer, RecetasMedicasSerializer, AlimentosSerializer, MedicamentosSerializer, RegisterSerializer
+from .models import ProfileUser, Notificaciones, RecetasMedicas, Alimentos, Medicamentos, MedicamentosProgramados
+from .serializers import ProfileUserSerializer, NotificacionesSerializer, RecetasMedicasSerializer, AlimentosSerializer, MedicamentosSerializer, RegisterSerializer, MedicamentosProgramadosSerializer
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
@@ -281,3 +281,59 @@ def MedicamentosView(request, pk=None):
             return Response({"error": "Medicamento no encontrado"}, status=status.HTTP_404_NOT_FOUND)
         medicamentos.delete()
         return Response({"message": "Medicamento eliminado"}, status=status.HTTP_204_NO_CONTENT)
+
+# CRUD Medicamentos Programados
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+def MedicamentosProgramadosView(request):
+    user = request.user
+    if user.is_anonymous:
+        return Response({"error": "Usuario no autenticado"}, status=status.HTTP_401_UNAUTHORIZED)
+    try:
+        profile = user.profile
+    except ProfileUser.DoesNotExist:
+        return Response({"error": "El perfil no existe"}, status=status.HTTP_404_NOT_FOUND)
+    
+    if request.method == 'GET':
+        medicamentos = MedicamentosProgramados.objects.filter(user=profile)
+        serializer = MedicamentosProgramadosSerializer(medicamentos, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    if request.method == 'POST':
+        serializer = MedicamentosProgramadosSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=profile)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'PUT', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def MedicamentosProgramadosDetailView(request, pk):
+    user = request.user
+    if user.is_anonymous:
+        return Response({"error": "Usuario no autenticado"}, status=status.HTTP_401_UNAUTHORIZED)
+
+    try:
+        profile = user.profile
+    except ProfileUser.DoesNotExist:
+        return Response({"error": "El perfil no existe"}, status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        medicamento = MedicamentosProgramados.objects.get(pk=pk, user=profile)
+    except MedicamentosProgramados.DoesNotExist:
+        return Response({"error": "Medicamento programado no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+    
+    if request.method == 'GET':
+        serializer = MedicamentosProgramadosSerializer(medicamento)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    if request.method == 'PUT':
+        serializer = MedicamentosProgramadosSerializer(medicamento, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    if request.method == 'DELETE':
+        medicamento.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
