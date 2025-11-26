@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
+import '../Premium.css'
 // Importamos iconos de Lucide React
 import { Menu, Pill, Star, Stethoscope, ChevronRight, Cross } from 'lucide-react';
 // Importar el archivo de estilos
-import '../styles/Home.css';
+import '../App.css'
+//import '../styles/Home.css';
 
 // Función para obtener los datos del mes, incluyendo el nombre del día
 const getMonthData = () => {
@@ -32,17 +34,57 @@ const getMonthData = () => {
     };
 };
 
+// Nueva función para obtener el saludo basado en la hora
+const getGreeting = () => {
+    const hour = new Date().getHours();
+    
+    if (hour < 12) {
+        return "Buenos días";
+    } else if (hour < 19) { 
+        // <19 para que se incluyan las 18h
+        return "Buenas tardes";
+    } else {
+        return "Buenas noches";
+    }
+};
 
 export default function Home() {
     const calendarRef = useRef(null);
     const [days, setDays] = useState([]);
     const [monthName, setMonthName] = useState("");
+    const [greeting, setGreeting] = useState(""); // Nuevo estado para el saludo
+    // estado para variable "nombre"
+    const [userName, setUserName] = useState("");
 
     // Usamos el hook para obtener los datos una sola vez
     useEffect(() => {
         const { days: newDays, monthName: newMonthName } = getMonthData();
         setDays(newDays);
         setMonthName(newMonthName);
+        
+        // Inicializamos el saludo
+        setGreeting(getGreeting());
+
+        // Configuramos un intervalo para actualizar el saludo cada hora, 
+        // aunque solo se actualizará visualmente si la hora cambia a una nueva franja.
+        // Lo configuramos para que se ejecute al inicio de la siguiente hora.
+        const now = new Date();
+        const nextHour = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours() + 1, 0, 1); // 1 segundo después del inicio de la siguiente hora
+        const timeToNextHour = nextHour.getTime() - now.getTime();
+
+        const timeoutId = setTimeout(() => {
+            setGreeting(getGreeting()); // Actualiza justo cuando cambia la hora
+
+            // Una vez que cambia la hora, configuramos un intervalo para revisar cada hora
+            const intervalId = setInterval(() => {
+                setGreeting(getGreeting());
+            }, 60 * 60 * 1000); // Cada hora (60 minutos * 60 segundos * 1000 milisegundos)
+            
+            return () => clearInterval(intervalId);
+        }, timeToNextHour);
+
+        return () => clearTimeout(timeoutId);
+
     }, []);
 
     // Lógica para hacer scroll al día actual
@@ -86,10 +128,10 @@ export default function Home() {
                 ))}
             </div>
 
-            {/* REGISTRO NUEVO MEDICAMENTO HOME */}
+            {/* REGISTRO NUEVO MEDICAMENTO HOME - Sección Modificada */}
             <section className="delay-block">
                 <h2 className="delay-title">
-                    Buenos días <span>HOY</span>
+                    {greeting} <span>{userName}</span> {/* Usa la variable de estado 'greeting' */}
                 </h2>
                 <button className="btn-register">
                     <Pill size={20} />
@@ -153,7 +195,7 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* SUGERENCIAS + PREMIUM */}
+            {/* SUGERENCIAS (Última sección de contenido normal) */}
             <section className="cycle-section">
                 <h4>Según tus recetas</h4>
 
@@ -181,10 +223,24 @@ export default function Home() {
                     </div>
                 </div>
             </section>
-            <div className="tip-card" style={{ borderLeftColor: '#fa4f20ff' }}>
-                        <p style={{ fontWeight: 600 }}>¡Pásate a premium! <Star size={16} color="#fa4f20ff" style={{ display: 'inline' }} /></p>
-                        <p style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: 5 }}>Pásate a Premium para tener todas las funciones habilitadas</p>
-                    </div>
+            
+            {/* TARJETA PREMIUM */}
+            <div className="premium-card-1">
+                <div className="title-premium">
+                    <Star size={24} color="white" fill="white" style={{ rotate: '45deg' }} />
+                    ¡Pásate a Premium! <Star size={24} color="white" fill="white" style={{ rotate: '90deg' }} />
+                </div>
+                <p className="subtitle-premium">
+                    Desbloquea historial ilimitado, notificaciones inteligentes y planifica el cuidado de tu familia.
+                </p>
+                <button className="action-btn" onClick={() => console.log('Ir a Premium')}>
+                    Mejorar mi plan
+                </button>
+            </div>
+            
+            {/* Espacio extra en la parte inferior para que la barra de navegación no cubra el contenido */}
+            <div style={{ height: '80px' }}></div> 
+
         </div>
     );
 }

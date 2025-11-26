@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Pill, Plus } from 'lucide-react';
 import api from '../api';
 import '../styles/Calendario.css';
+import '../calendario.css'
 
 const Calendario = () => {
   const [showResumen, setShowResumen] = useState(false);
