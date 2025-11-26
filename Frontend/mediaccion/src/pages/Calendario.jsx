@@ -301,4 +301,4 @@ const Calendario = () => {
     </div>
   );
 };
-export default CalendarMedicamentosResponsive;
+export default Calendario;
