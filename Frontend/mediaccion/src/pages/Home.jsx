@@ -3,7 +3,8 @@ import '../Premium.css'
 // Importamos iconos de Lucide React
 import { Menu, Pill, Star, Stethoscope, ChevronRight, Cross } from 'lucide-react';
 // Importar el archivo de estilos
-import '../styles/Home.css';
+import '../App.css'
+//import '../styles/Home.css';
 
 // Función para obtener los datos del mes, incluyendo el nombre del día
 const getMonthData = () => {
