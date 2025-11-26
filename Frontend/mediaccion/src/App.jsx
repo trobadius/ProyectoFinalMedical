@@ -3,7 +3,6 @@ import './styles/App.css';
 import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home.jsx';
 import Calendario from './pages/Calendario.jsx';
-import CameraOCR from './components/CameraOCR.jsx';
 import Perfil from './pages/Perfil.jsx';
 import Login from './pages/Login.jsx';
 import Progresos1 from "./pages/Progresos1.jsx";
@@ -15,6 +14,9 @@ import ProtectedRoute from './components/ProtectedRoute.jsx';
 import Register from './pages/Register.jsx';
 import NavbarOutlet from './components/NavbarOutlet.jsx';
 import TesseractOCR from './components/TesseractOCR.jsx';
+import CameraOCR from './components/CameraOCR.jsx';
+import Chatbot from './pages/Chatbot.jsx';
+import Escanerqr from './pages/Escanerqr.jsx';
 
 export default function App() {
   return (
@@ -36,12 +38,14 @@ export default function App() {
             <Route element={<NavbarOutlet/>} >
                 <Route path="/" element={<Home />} />
                 <Route path="/calendario" element={<Calendario />} />
-                <Route path="/cameraOCR" element={<CameraOCR />} />
                 <Route path="/tesseractOCR" element={<TesseractOCR />} />
                 <Route path="/perfil" element={<Perfil />} />
                 <Route path="/Progresos1" element={<Progresos1 />} />
                 <Route path="/Progresos2" element={<Progresos2 />} />
                 <Route path="/Progresos3" element={<Progresos3 />} />
+                <Route path="/chatbot" element={<Chatbot />} />
+                <Route path="/Escanerqr" element={<Escanerqr/>} />
+
             </Route>
           </Route>
           <Route path="/login" element={<Login />} />
@@ -49,6 +53,7 @@ export default function App() {
           <Route path="/register" element={<Logout metodo="register" />} />
           <Route path="/registration" element={<Register />} />
           <Route path="*" element={<NotFound />}/>
+          <Route path="/Chatbot" element={<Chatbot />} />
         </Routes>
       </main>
       */}
@@ -70,6 +75,7 @@ export default function App() {
           <Route path="/logout" element={<Logout />}/>
           <Route path="/register" element={<Logout metodo="register" />} />
           <Route path="/registration" element={<Register />} />
+          <Route path="/chatbot" element={<Chatbot />} />
           <Route path="*" element={<NotFound />}/>
         </Routes>
       </main>
