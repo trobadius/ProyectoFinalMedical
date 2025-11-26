@@ -1,43 +1,62 @@
 import React, { useState, useEffect } from "react";
 import { Pill, Plus } from 'lucide-react';
+import api from '../api';
 import '../styles/Calendario.css';
 
-const CalendarMedicamentosResponsive = () => {
+const Calendario = () => {
   const [showResumen, setShowResumen] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [medicamentos, setMedicamentos] = useState({});
   const [nuevoMed, setNuevoMed] = useState({ nombre: "", intervalo: 8 });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  //Cargar medicamentos desde localStorage
+  // Cargar medicamentos desde la base de datos
   useEffect(() => {
-    const storedMeds = localStorage.getItem("calendarMedicamentos");
-    if (storedMeds) setMedicamentos(JSON.parse(storedMeds));
+    fetchMedicamentos();
   }, []);
 
-  //Guardar medicamentos
-  useEffect(() => {
-    localStorage.setItem("calendarMedicamentos", JSON.stringify(medicamentos));
-  }, [medicamentos]);
+  const fetchMedicamentos = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get('/api/medicamentos-programados/');
+      
+      // Agrupar medicamentos por fecha
+      const grouped = {};
+      response.data.forEach(med => {
+        if (!grouped[med.fecha]) {
+          grouped[med.fecha] = [];
+        }
+        grouped[med.fecha].push(med);
+      });
+      
+      setMedicamentos(grouped);
+      setError(null);
+    } catch (err) {
+      console.error("Error al cargar medicamentos:", err);
+      setError("Error al cargar los medicamentos");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  //Pedir permiso de notificaciones
+  // Pedir permiso de notificaciones
   useEffect(() => {
     if ("Notification" in window) {
       Notification.requestPermission();
     }
   }, []);
 
-  //Sistema de recordatorios automáticos
+  // Sistema de recordatorios automáticos
   useEffect(() => {
     const checkNotifications = () => {
       const now = new Date();
-      const todayKey = now.toDateString();
+      const todayKey = now.toISOString().split('T')[0]; // Formato YYYY-MM-DD
       const medsHoy = medicamentos[todayKey] || [];
 
-      let needsUpdate = false;
-
-      const updated = medsHoy.map((med) => {
-        const ultimaToma = med.ultimaToma ? new Date(med.ultimaToma) : null;
+      medsHoy.forEach((med) => {
+        const ultimaToma = med.ultima_toma ? new Date(med.ultima_toma) : null;
         const diffHoras = ultimaToma ? (now.getTime() - ultimaToma.getTime()) / (1000 * 60 * 60) : Infinity;
 
         // Si han pasado más horas que el intervalo y el intervalo es válido (>0)
@@ -48,21 +67,28 @@ const CalendarMedicamentosResponsive = () => {
               icon: <Pill/>
             });
           }
-          needsUpdate = true;
-          return { ...med, ultimaToma: now.toISOString() };
+          // Actualizar la última toma en la base de datos
+          updateUltimaToma(med.id, now);
         }
-        return med;
       });
-
-      if (needsUpdate) {
-        setMedicamentos((prev) => ({ ...prev, [todayKey]: updated }));
-      }
     };
 
     const interval = setInterval(checkNotifications, 60 * 1000);
     checkNotifications();
     return () => clearInterval(interval);
   }, [medicamentos]);
+
+  const updateUltimaToma = async (medId, time) => {
+    try {
+      await api.put(`/api/medicamentos-programados/${medId}/`, {
+        ultima_toma: time.toISOString()
+      });
+      // Recargar medicamentos para actualizar la UI
+      fetchMedicamentos();
+    } catch (err) {
+      console.error("Error al actualizar última toma:", err);
+    }
+  };
 
   // Cálculos del calendario
   const daysOfWeek = ["L", "M", "X", "J", "V", "S", "D"]; // Lunes a Domingo
@@ -81,29 +107,48 @@ const CalendarMedicamentosResponsive = () => {
   for (let i = 0; i < startingDay; i++) daysArray.push(null);
   for (let i = 1; i <= totalDays; i++) daysArray.push(i);
 
-  const guardarMedicamento = () => {
+  const guardarMedicamento = async () => {
     if (!nuevoMed.nombre.trim() || !selectedDate) return;
 
-    const nuevoMedicamento = {
-      nombre: nuevoMed.nombre.trim(),
-      intervalo: Number(nuevoMed.intervalo) || 8
-    };
-
-    const key = selectedDate.toDateString();
-    const medsDelDia = medicamentos[key] || [];
-    setMedicamentos((prev) => ({
-      ...prev,
-      [key]: [
-        ...medsDelDia,
-        nuevoMedicamento,
-      ],
-    }));
-    setNuevoMed({ nombre: "", intervalo: 8 });
-    // Deseleccionar la fecha para forzar al usuario a seleccionar de nuevo si quiere agregar otro
-    setSelectedDate(null);
+    try {
+      setLoading(true);
+      const fechaFormato = selectedDate.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+      
+      await api.post('/api/medicamentos-programados/', {
+        nombre: nuevoMed.nombre.trim(),
+        intervalo: Number(nuevoMed.intervalo) || 8,
+        fecha: fechaFormato,
+        ultima_toma: null
+      });
+      
+      setNuevoMed({ nombre: "", intervalo: 8 });
+      setSelectedDate(null);
+      
+      // Recargar medicamentos
+      await fetchMedicamentos();
+    } catch (err) {
+      console.error("Error al guardar medicamento:", err);
+      setError("Error al guardar el medicamento");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const hoyKey = new Date().toDateString();
+  const deleteMedicamento = async (medId) => {
+    try {
+      setLoading(true);
+      await api.delete(`/api/medicamentos-programados/${medId}/`);
+      await fetchMedicamentos();
+    } catch (err) {
+      console.error("Error al eliminar medicamento:", err);
+      setError("Error al eliminar el medicamento");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Obtener medicamentos de hoy usando formato YYYY-MM-DD
+  const hoyKey = new Date().toISOString().split('T')[0];
   const medsHoy = medicamentos[hoyKey] || [];
 
   return (
@@ -116,6 +161,9 @@ const CalendarMedicamentosResponsive = () => {
         <button onClick={nextMonth} className="nav-btn">›</button>
       </header>
 
+      {error && <div style={{ color: 'red', padding: '10px' }}>{error}</div>}
+      {loading && <div style={{ color: '#666', padding: '10px' }}>Cargando...</div>}
+
       <div className="calendar-grid">
         {daysOfWeek.map((d) => (
           <div key={d} className="day-name">{d}</div>
@@ -124,10 +172,10 @@ const CalendarMedicamentosResponsive = () => {
         {daysArray.map((day, i) => {
           if (!day) return <div key={`empty-${i}`} className="day empty" />;
           const thisDate = new Date(year, month, day);
-          const key = thisDate.toDateString();
+          const key = thisDate.toISOString().split('T')[0]; // Formato YYYY-MM-DD
           const hasMeds = Boolean(medicamentos[key]?.length);
           const isToday = thisDate.toDateString() === new Date().toDateString();
-          const isSelected = selectedDate?.toDateString() === key;
+          const isSelected = selectedDate?.toDateString() === thisDate.toDateString();
 
           return (
             <div
@@ -163,6 +211,7 @@ const CalendarMedicamentosResponsive = () => {
               onChange={(e) =>
                 setNuevoMed((p) => ({ ...p, nombre: e.target.value }))
               }
+              disabled={loading}
             />
             <input
               type="number"
@@ -172,22 +221,39 @@ const CalendarMedicamentosResponsive = () => {
                 setNuevoMed((p) => ({ ...p, intervalo: Number(e.target.value) || 1 }))
               }
               placeholder="Cada (h)"
+              disabled={loading}
             />
-            <button onClick={guardarMedicamento}>
+            <button onClick={guardarMedicamento} disabled={loading}>
               <Plus size={20} color="white" />
             </button>
           </div>
 
           <ul className="med-list">
-            {(medicamentos[selectedDate.toDateString()] || []).map(
+            {(medicamentos[selectedDate.toISOString().split('T')[0]] || []).map(
               (med, idx) => (
-                <li key={idx}>
-                  <strong>{med.nombre}</strong> — cada {med.intervalo}h
-                  {med.ultimaToma && (
-                    <span style={{ fontSize: '0.8em', color: '#6b7280', display: 'block' }}>
-                      Última toma: {new Date(med.ultimaToma).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
-                    </span>
-                  )}
+                <li key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div>
+                    <strong>{med.nombre}</strong> — cada {med.intervalo}h
+                    {med.ultima_toma && (
+                      <span style={{ fontSize: '0.8em', color: '#6b7280', display: 'block' }}>
+                        Última toma: {new Date(med.ultima_toma).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    )}
+                  </div>
+                  <button 
+                    onClick={() => deleteMedicamento(med.id)}
+                    style={{ 
+                      background: '#ef4444', 
+                      color: 'white', 
+                      border: 'none', 
+                      padding: '5px 10px', 
+                      borderRadius: '4px',
+                      cursor: 'pointer'
+                    }}
+                    disabled={loading}
+                  >
+                    Eliminar
+                  </button>
                 </li>
               )
             )}
@@ -217,9 +283,9 @@ const CalendarMedicamentosResponsive = () => {
                 {medsHoy.map((m, i) => (
                   <li key={i}>
                     <strong>{m.nombre}</strong> — cada {m.intervalo}h
-                    {m.ultimaToma && (
+                    {m.ultima_toma && (
                       <span style={{ fontSize: '0.8em', color: '#6b7280', display: 'block' }}>
-                        Última toma: {new Date(m.ultimaToma).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+                        Última toma: {new Date(m.ultima_toma).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
                       </span>
                     )}
                   </li>
@@ -235,4 +301,4 @@ const CalendarMedicamentosResponsive = () => {
     </div>
   );
 };
-export default CalendarMedicamentosResponsive;
+export default Calendario;
