@@ -56,3 +56,16 @@ class Medicamentos(models.Model):
 
     def __str__(self):
         return self.nombre_medicamento
+
+class MedicamentosProgramados(models.Model):
+    nombre = models.CharField(max_length=100)
+    intervalo = models.IntegerField(default=8)  # Intervalo en horas
+    fecha = models.DateField()
+    ultima_toma = models.DateTimeField(null=True, blank=True)
+    user = models.ForeignKey(ProfileUser, on_delete=models.CASCADE, null=True, blank=True, related_name='medicamentos_programados')
+    
+    class Meta:
+        unique_together = ('nombre', 'fecha', 'user')
+    
+    def __str__(self):
+        return f"{self.nombre} - {self.fecha}"

@@ -17,4 +17,7 @@ urlpatterns = [
 
     path('medicamentos/', views.MedicamentosView),
     path('medicamentos/<int:pk>/', views.MedicamentosView),
+    
+    path('medicamentos-programados/', views.MedicamentosProgramadosView),
+    path('medicamentos-programados/<int:pk>/', views.MedicamentosProgramadosDetailView),
 ]

@@ -1,0 +1,75 @@
+/* -----------------------------------
+HOME - HEADER
+-------------------------------------- */
+.home-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    margin-bottom: 10px;
+}
+
+.date {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+}
+
+/* -----------------------------------
+   CALENDARIO HORIZONTAL (La clave del layout)
+-------------------------------------- */
+.calendar-scroll {
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+    padding: 10px 0;
+    scroll-snap-type: x mandatory;
+    white-space: nowrap;
+    /* Ocultar scrollbar */
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+.calendar-scroll::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+}
+
+.calendar-day {
+    /* CLAVE: Evita que el día se encoja y le da un ancho fijo */
+    flex: 0 0 55px; 
+    height: 70px; /* Alto fijo para una mejor estética */
+    border-radius: 14px;
+    background: #ffffff;
+    box-shadow: var(--shadow-light);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    scroll-snap-align: start; /* Para que el scroll se detenga limpiamente */
+    transition: all 0.2s ease;
+    border: 1px solid #e0e0e0;
+}
+
+.calendar-day.today {
+    background: var(--primary-color);
+    color: white;
+    box-shadow: 0 4px 10px rgba(94, 152, 158, 0.4);
+    border-color: var(--primary-color);
+}
+
+.day-name {
+    font-size: 0.7rem;
+    font-weight: 500;
+    opacity: 0.8;
+    margin-bottom: 2px;
+}
+
+.calendar-day.today .day-name {
+    opacity: 1;
+}
+
+.day-number {
+    font-size: 1.5rem;
+    font-weight: 800;
+}

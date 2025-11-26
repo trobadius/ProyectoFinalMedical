@@ -1,0 +1,291 @@
+
+
+/* ========== VARIABLES DE COLOR ========== */
+:root {
+  --color-primary: #5e989e;      
+  --color-secondary: #5e989e;    /* Azul calmante */
+  --color-accent: #5e989e;       /* Lima cálido para botones o avisos */
+  --color-bg: #d5ebedff;           /* Fondo claro */
+  --color-card: #5e989e;         /* Fondo de tarjetas */
+  --color-text: #2E4031;         /* Texto oscuro natural */
+  --color-highlight: #5e989e;    /* Amarillo verdoso para detalles */
+}
+
+
+h2, h3, h4, p {
+  margin: 0;
+}
+
+
+
+/* ========== BASE GLOBAL ========== */
+* {
+  box-sizing: border-box;
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+}
+
+.app-root {
+  margin-top: 25px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+}
+
+
+body {
+  margin: 0;
+  /* fallback color */
+  background-color: var(--color-bg);
+  /* background image + overlay (ajusta opacidad si hace falta) */
+  background-image: linear-gradient(rgba(255,255,255,0.0), rgba(255,255,255,0.4)), url('/static/background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  color: var(--color-text);
+  overflow-x: hidden;
+  
+}
+
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* ========== TIPOGRAFÍA ========== */
+h1 {
+  color: var(--color-primary);
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+}
+
+h2 {
+  color: var(--color-secondary);
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+}
+
+
+/* ========== BOTONES ========== */
+button,
+.btn-primary {
+  background-color: var(--color-accent);
+  color: var(--color-text);
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.2rem;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+button:hover,
+.btn-primary:hover {
+  background-color: var(--color-highlight);
+}
+
+/* ========== TARJETAS Y SECCIONES ========== */
+.card {
+  background-color: var(--color-card);
+  border: none;
+  border-radius: 12px;
+  padding: 1rem;
+  margin: 1rem 0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+}
+
+.section {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+/* ========== ESTILOS DE ALARMAS Y MENSAJES ========== */
+.alert-success {
+  background-color: var(--color-primary);
+  color: #fff;
+}
+
+.alert-warning {
+  background-color: var(--color-highlight);
+  color: var(--color-text);
+}
+
+.alert-danger {
+  background-color: #E74C3C;
+  color: #fff;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (min-width: 768px) {
+  h1 { font-size: 2.2rem; }
+  h2 { font-size: 1.6rem; }
+  .card { padding: 1.5rem 2rem; }
+}
+
+
+@media (min-width: 1024px) {
+  #root { padding: 2rem; }
+}
+
+
+
+/* ==== Resumen overlay ==== */
+.resumen-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1100;
+}
+
+.resumen-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px;
+  width: 90%;
+  max-width: 340px;
+  color: #659fa6;
+  text-align: center;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.resumen-card h3 {
+  margin-bottom: 12px;
+  font-size: 1.3rem;
+}
+
+.resumen-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 12px 0;
+}
+
+.resumen-card li {
+  background-color: #e1f4f7;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  padding: 8px;
+}
+
+.cerrar-btn {
+  background-color: #659fa6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+
+/* --- Bottom Sheet Card --- */
+.notifications-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #ffffff;
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.15);
+  transform: translateY(72%);
+  transition: transform 0.35s ease-in-out;
+  z-index: 9999;
+}
+
+/* Abierta */
+.notifications-sheet.open {
+  transform: translateY(0%);
+}
+
+/* Barra superior */
+.sheet-handle {
+  width: 100%;
+  text-align: center;
+  padding: 8px 0;
+  cursor: pointer;
+  background-color: #eaf4f6;
+  border-radius: 20px 20px 0 0;
+}
+
+.sheet-handle .arrow {
+  font-size: 1.3rem;
+  color: #366a73;
+}
+
+/* Contenido interno */
+.sheet-content {
+  padding: 16px;
+  background: #ffffff;
+}
+
+.sheet-title {
+  margin: 0 0 12px 0;
+  font-size: 1.1rem;
+  color: #2d5460;
+  font-weight: 600;
+}
+
+/* Lista de notificaciones */
+.notif-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.notif-item {
+  background: #f5fafb;
+  padding: 12px 14px;
+  border-radius: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.notif-text {
+  color: #2d5460;
+  font-size: 0.95rem;
+}
+
+.notif-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.ok {
+  font-size: 1.2rem;
+  color: #4ba3c7;
+}
+
+.del {
+  font-size: 1.2rem;
+  color: #d46d6d;
+}
+
+.empty {
+  color: #6c8a92;
+  font-size: 0.9rem;
+  opacity: 0.8;
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* --- Desktop improvements --- */
+@media (min-width: 768px) {
+  .notifications-sheet {
+    width: 420px;
+    left: 50%;
+    transform: translate(-50%, 72%);
+  }
+
+  .notifications-sheet.open {
+    transform: translate(-50%, 0%);
+  }
+  
+}
+

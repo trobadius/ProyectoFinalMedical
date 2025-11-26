@@ -1,0 +1,376 @@
+/* CSS PROGRESOS 1: */
+/* Contenedor principal */
+.page-container {
+
+    --medium-grey-custom: #666;
+    --dark-grey-custom: #c0dff0;
+    --text-color-custom: #010101;
+    --border-radius-lg-custom: 30px;
+    --border-radius-sm-custom: 8px;
+  
+    background-color: rgb(9, 69, 74);
+    color: #000;
+    min-height: calc(100vh - 80px); /* Ajusta la altura si tu navbar mide 80px, por ejemplo */
+    width: 375px; 
+    margin: 0 auto;
+    padding: 20px 20px 0 20px; /* Padding inferior se maneja por el contenido */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-label {
+  font-size: 30px;
+  color: #171616;
+}
+
+.header-right {
+  display: flex;
+  gap: 12px;
+}
+
+/* Lista de progresos */
+.progress-list {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Espai entre barres */
+.progress-row {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.progress-flex {
+  flex: 10;
+}
+
+/* Espai entre botons */
+.progress-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+/* Barra de progreso */
+.progress-bar-container {
+  width: 100%;
+  height: 60px;
+  background: #CCC;
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: rgb(255, 255, 255);
+  border-radius: 20px;
+}
+/* Botón de página siguiente */
+
+.next-page-button-container {
+  display: flex;
+  margin-top: 40px;
+  border-radius: 20px;
+}
+
+
+/* CSS PROGRESOS2 */
+/* Contenedor principal */
+.page-container {
+    --bg-color-custom: #f1f1f1;
+    --light-grey-custom: #CCC;
+    --medium-grey-custom: #666;
+    --dark-grey-custom: #0ca3f5;
+    --text-color-custom: #010101;
+    --border-radius-lg-custom: 80px;
+    --border-radius-sm-custom: 20px;
+  
+    background-color: #fff;
+    color: #000;
+    min-height: calc(100vh - 80px); /* Ajusta la altura si tu navbar mide 80px, por ejemplo */
+    width: 375px; 
+    margin: 0 auto;
+    padding: 20px 20px 0 20px; /* Padding inferior se maneja por el contenido */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.header-left {
+  margin-top: 20px;
+  font-size: 16px;
+}
+
+/* Espai entre botons de dalt a la dreta */
+.header-right {
+  display: flex;
+  gap: 10px;
+}
+
+.header-icon {
+  width: 30px;
+  height: 30px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+/* Progreso */
+.progress-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.progress-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.progress-bar-container {
+  flex: 1;
+  height: 16px;
+  background: #CCC;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: #c0dff0;
+  border-radius: 10px;
+  transition: width 0.3s;
+}
+
+.progress-icons {
+  display: flex;
+  gap: 10px;
+}
+
+.icon-button {
+  width: 40px;
+  height: 40px;
+  background: #c0dff0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0px 2px 4px rgba(142, 136, 136, 0.3);
+}
+
+/* Cupones/premios */
+.cupones-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.cupon-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cupon-bar {
+  flex: 9;
+  height: 40px;
+  background: #c0dff0;
+  border-radius: 12px;
+}
+
+.cupon-arrow {
+  width: 50px;
+  height: 50px;
+  /* color botones */
+  background: #c0dff0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+
+/* Treure linea de sota el  link */
+.cupon-arrow {
+  text-decoration: none;
+  color: inherit; /* opcional: mantiene el color del texto */
+}
+
+/* CSS PROGRESOS Y PRMEIOS 3 */
+
+/* --- Variables de Color y Diseño Específicas del Componente --- */
+/* Estas variables facilitan la modificación de los tonos de gris y formas */
+.progress-screen-custom {
+    --bg-color-custom: #f1f1f1;
+    --light-grey-custom: #CCC;
+    --medium-grey-custom: #666;
+    --dark-grey-custom: #fbaf3492;
+    --text-color-custom: #010101;
+    --border-radius-lg-custom: 30px;
+    --border-radius-sm-custom: 8px;
+    
+    /* Configuración de la pantalla (fondo, ancho, padding) */
+    background-color: #fff;
+    color: var(--text-color-custom);
+    min-height: calc(100vh - 80px); /* Ajusta la altura si tu navbar mide 80px, por ejemplo */
+    width: 375px; 
+    margin: 0 auto;
+    padding: 20px 20px 0 20px; /* Padding inferior se maneja por el contenido */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- Estilos de Íconos Placeholders (Forma y color de fondo) --- */
+.progress-screen-custom .icon-placeholder {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px; 
+    padding: 2px;
+}
+
+/* --- Encabezado --- */
+.progress-screen-custom .header-custom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 20px;
+}
+
+/* Ajuste específico para el ícono superior derecho (cuadrado/rectángulo) */
+.progress-screen-custom .header-icon-right {
+    border-radius: var(--border-radius-sm-custom); 
+}
+
+/* --- Contenedor Principal (Cuerpo) --- */
+.progress-screen-custom .progress-container-custom {
+    flex-grow: 1; 
+    padding: 0 10px;
+}
+
+.progress-screen-custom .progress-title-custom {
+    font-size: 1.5rem;
+    color: var(--text-color-custom);
+    margin-bottom: 20px;
+}
+
+/* --- Barras de Progreso --- */
+.progress-screen-custom .progress-bars-custom {
+    margin-bottom: 40px;
+}
+
+.progress-screen-custom .progress-bar-short-custom {
+    height: 8px;
+    width: 40%;
+    background-color: var(--medium-grey-custom);
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+.progress-screen-custom .progress-bar-long-custom {
+    height: 8px;
+    width: 65%;
+    background-color: var(--medium-grey-custom);
+    border-radius: 4px;
+}
+
+/* --- Bloques Principales (Rectángulos de Contenido) --- */
+.progress-screen-custom .main-block-custom {
+    border-radius: var(--border-radius-lg-custom);
+    margin-bottom: 20px;
+    padding: 15px; 
+    display: flex; 
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+/* Bloque superior (claro, más corto) */
+.progress-screen-custom .primary-block-custom {
+    background-color: var(--light-grey-custom);
+    height: 60px; 
+}
+
+/* Simulación del contenido negro dentro del bloque claro */
+.progress-screen-custom .primary-block-content-custom {
+    background-color: var(--bg-color-custom); 
+    width: 70%;
+    height: 100%;
+    border-radius: 20px; 
+    margin-right: 10px;
+}
+
+.progress-screen-custom .block-icons-custom {
+    display: flex;
+    gap: 10px;
+    /* Asegura que los íconos no se "pegue" al borde del bloque */
+    margin-right: -5px; 
+}
+
+/* Ícono de estrella/documento pequeño */
+.progress-screen-custom .star-icon-custom, 
+.progress-screen-custom .doc-icon-small-custom {
+    width: 25px;
+    height: 25px;
+    background-color: var(--medium-grey-custom); 
+    border-radius: 50%;
+    font-size: 12px;
+}
+
+/* El ícono de documento es cuadrado con bordes redondeados */
+.progress-screen-custom .doc-icon-small-custom {
+    border-radius: var(--border-radius-sm-custom); 
+}
+
+/* Bloque inferior (oscuro y grande) */
+.progress-screen-custom .secondary-block-custom {
+    background-color: var(--dark-grey-custom);
+    height: 120px; 
+    justify-content: flex-start;
+}
+
+/* --- Explicación del Premio --- */
+.progress-screen-custom .award-explanation-custom {
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--light-grey-custom);
+    margin-top: 40px;
+    padding-bottom: 20px; 
+}

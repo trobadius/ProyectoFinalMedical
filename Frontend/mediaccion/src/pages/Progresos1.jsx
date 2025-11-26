@@ -1,5 +1,12 @@
 
+import { ImageUpscaleIcon } from "lucide-react";
 import React from "react";
+import { Link } from "react-router-dom";
+// importar procesos 2
+import Progresos2 from "./Progresos2.jsx";
+import '../styles/Progresos.css';
+
+
 
 function ProgressBar({ value }) {
   return (
@@ -25,12 +32,7 @@ export default function Page1({ goTo }) {
       {/* Header */}
       <div className="header">
         <div className="header-left">
-          <div className="header-circle">⚪</div>
           <div className="header-label">Tus progresos</div>
-        </div>
-        <div className="header-right">
-          <IconButton>≡</IconButton>
-          <IconButton>🔍</IconButton>
         </div>
       </div>
 
@@ -48,24 +50,12 @@ export default function Page1({ goTo }) {
           </div>
         ))}
       </div>
-
-      {/* Menú inferior */}
-      <div className="bottom-menu">
-        <button onClick={() => goTo(1)} className="menu-button">
-          <div className="menu-icon">🏠</div>
-          <div className="menu-text">Inicio</div>
-        </button>
-
-        <button onClick={() => goTo(2)} className="menu-button">
-          <div className="menu-icon">📷</div>
-          <div className="menu-text">Tomar</div>
-        </button>
-
-        <button onClick={() => goTo(3)} className="menu-button">
-          <div className="menu-icon">🔔</div>
-          <div className="menu-text">Avisos</div>
-        </button>
-      </div>
+      {/* Botón para ir a la siguiente página */}
+    <div className="next-page-button-container">
+      <Link to="/Progresos2">
+      <button>Ver mis premios desbloqueados</button>
+      </Link>
+    </div>
     </div>
   );
 }
