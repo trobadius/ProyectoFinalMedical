@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Pill, Plus } from 'lucide-react';
+import '../calendario.css'
 
 const CalendarMedicamentosResponsive = () => {
   const [showResumen, setShowResumen] = useState(false);
