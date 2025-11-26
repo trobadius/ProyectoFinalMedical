@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import api from "../api";
 import { validarCamposRepetidos} from "../utils/Validaciones";
 import { FaUserCircle, FaPencilAlt } from 'react-icons/fa';
+import '../styles/Perfil.css';
 
 export default function Perfil() {
   const [loading, setLoading] = useState(false);

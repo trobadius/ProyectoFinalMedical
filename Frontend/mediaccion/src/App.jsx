@@ -14,6 +14,7 @@ import ProtectedRoute from './components/ProtectedRoute.jsx';
 import Register from './pages/Register.jsx';
 import NavbarOutlet from './components/NavbarOutlet.jsx';
 import TesseractOCR from './components/TesseractOCR.jsx';
+import CameraOCR from './components/CameraOCR.jsx';
 import Chatbot from './pages/Chatbot.jsx';
 import Escanerqr from './pages/Escanerqr.jsx';
 
@@ -74,6 +75,7 @@ export default function App() {
           <Route path="/logout" element={<Logout />}/>
           <Route path="/register" element={<Logout metodo="register" />} />
           <Route path="/registration" element={<Register />} />
+          <Route path="/chatbot" element={<Chatbot />} />
           <Route path="*" element={<NotFound />}/>
         </Routes>
       </main>

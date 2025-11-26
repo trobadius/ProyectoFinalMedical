@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { createWorker } from "tesseract.js";
-// import QR from "../assets/QR.png"; 
+import QR from "../assets/QR.png"; 
 
 export default function TesseractOCR({ overlayImg }) {
   const videoRef = useRef(null);
@@ -88,12 +88,13 @@ export default function TesseractOCR({ overlayImg }) {
       <div className="camera-ocr-video-container">
         <video ref={videoRef} className="camera-ocr-video" />
         <div className="overlay-box" />
-        {/* <div className="overlay-img" style={{ opacity: started ? 0 : 1 }}>
-          <img src={QRImage} alt="QR" className="qr-image" />
-        </div> */}
+        <div className="overlay-img" style={{ opacity: started ? 0 : 1 }}>
+          <img src={QR} alt="QR" className="qr-image" />
+        </div>
       </div>
 
       <canvas ref={canvasRef} className="camera-ocr-canvas" />
+   
 
       <button onClick={captureAndScan} className="camera-ocr-button">
         Escanear

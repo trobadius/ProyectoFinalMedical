@@ -35,23 +35,7 @@ export default function StickyButton() {
         <FaCalendarAlt />
       </button>
       
-            {/* Cámara */}
-      <button
-        className="sticky-btn"
-        onClick={() => navigate("/cameraOCR")}
-        aria-label="Cámara"
-      >
-        <FaCamera />
-      </button>
-
-      {/* Cámara */}
-      <button
-        className="sticky-btn"
-        onClick={() => navigate("/cameraOCR")}
-        aria-label="Cámara"
-      >
-        <FaCamera />
-      </button>
+    
 
       {/* Progresos (icono de trofeo/copa) */}
       <button
