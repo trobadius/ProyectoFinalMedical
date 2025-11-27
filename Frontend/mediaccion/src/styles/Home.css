@@ -1,75 +1,227 @@
-/* -----------------------------------
-HOME - HEADER
--------------------------------------- */
+/*DEFINICIÓN DE VARIABLES DE COLOR*/
+
+
+:root {
+    --color-primary-violet: #8b5cf6;     /* Violeta (Botones, Título) */
+    --color-accent-amber: #f59e0b;       /* Naranja/Ámbar (Día Hoy, Énfasis) */
+    --color-card-green: #10b981;        /* Verde Esmeralda */
+    --color-text-gray: #6b7280;         /* Gris para texto secundario */
+    --color-bg-light: #f3f4f6;          /* Gris muy claro para fondo de día */
+    --color-gray-dark: #1f2937;         /* Gris muy oscuro para texto principal */
+    --color-gray-light: #e5e7eb;        /* Gris para hover */
+}
+
+/*HOME - GENERAL Y HEADER*/
+.home-app {
+    padding: 1rem;
+    padding-bottom: 5rem;
+    max-width: 48rem;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #f9fafb;
+    min-height: 100vh;
+}
+
 .home-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 0;
-    margin-bottom: 10px;
+    padding: 1rem 0;
+    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 1rem;
 }
 
 .date {
-    font-size: 1.2rem;
+    font-size: 1.25rem; 
     font-weight: 600;
-    color: #333;
+    color: #374151; 
 }
 
-/* -----------------------------------
-   CALENDARIO HORIZONTAL (La clave del layout)
--------------------------------------- */
+/* CALENDARIO HORIZONTAL (REDISEÑADO CON COLORES DEL HOME) */
+
+  .today-highlight {
+    background-color: var(--color-accent-amber) !important;
+    color: white !important;
+    font-weight: 700;
+    box-shadow: var(--shadow-light);
+  }
+
+  
 .calendar-scroll {
     display: flex;
-    overflow-x: auto;
+    overflow-x: scroll;
+    padding: 12px 0;
     gap: 10px;
-    padding: 10px 0;
-    scroll-snap-type: x mandatory;
-    white-space: nowrap;
-    /* Ocultar scrollbar */
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+    
+    /* Ocultar barra de desplazamiento */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
-
 .calendar-scroll::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
+    display: none;
 }
 
+/* Tarjeta de Día Individual */
 .calendar-day {
-    /* CLAVE: Evita que el día se encoja y le da un ancho fijo */
-    flex: 0 0 55px; 
-    height: 70px; /* Alto fijo para una mejor estética */
-    border-radius: 14px;
-    background: #ffffff;
-    box-shadow: var(--shadow-light);
+    flex-shrink: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 5px;
-    scroll-snap-align: start; /* Para que el scroll se detenga limpiamente */
-    transition: all 0.2s ease;
-    border: 1px solid #e0e0e0;
+    width: 65px; 
+    height: 75px; 
+    padding: 8px;
+    border-radius: 14px; 
+    background-color: var(--color-bg-light); 
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); 
+    border: none;
+    scroll-snap-align: start;
 }
 
+.calendar-day:hover {
+    background-color: var(--color-gray-light); 
+    transform: scale(1.05);
+}
+
+/* Estilo para el día de hoy con color NARANJA/AMBAR */
 .calendar-day.today {
-    background: var(--primary-color);
-    color: white;
-    box-shadow: 0 4px 10px rgba(94, 152, 158, 0.4);
-    border-color: var(--primary-color);
+    background-color: var(--color-accent-amber) !important; 
+    box-shadow: 0 6px 15px rgba(245, 158, 11, 0.5) !important; 
+    transform: scale(1.08);
+    border: 2px solid white !important; 
 }
 
+/* Estilos de texto */
 .day-name {
-    font-size: 0.7rem;
+    font-size: 0.75rem; 
     font-weight: 500;
-    opacity: 0.8;
     margin-bottom: 2px;
+    color: var(--color-text-gray);
 }
-
 .calendar-day.today .day-name {
-    opacity: 1;
+    color: white; 
 }
 
 .day-number {
-    font-size: 1.5rem;
+    font-size: 1.75rem; 
     font-weight: 800;
+    color: var(--color-gray-dark);
+}
+.calendar-day.today .day-number {
+    color: white; 
+}
+
+
+/*CONTENIDO DEL HOME (Secciones abajo del calendario)*/
+
+.delay-block {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    background-color: white !important;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.delay-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-gray-dark) !important;
+    margin-bottom: 1rem;
+}
+.delay-title span {
+    color: var(--color-primary-violet) !important;
+}
+.btn-register {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--color-primary-violet);
+    color: white;
+    font-weight: 600;
+    border-radius: 12px;
+    border: none;
+    gap: 8px;
+    transition: background-color 0.2s;
+}
+.daily-tips h3, .delay-extras h4, .cycle-section h4 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-gray-dark) !important;
+    margin-bottom: 1rem;
+    margin-top: 1.5rem; 
+}
+
+/* MEDICAMENTOS DIARIOS */
+.tip-card {
+    padding: 1rem;
+    background-color: white;
+    border-radius: 12px;
+    border-left-width: 4px;
+    flex-shrink: 0;
+    width: 250px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+.tips-scroll {
+    display: flex;
+    overflow-x: scroll;
+    gap: 12px;
+    padding-bottom: 8px;
+}
+
+/* NOTICIAS */
+.extras-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+.extra {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1rem;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+}
+.extra p {
+    font-size: 0.8rem;
+    color: #374151 !important;
+    margin-top: 5px;
+    line-height: 1.2;
+}
+
+/* SUGERENCIAS */
+.cycle-scroll {
+    display: flex;
+    overflow-x: scroll;
+    gap: 12px;
+    padding-bottom: 8px;
+}
+.cycle-card {
+    flex-shrink: 0;
+    width: 120px;
+    text-align: center;
+}
+.card-img {
+    width: 100%;
+    height: 80px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+.placeholder-green { background-color: #d0f0c0 !important; }
+.placeholder-blue { background-color: #c0dff0 !important; }
+.placeholder-purple { background-color: #e0c0f0 !important; }
+.placeholder-premium { 
+    background-image: linear-gradient(45deg, #f59e0b, #f97316) !important;
 }

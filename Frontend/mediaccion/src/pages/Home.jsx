@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import '../Premium.css'
 // Importamos iconos de Lucide React
+import { useNavigate } from "react-router-dom";
 import { Menu, Pill, Star, Stethoscope, ChevronRight, Cross } from 'lucide-react';
 // Importar el archivo de estilos
 import '../App.css'
-//import '../styles/Home.css';
+import '../styles/Home.css';
+import '../styles/Premium.css';
+
 
 // Función para obtener los datos del mes, incluyendo el nombre del día
 const getMonthData = () => {
@@ -179,7 +181,7 @@ export default function Home() {
 
                 <div className="extras-row">
                     <div className="extra">
-                        <Star size={24} color="#f59e0b" style={{ margin: '0 auto 5px' }} />
+                        <Star size={24} color="#f59e0b" style={{ margin: '0 auto px' }} />
                         <p>Noticia sobre salud infantil</p>
                     </div>
                     
