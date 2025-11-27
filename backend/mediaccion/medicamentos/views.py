@@ -5,6 +5,9 @@ from .models import ProfileUser, Notificaciones, RecetasMedicas, Alimentos, Medi
 from .serializers import ProfileUserSerializer, NotificacionesSerializer, RecetasMedicasSerializer, AlimentosSerializer, MedicamentosSerializer, RegisterSerializer, MedicamentosProgramadosSerializer
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from django.utils import timezone
+
+
 
 #Solo permitimos a no usuarios registrados crearse la cuenta
 #CRUD Usuarios  
@@ -337,3 +340,44 @@ def MedicamentosProgramadosDetailView(request, pk):
     if request.method == 'DELETE':
         medicamento.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+@api_view(['GET', 'PUT', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def MedicamentosProgramadosList(request, pk):
+    user = request.user
+    if user.is_anonymous:
+        return Response({"error": "Usuario no autenticado"}, status=status.HTTP_401_UNAUTHORIZED)
+
+    # Obtenemos el perfil del usuario
+    try:
+        profile = user.profile
+    except ProfileUser.DoesNotExist:
+        return Response({"error": "El perfil no existe"}, status=status.HTTP_404_NOT_FOUND)
+
+    # Buscamos el medicamento programado con pk y del usuario
+    try:
+        medicamento = MedicamentosProgramados.objects.get(pk=pk, user=profile)
+    except MedicamentosProgramados.DoesNotExist:
+        return Response({"error": "Medicamento programado no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+    
+    # ===================== GET =====================
+    if request.method == 'GET':
+        serializer = MedicamentosProgramadosSerializer(medicamento)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    # ===================== PUT =====================
+    if request.method == 'PUT':
+        # Actualizamos campos de medicamento, parcial=True permite actualizar solo algunos campos
+        serializer = MedicamentosProgramadosSerializer(medicamento, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # ===================== DELETE =====================
+    if request.method == 'DELETE':
+        medicamento.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    
+

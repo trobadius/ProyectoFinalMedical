@@ -20,4 +20,6 @@ urlpatterns = [
     
     path('medicamentos-programados/', views.MedicamentosProgramadosView),
     path('medicamentos-programados/<int:pk>/', views.MedicamentosProgramadosDetailView),
+
+    path('api/meds_programados/', views.MedicamentosProgramadosList),
 ]

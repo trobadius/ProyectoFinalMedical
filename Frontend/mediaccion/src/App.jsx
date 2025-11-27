@@ -8,6 +8,7 @@ import Login from './pages/Login.jsx';
 import Progresos1 from "./pages/Progresos1.jsx";
 import Progresos2 from "./pages/Progresos2.jsx";
 import Progresos3 from "./pages/Progresos3.jsx";
+import ProgressBar from './components/ProgressBar.jsx';
 import Logout from './components/Logout.jsx';
 import NotFound from './pages/NotFound.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
