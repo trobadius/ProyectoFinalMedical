@@ -17,7 +17,7 @@ import NavbarOutlet from './components/NavbarOutlet.jsx';
 import TesseractOCR from './components/TesseractOCR.jsx';
 import CameraOCR from './components/CameraOCR.jsx';
 import Chatbot from './pages/Chatbot.jsx';
-
+import OpenAiApi from './components/OpenAiApi.jsx';
 
 export default function App() {
   return (
@@ -70,6 +70,7 @@ export default function App() {
                 <Route path="/Progresos1" element={<Progresos1 />} />
                 <Route path="/Progresos2" element={<Progresos2 />} />
                 <Route path="/Progresos3" element={<Progresos3 />} />
+                <Route path="/openai" element={<OpenAiApi />} />
             </Route>
           </Route>
           <Route path="/login" element={<Login />} />
