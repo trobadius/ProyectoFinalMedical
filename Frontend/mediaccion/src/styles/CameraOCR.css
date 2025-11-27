@@ -56,6 +56,29 @@
   background-color: var(--dark-grey-custom);
   color: white;
   cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.camera-ocr-button:hover {
+  background-color: #3a5f6e;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.camera-ocr-button:disabled {
+  background-color: var(--medium-grey-custom);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.camera-ocr-button.save-button {
+  background-color: #28a745;
+  font-weight: 600;
+  font-size: 1.05em;
+}
+
+.camera-ocr-button.save-button:hover {
+  background-color: #218838;
 }
 
 .camera-ocr-result {
@@ -95,4 +118,68 @@
   width: 250px;  /* Ajusta el tamaño de tu logo QR */
   height: 200px;
   object-fit: contain;
+}
+
+/* Estilos para información procesada */
+.processed-info {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: var(--border-radius-sm-custom);
+  width: 100%;
+}
+
+.processed-info h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: var(--dark-grey-custom);
+  font-size: 1.2em;
+}
+
+.info-card {
+  background-color: white;
+  padding: 15px;
+  border-radius: var(--border-radius-sm-custom);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 15px;
+}
+
+.info-card p {
+  margin: 8px 0;
+  line-height: 1.6;
+}
+
+.info-card strong {
+  color: var(--dark-grey-custom);
+  font-weight: 600;
+}
+
+.otros-medicamentos {
+  background-color: white;
+  padding: 15px;
+  border-radius: var(--border-radius-sm-custom);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.otros-medicamentos h4 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: var(--medium-grey-custom);
+  font-size: 1em;
+}
+
+.otros-medicamentos ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.otros-medicamentos li {
+  padding: 5px 0;
+  color: var(--text-color-custom);
+  border-bottom: 1px solid #eee;
+}
+
+.otros-medicamentos li:last-child {
+  border-bottom: none;
 }

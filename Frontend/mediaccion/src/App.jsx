@@ -17,7 +17,7 @@ import NavbarOutlet from './components/NavbarOutlet.jsx';
 import TesseractOCR from './components/TesseractOCR.jsx';
 import CameraOCR from './components/CameraOCR.jsx';
 import Chatbot from './pages/Chatbot.jsx';
-import Escanerqr from './pages/Escanerqr.jsx';
+
 
 export default function App() {
   return (
