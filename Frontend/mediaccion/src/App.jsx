@@ -8,6 +8,7 @@ import Login from './pages/Login.jsx';
 import Progresos1 from "./pages/Progresos1.jsx";
 import Progresos2 from "./pages/Progresos2.jsx";
 import Progresos3 from "./pages/Progresos3.jsx";
+import ProgressBar from './components/ProgressBar.jsx';
 import Logout from './components/Logout.jsx';
 import NotFound from './pages/NotFound.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
@@ -16,7 +17,7 @@ import NavbarOutlet from './components/NavbarOutlet.jsx';
 import TesseractOCR from './components/TesseractOCR.jsx';
 import CameraOCR from './components/CameraOCR.jsx';
 import Chatbot from './pages/Chatbot.jsx';
-import Escanerqr from './pages/Escanerqr.jsx';
+import OpenAiApi from './components/OpenAiApi.jsx';
 
 export default function App() {
   return (
@@ -69,6 +70,7 @@ export default function App() {
                 <Route path="/Progresos1" element={<Progresos1 />} />
                 <Route path="/Progresos2" element={<Progresos2 />} />
                 <Route path="/Progresos3" element={<Progresos3 />} />
+                <Route path="/openai" element={<OpenAiApi />} />
             </Route>
           </Route>
           <Route path="/login" element={<Login />} />
