@@ -225,3 +225,42 @@
 .placeholder-premium { 
     background-image: linear-gradient(45deg, #f59e0b, #f97316) !important;
 }
+
+/* Modal / Popup styles */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20000; /* elevado para estar por encima de otros elementos */
+}
+.modal {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 1.25rem;
+    max-width: 520px;
+    width: calc(100% - 48px);
+    box-shadow: 0 12px 40px rgba(2,6,23,0.2);
+    position: relative;
+    z-index: 20001;
+}
+.modal h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.125rem;
+}
+.modal p {
+    margin: 0;
+    color: #374151;
+    line-height: 1.5;
+}
+.modal-close {
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    background: transparent;
+    border: none;
+    font-size: 1.25rem;
+    cursor: pointer;
+}
