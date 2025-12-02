@@ -1,35 +1,27 @@
-
-
 import React, { useRef, useState, useEffect } from "react";
 import { createWorker } from "tesseract.js";
+import { useNavigate } from "react-router-dom";
 import QR from "../assets/QR.png";
 import '../styles/CameraOCR.css';
+import { 
+  processMedicamentoText, 
+  formatMedicamentoInfo 
+} from '../utils/medicamentoProcessor';
+import { saveMedicamentoToCalendar } from '../utils/medicamentoAPI';
 
 export default function CameraOCR() {
+  const navigate = useNavigate();
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const workerRef = useRef(null);
 
   const [started, setStarted] = useState(false);
   const [result, setResult] = useState("");
+  const [processedData, setProcessedData] = useState(null);
+  const [workerReady, setWorkerReady] = useState(false);
   const [cameraMode, setCameraMode] = useState("environment");
+  const [saving, setSaving] = useState(false);
 
-  // Inicializa worker de Tesseract
-  // useEffect(() => {
-  //   const initWorker = async () => {
-  //     const worker = await createWorker({ logger: (m) => console.log(m) });
-  //     await worker.loadLanguage("spa");
-  //     await worker.initialize("spa");
-  //     workerRef.current = worker;
-  //   };
-  //   initWorker();
-
-  //   return () => {
-  //     if (workerRef.current && workerRef.current.terminate) {
-  //       workerRef.current.terminate();
-  //     }
-  //   };
-  // }, []);
   useEffect(() => {
   const initWorker = async () => {
     const worker = createWorker();  
@@ -129,7 +121,48 @@ export default function CameraOCR() {
       tessedit_char_whitelist:
         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789áéíóúñ ",
     });
-    setResult(data.text);
+    
+    // Procesar el texto con NLP y regex
+    const ocrText = data.text;
+    const processed = processMedicamentoText(ocrText);
+    
+    setResult(ocrText);
+    setProcessedData(processed);
+    
+    // Mostrar resultado procesado automáticamente
+    if (processed.principal) {
+      const formattedInfo = formatMedicamentoInfo(processed);
+      alert(formattedInfo);
+    } else {
+      alert("No se pudo identificar medicamentos en el texto.\n\nTexto detectado:\n" + ocrText);
+    }
+  };
+
+  // Función para guardar medicamento en el calendario
+  const handleSaveToCalendar = async () => {
+    if (!processedData || !processedData.principal) {
+      alert("No hay información de medicamento para guardar");
+      return;
+    }
+    
+    setSaving(true);
+    try {
+      const result = await saveMedicamentoToCalendar(processedData);
+      
+      if (result.success) {
+        alert(`✓ ${result.message}\n\nRedirigiendo al calendario...`);
+        setTimeout(() => {
+          navigate('/calendario');
+        }, 1500);
+      } else {
+        alert(`✗ ${result.message}`);
+      }
+    } catch (error) {
+      console.error('Error al guardar:', error);
+      alert('Error al guardar el medicamento en el calendario');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -172,25 +205,65 @@ export default function CameraOCR() {
       </button>
       <button
         onClick={() => {
-          if (result) {
-            alert(`Texto capturado:\n\n${result}`);
+          if (processedData && processedData.principal) {
+            const formattedInfo = formatMedicamentoInfo(processedData);
+            alert(formattedInfo);
+          } else if (result) {
+            alert(`Texto capturado (sin procesar):\n\n${result}`);
           } else {
             alert("Aún no se ha capturado texto");
         }
       }}
       className="camera-ocr-button"
 >
-      Mostrar Texto Capturado
+      Mostrar Información Procesada
   </button>
-
-<pre className="camera-ocr-result">{result}</pre>
-
-      {/* <button
-        onClick={() => handleActivateCamera()}
-        className="camera-ocr-button"
+  
+  {processedData && processedData.principal && (
+    <>
+      <button
+        onClick={handleSaveToCalendar}
+        className="camera-ocr-button save-button"
+        disabled={saving}
       >
-        Escanear Receta medica
-      </button> */}
+        {saving ? 'Guardando...' : '💾 Guardar en Calendario'}
+      </button>
+      
+      <div className="processed-info">
+      <h3>📋 Información Detectada:</h3>
+      <div className="info-card">
+        <p><strong>Medicamento:</strong> {processedData.principal.nombre}</p>
+        {processedData.principal.dosis && (
+          <p><strong>Dosis:</strong> {processedData.principal.dosis}</p>
+        )}
+        {processedData.principal.frecuenciaTexto && (
+          <p><strong>Frecuencia:</strong> {processedData.principal.frecuenciaTexto}</p>
+        )}
+        {processedData.principal.intervalo && (
+          <p><strong>Intervalo:</strong> Cada {processedData.principal.intervalo} horas</p>
+        )}
+        {processedData.principal.duracionDias && (
+          <p><strong>Duración:</strong> {processedData.principal.duracionDias} días</p>
+        )}
+        {processedData.principal.cantidad && (
+          <p><strong>Cantidad:</strong> {processedData.principal.cantidad}</p>
+        )}
+        <p><strong>Confianza:</strong> {processedData.principal.confianza}%</p>
+      </div>
+      
+      {processedData.medicamentos.length > 1 && (
+        <div className="otros-medicamentos">
+          <h4>Otros medicamentos detectados:</h4>
+          <ul>
+            {processedData.medicamentos.slice(1).map((med, idx) => (
+              <li key={idx}>{med.nombre} ({med.confianza}%)</li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+    </>
+  )}
 
       <pre className="camera-ocr-result">{result}</pre>
     </div>

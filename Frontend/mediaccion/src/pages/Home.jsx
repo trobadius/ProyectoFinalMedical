@@ -1,10 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
-import '../Premium.css'
+import ReactDOM from 'react-dom';
 // Importamos iconos de Lucide React
+import { useNavigate } from "react-router-dom";
 import { Menu, Pill, Star, Stethoscope, ChevronRight, Cross } from 'lucide-react';
 // Importar el archivo de estilos
 import '../App.css'
-//import '../styles/Home.css';
+import '../styles/Home.css';
+import '../styles/Premium.css';
+import remedio from '../assets/remedio.png';
+import higado2 from '../assets/higado_2.png';
+import agua from '../assets/agua.png';
+
 
 // Función para obtener los datos del mes, incluyendo el nombre del día
 const getMonthData = () => {
@@ -55,6 +61,21 @@ export default function Home() {
     const [greeting, setGreeting] = useState(""); // Nuevo estado para el saludo
     // estado para variable "nombre"
     const [userName, setUserName] = useState("");
+    const [showRemedioModal, setShowRemedioModal] = useState(false);
+
+    // Modal portal component to ensure it's rendered at document.body level
+    const RemedioModal = ({ children, onClose }) => {
+        if (typeof document === 'undefined') return null;
+        return ReactDOM.createPortal(
+            <div className="modal-overlay" onClick={onClose}>
+                <div className="modal" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
+                    <button className="modal-close" onClick={onClose} aria-label="Cerrar">×</button>
+                    {children}
+                </div>
+            </div>,
+            document.body
+        );
+    };
 
     // Usamos el hook para obtener los datos una sola vez
     useEffect(() => {
@@ -179,7 +200,7 @@ export default function Home() {
 
                 <div className="extras-row">
                     <div className="extra">
-                        <Star size={24} color="#f59e0b" style={{ margin: '0 auto 5px' }} />
+                        <Star size={24} color="#f59e0b" style={{ margin: '0 auto px' }} />
                         <p>Noticia sobre salud infantil</p>
                     </div>
                     
@@ -201,23 +222,25 @@ export default function Home() {
 
                 <div className="cycle-scroll">
                     <div className="cycle-card">
-                        <div className="card-img placeholder-green"></div>
-                        <p>Sugerencia alimenticia para el hígado</p>
+                        <img src={higado2} alt="Sugerencia hígado" className="card-img" style={{ objectFit: 'cover' }} />
+                        <p>Sugerencia alimenticia para el hígado🌟</p>
                     </div>
 
                     <div className="cycle-card">
-                        <div className="card-img placeholder-blue"></div>
-                        <p>Aumenta tu ingesta de agua</p>
+                        <img src={agua} alt="Aumenta tu ingesta de agua" className="card-img" style={{ objectFit: 'cover' }} />
+                        <p>Aumenta tu ingesta de agua💧</p>
                     </div>
 
-                    <div className="cycle-card">
-                        <div className="card-img placeholder-purple"></div>
-                        <p>Remedios naturales comprobados</p>
+                    <div className="cycle-card" onClick={() => setShowRemedioModal(true)} style={{ cursor: 'pointer' }}>
+                        <img src={remedio} alt="Remedios naturales" className="card-img" style={{ objectFit: 'cover' }} />
+                        <p>Remedios naturales comprobados🥬</p>
                     </div>
 
+                    {/* tarjeta premium pequeña */}
                     <div className="cycle-card">
                         <div className="card-img placeholder-premium">
-                            PREMIUM
+                            <Star size={20} color="white" fill="white" style={{ rotate: '45deg' }} />
+                            ¡PREMIUM! <Star size={20} color="white" fill="white" style={{ rotate: '90deg' }} />
                         </div>
                         <p style={{ color: '#000000ff', fontWeight: 'bold' }}>¡Desbloquéalo ahora!</p>
                     </div>
@@ -239,6 +262,17 @@ export default function Home() {
             </div>
             
             {/* Espacio extra en la parte inferior para que la barra de navegación no cubra el contenido */}
+            {showRemedioModal && (
+                <RemedioModal onClose={() => setShowRemedioModal(false)}>
+                    <h3>🥬 Remedios naturales comprobados</h3>
+                    <p>
+                        Algunos remedios naturales han demostrado efectos reales: el jengibre ayuda a la digestión, la manzanilla calma y la menta reduce molestias estomacales.
+                        Consumidos con moderación, pueden complementar el cuidado diario sin sustituir tratamientos médicos.
+                        Son opciones accesibles y útiles para aliviar síntomas leves de forma natural.
+                    </p>
+                </RemedioModal>
+            )}
+
             <div style={{ height: '80px' }}></div> 
 
         </div>
