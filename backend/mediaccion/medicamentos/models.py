@@ -60,6 +60,8 @@ class Medicamentos(models.Model):
 class MedicamentosProgramados(models.Model):
     nombre = models.CharField(max_length=100)
     intervalo = models.IntegerField(default=8)  # Intervalo en horas
+    tomadas = models.IntegerField(default=0)
+    total_tomas = models.IntegerField(default=3)
     fecha = models.DateField()
     ultima_toma = models.DateTimeField(null=True, blank=True)
     user = models.ForeignKey(ProfileUser, on_delete=models.CASCADE, null=True, blank=True, related_name='medicamentos_programados')

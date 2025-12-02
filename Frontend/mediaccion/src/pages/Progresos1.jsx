@@ -18,10 +18,16 @@ export default function Progresos1() {
 
   // Escuchar evento personalizado para actualizar progresos
   useEffect(() => {
-    const actualizar = (e) => setMedicamentos(e.detail);
-    window.addEventListener("medicamentosActualizados", actualizar);
-    return () => window.removeEventListener("medicamentosActualizados", actualizar);
-  }, []);
+  const actualizar = (e) => {
+    // e.detail trae los medicamentos actuales del calendario
+    // Solo mantenemos los que existen actualmente
+    const actuales = e.detail || [];
+    setMedicamentos(actuales);
+  };
+  window.addEventListener("medicamentosActualizados", actualizar);
+  return () => window.removeEventListener("medicamentosActualizados", actualizar);
+}, []);
+
 
   const resetAll = () => {
     const reiniciar = medicamentos.map((m) => ({ ...m, progreso: 0 }));
