@@ -202,3 +202,22 @@
   animation: pulso 1.8s infinite;
 }
 /* ==== Fin Calendario ==== */
+
+
+
+/* Barra procesos: */
+.progress-bar-segmented {
+  display: flex;
+  gap: 2px;
+  margin-top: 5px;
+}
+.segment {
+  flex: 1;
+  height: 8px;
+  background: #e5e7eb; /* gris claro */
+  border-radius: 2px;
+  transition: background 0.3s;
+}
+.segment.completo {
+  background: #4caf50; /* verde */
+}
