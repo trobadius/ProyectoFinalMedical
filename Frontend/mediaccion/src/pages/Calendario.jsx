@@ -1,26 +1,24 @@
 
-// codigo funcional sin eliminar el medicamento de todos los dias al completar las tomas
 import React, { useState, useEffect } from "react";
 import { Pill, Plus } from 'lucide-react';
 import api from '../api';
 import '../styles/Calendario.css';
 import '../calendario.css';
-
+import { Link } from "react-router-dom";
 const Calendario = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [medicamentos, setMedicamentos] = useState({});
-  const [nuevoMed, setNuevoMed] = useState({ 
-    nombre: "", 
-    intervalo: 8, 
-    tomadas: 0, 
+  const [nuevoMed, setNuevoMed] = useState({
+    nombre: "",
+    intervalo: 8,
+    tomadas: 0,
     total_tomas: 1,
-    duracion_dias: 1    // ✅ AÑADIDO
+    duracion_dias: 1
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // --- Cargar medicamentos
   useEffect(() => {
     fetchMedicamentos();
   }, []);
@@ -43,48 +41,44 @@ const Calendario = () => {
     }
   };
 
-  // --- Guardar medicamento varios días
   const guardarMedicamento = async () => {
-  if (!nuevoMed.nombre.trim()) return;
-  try {
-    setLoading(true);
-    const baseDate = new Date(selectedDate);
+    if (!nuevoMed.nombre.trim()) return;
+    try {
+      setLoading(true);
+      const baseDate = new Date(selectedDate);
 
-    for (let i = 0; i < nuevoMed.duracion_dias; i++) {
-      const fecha = new Date(baseDate);
-      fecha.setDate(baseDate.getDate() + i);
-      const fechaStr = fecha.toISOString().split("T")[0];
+      for (let i = 0; i < nuevoMed.duracion_dias; i++) {
+        const fecha = new Date();
+        fecha.setDate(baseDate.getDate() + i);
+        const fechaStr = fecha.toISOString().split("T")[0];
 
-      await api.post("/api/medicamentos-programados/", {
-        nombre: nuevoMed.nombre.trim(),
-        intervalo: Number(nuevoMed.intervalo) || 8,
-        tomadas: 0,
-        total_tomas: Number(nuevoMed.total_tomas) || 1,
-        fecha: fechaStr,
-        ultima_toma: null
+        await api.post("/api/medicamentos-programados/", {
+          nombre: nuevoMed.nombre.trim(),
+          intervalo: Number(nuevoMed.intervalo) || 8,
+          tomadas: 0,
+          total_tomas: Number(nuevoMed.total_tomas) || 1,
+          fecha: fechaStr,
+          ultima_toma: null
+        });
+      }
+
+      setNuevoMed({
+        nombre: "",
+        intervalo: 8,
+        total_tomas: 1,
+        duracion_dias: 1,
+        tomadas: 0
       });
+
+      await fetchMedicamentos();
+
+    } catch (err) {
+      setError("Error al guardar medicamento");
+    } finally {
+      setLoading(false);
     }
+  };
 
-    // ✅ Reset solo del formulario (inputs de usuario)
-    setNuevoMed({
-      nombre: "",
-      intervalo: 8,
-      total_tomas: 1,
-      duracion_dias: 1,
-      tomadas: 0
-    });
-
-    // Actualizamos los medicamentos del calendario
-    await fetchMedicamentos();
-
-  } catch (err) {
-    setError("Error al guardar medicamento");
-  } finally {
-    setLoading(false);
-  }
-};
-
-  // --- Registrar una toma de medicamento
   const registrarToma = async (med) => {
     const ahora = new Date();
     const nuevasTomadas = (med.tomadas || 0) + 1;
@@ -103,12 +97,29 @@ const Calendario = () => {
         tomadas: nuevasTomadas,
         ultima_toma: ahora.toISOString()
       });
+
+      if (nuevasTomadas === med.total_tomas) {
+        alert("Día superado");
+        const fechasMedicamento = Object.keys(medicamentos).filter(f =>
+          medicamentos[f].some(mItem => mItem.nombre === med.nombre)
+        );
+        const ultimaFecha = fechasMedicamento.sort().reverse()[0];
+        if (med.fecha === ultimaFecha) {
+          setMedicamentos(prev => {
+            const medsDelDia = (prev[med.fecha] || []).map(mItem => {
+              if (mItem.id === med.id) return { ...mItem, desbloquearPremio: true };
+              return mItem;
+            });
+            return { ...prev, [med.fecha]: medsDelDia };
+          });
+        }
+      }
+
     } catch (err) {
       setError("Error al registrar toma:", err);
     }
   };
 
-  // --- Eliminar medicamento
   const eliminarMedicamento = async (med) => {
     try {
       await api.delete(`/api/medicamentos-programados/${med.id}/`);
@@ -121,7 +132,24 @@ const Calendario = () => {
     }
   };
 
-  // --- Calendario básico
+  const claseDia = (fechaKey) => {
+    const meds = medicamentos[fechaKey] || [];
+    if (meds.length === 0) return "";
+
+    // Crear fecha local desde fechaKey
+    const [y, m, d] = fechaKey.split('-').map(Number);
+    const fecha = new Date(y, m - 1, d);
+
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+
+    const todasCompletas = meds.every(m => (m.tomadas || 0) >= (m.total_tomas || 1));
+
+    if (todasCompletas) return "dia-completo";
+    if (fecha < hoy) return "dia-incompleto";
+    return "dia-registrado";
+  };
+
   const daysOfWeek = ["L", "M", "X", "J", "V", "S", "D"];
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -154,19 +182,26 @@ const Calendario = () => {
         {daysOfWeek.map(d => <div key={d} className="day-name">{d}</div>)}
         {daysArray.map((day, i) => {
           if (!day) return <div key={i} className="day empty" />;
+
           const thisDate = new Date(year, month, day);
           const key = thisDate.toISOString().split('T')[0];
-          const hasMeds = Boolean(medicamentos[key]?.length);
-          const isToday = thisDate.toDateString() === new Date().toDateString();
+          const isToday = (() => {
+            const hoy = new Date();
+            hoy.setHours(0, 0, 0, 0);
+            return thisDate.getTime() === hoy.getTime();
+          })();
+
           const isSelected = selectedDate?.toDateString() === thisDate.toDateString();
+          const colorClass = claseDia(key);
+
           return (
             <div
               key={i}
               onClick={() => setSelectedDate(thisDate)}
-              className={`day ${isSelected ? "selected" : ""} ${hasMeds ? "has-meds" : ""} ${isToday ? "today-highlight" : ""}`}
+              className={`day ${isSelected ? "selected" : ""} ${colorClass} ${isToday ? "hoy-borde" : ""}`}
             >
               <span>{day}</span>
-              {hasMeds && <Pill size={16} />}
+              {medicamentos[key]?.length > 0 && <Pill size={16} />}
             </div>
           );
         })}
@@ -175,42 +210,41 @@ const Calendario = () => {
       {selectedDate && (
         <div className="med-section">
           <p>Añadir medicamento para: <strong>{selectedDate.toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" })}</strong></p>
-
+          <p>Nombre del medicamento</p>
           <div className="input-group">
-             <input 
-              type="text" 
-              placeholder="Nombre del medicamento" 
+            <input
+              type="text"
+              placeholder="Nombre del medicamento"
               value={nuevoMed.nombre}
-              onChange={e => setNuevoMed(p => ({ ...p, nombre: e.target.value }))} 
-              disabled={loading} 
+              onChange={e => setNuevoMed(p => ({ ...p, nombre: e.target.value }))}
+              disabled={loading}
             />
 
             <p>Cada (h)</p>
 
-            <input 
-              type="number" 
-              min="1" 
+            <input
+              type="number"
+              min="1"
               value={nuevoMed.intervalo}
-              onChange={e => setNuevoMed(p => ({ ...p, intervalo: Number(e.target.value) || 1 }))} 
-              placeholder="Cada (h)" 
-              disabled={loading} 
+              onChange={e => setNuevoMed(p => ({ ...p, intervalo: Number(e.target.value) || 1 }))}
+              placeholder="Cada (h)"
+              disabled={loading}
             />
-            <p>Tomas</p>
+            <p>Tomas por dia</p>
 
-            <input 
-              type="number" 
-              min="1" 
+            <input
+              type="number"
+              min="1"
               value={nuevoMed.total_tomas}
-              onChange={e => setNuevoMed(p => ({ ...p, total_tomas: Number(e.target.value) || 1 }))} 
-              placeholder="Número de tomas" 
-              disabled={loading} 
+              onChange={e => setNuevoMed(p => ({ ...p, total_tomas: Number(e.target.value) || 1 }))}
+              placeholder="Número de tomas"
+              disabled={loading}
             />
 
             <p>Duración en dias</p>
 
-            {/* ⭐ INPUT NUEVO PARA LOS DÍAS */}
-            <input 
-              type="number" 
+            <input
+              type="number"
               min="1"
               value={nuevoMed.duracion_dias}
               onChange={e => setNuevoMed(p => ({ ...p, duracion_dias: Number(e.target.value) || 1 }))}
@@ -255,13 +289,27 @@ const Calendario = () => {
                   <div style={{ marginTop: 5, display: "flex", gap: 5 }}>
                     {tomadas < totalTomas ? (
                       <button onClick={() => registrarToma(med)}>Tomar dosis</button>
+                    ) : med.desbloquearPremio ? (
+                      <Link
+                        to="/Progresos3"
+                        style={{
+                          backgroundColor: "#facc15",
+                          color: "#000",
+                          padding: "10px 16px",
+                          borderRadius: "6px",
+                          display: "inline-block",
+                          textDecoration: "none"
+                        }}
+                      >
+                        ¡Desbloquear premio!
+                      </Link>
                     ) : (
-                      <button style={{ backgroundColor: "#facc15", color: "#000" }}>
-                        ¡Premio desbloqueado!
+                      <button style={{ backgroundColor: "#4ade80", color: "#000" }} disabled>
+                        Día completado
                       </button>
                     )}
-                    <button 
-                      onClick={() => eliminarMedicamento(med)} 
+                    <button
+                      onClick={() => eliminarMedicamento(med)}
                       style={{ backgroundColor: "#ef4444", color: "#fff" }}
                     >
                       Eliminar
@@ -272,12 +320,23 @@ const Calendario = () => {
             })}
           </ul>
         </div>
-      )}
-    </div>
+      )
+      }
+    </div >
   );
 };
 
 export default Calendario;
+
+
+
+
+
+
+
+
+
+
 
 
 

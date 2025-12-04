@@ -62,31 +62,38 @@ export default function App() {
       */}
       <main className="w-full max-w-screen-lg mx-auto px-0 py-6">
         <Routes>
-         <Route element={<ProtectedRoute/>} >
-            <Route element={<NavbarOutlet/>} >
-                <Route path="/" element={<Home />} />
-                <Route path="/calendario" element={<Calendario />} />
-                <Route path="/cameraOCR" element={<CameraOCR />} />
-                <Route path="/tesseractOCR" element={<TesseractOCR />} />
-                <Route path="/perfil" element={<Perfil />} />
-                <Route path="/Progresos1" element={<Progresos1 />} />
-                <Route path="/Progresos2" element={<Progresos2 />} />
-                <Route path="/Progresos3" element={<Progresos3 />} />
-                <Route path="/openai" element={<OpenAiApi />} />
-                <Route path="/zxingScanner" element={<ZxingScanner />} />
+          <Route element={<ProtectedRoute />} >
+            <Route element={<NavbarOutlet />} >
+              <Route path="/" element={<Home />} />
+              <Route path="/calendario" element={<Calendario />} />
+              <Route path="/cameraOCR" element={<CameraOCR />} />
+              <Route path="/tesseractOCR" element={<TesseractOCR />} />
+              <Route path="/perfil" element={<Perfil />} />
+              <Route path="/Progresos1" element={<Progresos1 />} />
+              <Route path="/Progresos2" element={<Progresos2 />} />
+              <Route path="/Progresos3" element={<Progresos3 />} />
+              <Route path="/openai" element={<OpenAiApi />} />
+              <Route path="/zxingScanner" element={<ZxingScanner />} />
 
             </Route>
           </Route>
           <Route path="/login" element={<Login />} />
-          <Route path="/logout" element={<Logout />}/>
+          <Route path="/logout" element={<Logout />} />
           <Route path="/register" element={<Logout metodo="register" />} />
           <Route path="/registration" element={<Register />} />
           <Route path="/chatbot" element={<Chatbot />} />
-          <Route path="*" element={<NotFound />}/>
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
-    
-    
+
+
     </div>
   );
 }
+
+
+
+
+
+
+
