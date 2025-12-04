@@ -18,14 +18,14 @@ const getMonthData = () => {
     const year = now.getFullYear();
     const month = now.getMonth();
     const todayNumber = now.getDate();
-    
+
     const totalDays = new Date(year, month + 1, 0).getDate();
     const monthName = now.toLocaleDateString('es-ES', { month: 'long' });
     const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 
     const daysArray = Array.from({ length: totalDays }, (_, i) => {
         const date = new Date(year, month, i + 1);
-        const dayOfWeekIndex = date.getDay(); 
+        const dayOfWeekIndex = date.getDay();
         return {
             number: i + 1,
             isToday: i + 1 === todayNumber,
@@ -34,7 +34,7 @@ const getMonthData = () => {
         };
     });
 
-    return { 
+    return {
         days: daysArray,
         monthName: monthName.charAt(0).toUpperCase() + monthName.slice(1)
     };
@@ -43,10 +43,10 @@ const getMonthData = () => {
 // Nueva función para obtener el saludo basado en la hora
 const getGreeting = () => {
     const hour = new Date().getHours();
-    
+
     if (hour < 12) {
         return "Buenos días";
-    } else if (hour < 19) { 
+    } else if (hour < 19) {
         // <19 para que se incluyan las 18h
         return "Buenas tardes";
     } else {
@@ -82,11 +82,11 @@ export default function Home() {
         const { days: newDays, monthName: newMonthName } = getMonthData();
         setDays(newDays);
         setMonthName(newMonthName);
-        
+
         // Inicializamos el saludo
         setGreeting(getGreeting());
 
-        // Configuramos un intervalo para actualizar el saludo cada hora, 
+        // Configuramos un intervalo para actualizar el saludo cada hora,
         // aunque solo se actualizará visualmente si la hora cambia a una nueva franja.
         // Lo configuramos para que se ejecute al inicio de la siguiente hora.
         const now = new Date();
@@ -100,7 +100,7 @@ export default function Home() {
             const intervalId = setInterval(() => {
                 setGreeting(getGreeting());
             }, 60 * 60 * 1000); // Cada hora (60 minutos * 60 segundos * 1000 milisegundos)
-            
+
             return () => clearInterval(intervalId);
         }, timeToNextHour);
 
@@ -112,7 +112,7 @@ export default function Home() {
     useEffect(() => {
         if (days.length > 0 && calendarRef.current) {
             const todayItem = calendarRef.current.querySelector(`.calendar-day.today`);
-            
+
             if (todayItem) {
                 // Usamos scrollIntoView con 'center' para centrarlo si es posible
                 todayItem.scrollIntoView({
@@ -127,12 +127,12 @@ export default function Home() {
         <div className="home-app">
             {/* HEADER */}
             <header className="home-header">
-                <Menu size={24} color="#6b7280" />
+                {/* <Menu size={24} color="#6b7280" /> */}
                 <div className="header-left">
                     <p className="date">{monthName}</p>
                 </div>
                 {/* Espaciador para centrar el mes */}
-                <div style={{ width: 24 }}></div> 
+                <div style={{ width: 24 }}></div>
             </header>
 
             {/* CALENDARIO HORIZONTAL */}
@@ -173,15 +173,15 @@ export default function Home() {
                     <div className="tip-card" style={{ borderLeftColor: '#f59e0b' }}>
                         <p style={{ fontWeight: 600 }}>Medicamento 2 <Pill size={16} color="#f59e0b" style={{ display: 'inline' }} /></p>
                         <p style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: 5 }}>¡Pronto se acaba! Quedan 3 dosis.</p>
-                        <button style={{ 
-                            fontSize: '0.75rem', 
-                            color: '#f59e0b', 
-                            marginTop: 10, 
-                            border: 'none', 
-                            background: 'none', 
-                            display: 'flex', 
-                            alignItems: 'center', 
-                            fontWeight: 600 
+                        <button style={{
+                            fontSize: '0.75rem',
+                            color: '#f59e0b',
+                            marginTop: 10,
+                            border: 'none',
+                            background: 'none',
+                            display: 'flex',
+                            alignItems: 'center',
+                            fontWeight: 600
                         }}>
                             Reponer ahora <ChevronRight size={14} />
                         </button>
@@ -203,7 +203,7 @@ export default function Home() {
                         <Star size={24} color="#f59e0b" style={{ margin: '0 auto px' }} />
                         <p>Noticia sobre salud infantil</p>
                     </div>
-                    
+
                     <div className="extra">
                         <Pill size={24} color="#4f46e5" style={{ margin: '0 auto 5px' }} />
                         <p>Nuevos estudios de farmacéutica</p>
@@ -234,6 +234,7 @@ export default function Home() {
                     <div className="cycle-card" onClick={() => setShowRemedioModal(true)} style={{ cursor: 'pointer' }}>
                         <img src={remedio} alt="Remedios naturales" className="card-img" style={{ objectFit: 'cover' }} />
                         <p>Remedios naturales comprobados🥬</p>
+
                     </div>
 
                     {/* tarjeta premium pequeña */}
@@ -246,7 +247,7 @@ export default function Home() {
                     </div>
                 </div>
             </section>
-            
+
             {/* TARJETA PREMIUM */}
             <div className="premium-card-1">
                 <div className="title-premium">
@@ -260,7 +261,7 @@ export default function Home() {
                     Mejorar mi plan
                 </button>
             </div>
-            
+
             {/* Espacio extra en la parte inferior para que la barra de navegación no cubra el contenido */}
             {showRemedioModal && (
                 <RemedioModal onClose={() => setShowRemedioModal(false)}>
@@ -273,8 +274,9 @@ export default function Home() {
                 </RemedioModal>
             )}
 
-            <div style={{ height: '80px' }}></div> 
+            <div style={{ height: '80px' }}></div>
 
         </div>
     );
 }
+
