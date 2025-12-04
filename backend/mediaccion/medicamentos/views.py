@@ -6,7 +6,9 @@ from .serializers import ProfileUserSerializer, NotificacionesSerializer, Receta
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.utils import timezone
-
+from django.conf import settings
+from twilio.rest import Client
+import logging
 
 
 #Solo permitimos a no usuarios registrados crearse la cuenta
@@ -394,3 +396,39 @@ def MedicamentosProgramadosList(request, pk):
 
     
 
+#============ TEST CONEXIÓN WHATSAPP =============
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def test_whatsapp(request):
+    """
+    Envía un mensaje de prueba de WhatsApp al número registrado del usuario.
+    """
+    print("!!!!!!!!!!!!!!!!!!!!!!!!!!TEST WHATSAPP VIEWSSSS!!!!!!!!!!!!!")
+    try:       
+        telefono = request.data.get('telefonoCompleto')
+        print("TELÉFONO USADO REAL:", request)
+        if not telefono:
+            return Response({"error": "No tienes un número de teléfono guardado"}, status=400)
+
+        # Inicializar cliente Twilio
+        client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+
+        mensaje = client.messages.create(
+            from_='whatsapp:+14155238886',
+            body='🔔 Prueba de conexión\n\nEste es un mensaje de prueba desde tu aplicación MediAcción.',
+            to=f'whatsapp:{telefono}'
+        )
+
+        return Response({
+            "success": True,
+            "message_sid": mensaje.sid,
+            "telefono_usado": telefono,
+            "status": mensaje.status,
+        }, status=200)
+
+    except Exception as e:
+        logger.error(f"[TWILIO ERROR] {str(e)}")
+        return Response({
+            "success": False,
+            "error": str(e)
+        }, status=500)

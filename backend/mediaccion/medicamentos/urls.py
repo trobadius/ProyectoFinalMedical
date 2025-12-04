@@ -22,4 +22,6 @@ urlpatterns = [
     path('medicamentos-programados/<int:pk>/', views.MedicamentosProgramadosDetailView),
 
     path('api/meds_programados/', views.MedicamentosProgramadosList),
+
+    path('notificaciones/whats/', views.test_whatsapp, name='test_whatsapp'),
 ]

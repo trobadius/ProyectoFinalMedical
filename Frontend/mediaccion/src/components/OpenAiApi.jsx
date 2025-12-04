@@ -1,7 +1,6 @@
 import OpenAI from "openai";
 
 
-
 export async function chatCerrado(prompt) {
   const PROMPT = `
   Quiero que analices el siguiente medicamento: ${prompt}
