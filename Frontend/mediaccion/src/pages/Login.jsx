@@ -20,6 +20,8 @@ function Login(){
       const res = await api.post("/api/token/",{username, password})
         localStorage.setItem(ACCES_TOKEN, res.data.access);
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
+        // Persist the username so Home can show a personalized greeting
+        localStorage.setItem('username', username);
         navigate("/")
     }catch(error){
       alert(error)

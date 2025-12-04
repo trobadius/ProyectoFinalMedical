@@ -5,9 +5,7 @@ import Home from './pages/Home.jsx';
 import Calendario from './pages/Calendario.jsx';
 import Perfil from './pages/Perfil.jsx';
 import Login from './pages/Login.jsx';
-import Progresos1 from "./pages/Progresos1.jsx";
-import Progresos2 from "./pages/Progresos2.jsx";
-import Progresos3 from "./pages/Progresos3.jsx";
+import Progresos from "./pages/Progresos.jsx";
 import ProgressBar from './components/ProgressBar.jsx';
 import Logout from './components/Logout.jsx';
 import NotFound from './pages/NotFound.jsx';
@@ -25,7 +23,7 @@ export default function App() {
   return (
     <div className="app-root min-h-screen"
       style={{
-        backgroundColor: '#d5ebedff',
+
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -69,9 +67,7 @@ export default function App() {
               <Route path="/cameraOCR" element={<CameraOCR />} />
               <Route path="/tesseractOCR" element={<TesseractOCR />} />
               <Route path="/perfil" element={<Perfil />} />
-              <Route path="/Progresos1" element={<Progresos1 />} />
-              <Route path="/Progresos2" element={<Progresos2 />} />
-              <Route path="/Progresos3" element={<Progresos3 />} />
+              <Route path="/progresos" element={<Progresos />} />
               <Route path="/openai" element={<OpenAiApi />} />
               <Route path="/zxingScanner" element={<ZxingScanner />} />
 
