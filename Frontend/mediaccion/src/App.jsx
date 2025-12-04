@@ -74,15 +74,22 @@ export default function App() {
             </Route>
           </Route>
           <Route path="/login" element={<Login />} />
-          <Route path="/logout" element={<Logout />}/>
+          <Route path="/logout" element={<Logout />} />
           <Route path="/register" element={<Logout metodo="register" />} />
           <Route path="/registration" element={<Register />} />
           <Route path="/chatbot" element={<Chatbot />} />
-          <Route path="*" element={<NotFound />}/>
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
-    
-    
+
+
     </div>
   );
 }
+
+
+
+
+
+
+

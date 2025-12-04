@@ -17,14 +17,14 @@ const getMonthData = () => {
     const year = now.getFullYear();
     const month = now.getMonth();
     const todayNumber = now.getDate();
-    
+
     const totalDays = new Date(year, month + 1, 0).getDate();
     const monthName = now.toLocaleDateString('es-ES', { month: 'long' });
     const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 
     const daysArray = Array.from({ length: totalDays }, (_, i) => {
         const date = new Date(year, month, i + 1);
-        const dayOfWeekIndex = date.getDay(); 
+        const dayOfWeekIndex = date.getDay();
         return {
             number: i + 1,
             isToday: i + 1 === todayNumber,
@@ -33,7 +33,7 @@ const getMonthData = () => {
         };
     });
 
-    return { 
+    return {
         days: daysArray,
         monthName: monthName.charAt(0).toUpperCase() + monthName.slice(1)
     };
@@ -42,9 +42,15 @@ const getMonthData = () => {
 // Función para obtener el saludo
 const getGreeting = () => {
     const hour = new Date().getHours();
-    if (hour < 12) return "Buenos días";
-    else if (hour < 19) return "Buenas tardes";
-    else return "Buenas noches";
+
+    if (hour < 12) {
+        return "Buenos días";
+    } else if (hour < 19) {
+        // <19 para que se incluyan las 18h
+        return "Buenas tardes";
+    } else {
+        return "Buenas noches";
+    }
 };
 
 export default function Home() {
@@ -62,23 +68,25 @@ export default function Home() {
         const { days: newDays, monthName: newMonthName } = getMonthData();
         setDays(newDays);
         setMonthName(newMonthName);
+
+        // Inicializamos el saludo
         setGreeting(getGreeting());
 
-        // Read persisted username (set at login) to personalize greeting
-        try {
-            const stored = localStorage.getItem('username');
-            if (stored) setUserName(stored);
-        } catch (e) {
-            // ignore in environments without localStorage
-        }
-
+        // Configuramos un intervalo para actualizar el saludo cada hora,
+        // aunque solo se actualizará visualmente si la hora cambia a una nueva franja.
+        // Lo configuramos para que se ejecute al inicio de la siguiente hora.
         const now = new Date();
         const nextHour = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours() + 1, 0, 1);
         const timeToNextHour = nextHour.getTime() - now.getTime();
 
         const timeoutId = setTimeout(() => {
-            setGreeting(getGreeting());
-            const intervalId = setInterval(() => setGreeting(getGreeting()), 60*60*1000);
+            setGreeting(getGreeting()); // Actualiza justo cuando cambia la hora
+
+            // Una vez que cambia la hora, configuramos un intervalo para revisar cada hora
+            const intervalId = setInterval(() => {
+                setGreeting(getGreeting());
+            }, 60 * 60 * 1000); // Cada hora (60 minutos * 60 segundos * 1000 milisegundos)
+
             return () => clearInterval(intervalId);
         }, timeToNextHour);
 
@@ -88,6 +96,7 @@ export default function Home() {
     useEffect(() => {
         if (days.length > 0 && calendarRef.current) {
             const todayItem = calendarRef.current.querySelector(`.calendar-day.today`);
+
             if (todayItem) {
                 todayItem.scrollIntoView({ behavior: "smooth", inline: "center" });
             }
@@ -98,9 +107,11 @@ export default function Home() {
         <div className="home-app">
             {/* HEADER */}
             <header className="home-header">
+                {/* <Menu size={24} color="#6b7280" /> */}
                 <div className="header-left">
                     <p className="date">{monthName}</p>
                 </div>
+                {/* Espaciador para centrar el mes */}
                 <div style={{ width: 24 }}></div>
             </header>
 
@@ -134,7 +145,16 @@ export default function Home() {
                     <div className="tip-card" style={{ borderLeftColor: '#f59e0b' }}>
                         <p style={{ fontWeight: 600 }}>Medicamento 2 <Pill size={16} color="#f59e0b" style={{ display: 'inline' }} /></p>
                         <p style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: 5 }}>¡Pronto se acaba! Quedan 3 dosis.</p>
-                        <button style={{ fontSize: '0.75rem', color: '#f59e0b', marginTop: 10, border: 'none', background: 'none', display: 'flex', alignItems: 'center', fontWeight: 600 }}>
+                        <button style={{
+                            fontSize: '0.75rem',
+                            color: '#f59e0b',
+                            marginTop: 10,
+                            border: 'none',
+                            background: 'none',
+                            display: 'flex',
+                            alignItems: 'center',
+                            fontWeight: 600
+                        }}>
                             Reponer ahora <ChevronRight size={14} />
                         </button>
                     </div>
@@ -153,6 +173,7 @@ export default function Home() {
                         <Star size={24} color="#f59e0b" />
                         <p>Noticia sobre salud infantil</p>
                     </div>
+
                     <div className="extra">
                         <Pill size={24} color="#4f46e5" />
                         <p>Nuevos estudios de farmacéutica</p>
@@ -179,6 +200,7 @@ export default function Home() {
                     <div className="cycle-card" onClick={() => setShowRemedioModal(true)} style={{ cursor: 'pointer' }}>
                         <img src={remedio} alt="Remedios naturales" className="card-img" style={{ objectFit: 'cover' }} />
                         <p>Remedios naturales comprobados🥬</p>
+
                     </div>
                     <div className="cycle-card">
                         <div className="card-img placeholder-premium">
@@ -203,6 +225,8 @@ export default function Home() {
                     Mejorar mi plan
                 </button>
             </div>
+
+            {/* Espacio extra en la parte inferior para que la barra de navegación no cubra el contenido */}
 
             <div style={{ height: '80px' }}></div>
 
@@ -243,3 +267,4 @@ export default function Home() {
         </div>
     );
 }
+
