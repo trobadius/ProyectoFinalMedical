@@ -5,6 +5,7 @@ import api from '../api';
 import '../styles/Calendario.css';
 import '../calendario.css';
 import { Link } from "react-router-dom";
+
 const Calendario = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -19,9 +20,12 @@ const Calendario = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+
+  // --- Cargar medicamentos
   useEffect(() => {
     fetchMedicamentos();
   }, []);
+
 
   const fetchMedicamentos = async () => {
     try {
@@ -41,16 +45,20 @@ const Calendario = () => {
     }
   };
 
+
+  // --- Guardar medicamento varios días
   const guardarMedicamento = async () => {
     if (!nuevoMed.nombre.trim()) return;
     try {
       setLoading(true);
       const baseDate = new Date(selectedDate);
 
+
       for (let i = 0; i < nuevoMed.duracion_dias; i++) {
-        const fecha = new Date();
+        const fecha = new Date(baseDate);
         fecha.setDate(baseDate.getDate() + i);
         const fechaStr = fecha.toISOString().split("T")[0];
+
 
         await api.post("/api/medicamentos-programados/", {
           nombre: nuevoMed.nombre.trim(),
@@ -62,6 +70,7 @@ const Calendario = () => {
         });
       }
 
+
       setNuevoMed({
         nombre: "",
         intervalo: 8,
@@ -70,7 +79,9 @@ const Calendario = () => {
         tomadas: 0
       });
 
+
       await fetchMedicamentos();
+
 
     } catch (err) {
       setError("Error al guardar medicamento");
@@ -79,9 +90,12 @@ const Calendario = () => {
     }
   };
 
+
+  // --- Registrar una toma de medicamento
   const registrarToma = async (med) => {
     const ahora = new Date();
     const nuevasTomadas = (med.tomadas || 0) + 1;
+
 
     setMedicamentos(prev => {
       const fechaKey = med.fecha;
@@ -92,14 +106,20 @@ const Calendario = () => {
       return { ...prev, [fechaKey]: medsDelDia };
     });
 
+
     try {
       await api.put(`/api/medicamentos-programados/${med.id}/`, {
         tomadas: nuevasTomadas,
         ultima_toma: ahora.toISOString()
       });
 
+
+      // Alertar al finalizar las tomas del día
       if (nuevasTomadas === med.total_tomas) {
         alert("Día superado");
+
+
+        // Verificar si es el último día del medicamento
         const fechasMedicamento = Object.keys(medicamentos).filter(f =>
           medicamentos[f].some(mItem => mItem.nombre === med.nombre)
         );
@@ -115,11 +135,14 @@ const Calendario = () => {
         }
       }
 
+
     } catch (err) {
       setError("Error al registrar toma:", err);
     }
   };
 
+
+  // --- Eliminar medicamento
   const eliminarMedicamento = async (med) => {
     try {
       await api.delete(`/api/medicamentos-programados/${med.id}/`);
@@ -132,24 +155,28 @@ const Calendario = () => {
     }
   };
 
+
+  // --- Función para determinar el color del día
   const claseDia = (fechaKey) => {
     const meds = medicamentos[fechaKey] || [];
-    if (meds.length === 0) return "";
+    if (meds.length === 0) return ""; // Sin medicamentos
 
-    // Crear fecha local desde fechaKey
-    const [y, m, d] = fechaKey.split('-').map(Number);
-    const fecha = new Date(y, m - 1, d);
 
+    const fecha = new Date(fechaKey);
     const hoy = new Date();
-    hoy.setHours(0, 0, 0, 0);
+    hoy.setHours(0, 0, 0, 0); // Ignorar horas
+
 
     const todasCompletas = meds.every(m => (m.tomadas || 0) >= (m.total_tomas || 1));
 
-    if (todasCompletas) return "dia-completo";
-    if (fecha < hoy) return "dia-incompleto";
-    return "dia-registrado";
+
+    if (todasCompletas) return "dia-completo"; // Verde
+    if (fecha < hoy) return "dia-incompleto"; // Rojo para días pasados
+    return "dia-registrado"; // Azul para días futuros con medicamento
   };
 
+
+  // --- Calendario básico
   const daysOfWeek = ["L", "M", "X", "J", "V", "S", "D"];
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -157,15 +184,19 @@ const Calendario = () => {
   const firstDay = new Date(year, month, 1).getDay();
   const startingDay = (firstDay + 6) % 7;
 
+
   const prevMonth = () => setCurrentDate(new Date(year, month - 1, 1));
   const nextMonth = () => setCurrentDate(new Date(year, month + 1, 1));
+
 
   const daysArray = [];
   for (let i = 0; i < startingDay; i++) daysArray.push(null);
   for (let i = 1; i <= lastDay; i++) daysArray.push(i);
 
+
   const selectedKey = selectedDate?.toISOString().split('T')[0];
   const medsHoy = selectedKey ? medicamentos[selectedKey] || [] : [];
+
 
   return (
     <div className="calendar-app">
@@ -175,42 +206,39 @@ const Calendario = () => {
         <button onClick={nextMonth} className="nav-btn">›</button>
       </header>
 
+
       {error && <div style={{ color: 'red', padding: 10 }}>{error}</div>}
       {loading && <div style={{ color: '#666', padding: 10 }}>Cargando...</div>}
+
 
       <div className="calendar-grid">
         {daysOfWeek.map(d => <div key={d} className="day-name">{d}</div>)}
         {daysArray.map((day, i) => {
           if (!day) return <div key={i} className="day empty" />;
-
           const thisDate = new Date(year, month, day);
           const key = thisDate.toISOString().split('T')[0];
-          const isToday = (() => {
-            const hoy = new Date();
-            hoy.setHours(0, 0, 0, 0);
-            return thisDate.getTime() === hoy.getTime();
-          })();
-
+          const hasMeds = Boolean(medicamentos[key]?.length);
+          const isToday = thisDate.toDateString() === new Date().toDateString();
           const isSelected = selectedDate?.toDateString() === thisDate.toDateString();
-          const colorClass = claseDia(key);
-
           return (
             <div
               key={i}
               onClick={() => setSelectedDate(thisDate)}
-              className={`day ${isSelected ? "selected" : ""} ${colorClass} ${isToday ? "hoy-borde" : ""}`}
+              className={`day ${isSelected ? "selected" : ""} ${hasMeds ? "has-meds" : ""} ${isToday ? "today-highlight" : ""} ${claseDia(key)}`}
             >
               <span>{day}</span>
-              {medicamentos[key]?.length > 0 && <Pill size={16} />}
+              {hasMeds && <Pill size={16} />}
             </div>
           );
         })}
       </div>
 
+
       {selectedDate && (
         <div className="med-section">
           <p>Añadir medicamento para: <strong>{selectedDate.toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" })}</strong></p>
-          <p>Nombre del medicamento</p>
+
+
           <div className="input-group">
             <input
               type="text"
@@ -220,7 +248,9 @@ const Calendario = () => {
               disabled={loading}
             />
 
+
             <p>Cada (h)</p>
+
 
             <input
               type="number"
@@ -230,7 +260,8 @@ const Calendario = () => {
               placeholder="Cada (h)"
               disabled={loading}
             />
-            <p>Tomas por dia</p>
+            <p>Tomas</p>
+
 
             <input
               type="number"
@@ -241,7 +272,9 @@ const Calendario = () => {
               disabled={loading}
             />
 
+
             <p>Duración en dias</p>
+
 
             <input
               type="number"
@@ -252,15 +285,18 @@ const Calendario = () => {
               disabled={loading}
             />
 
+
             <button onClick={guardarMedicamento} disabled={loading}>
               <Plus size={20} color="white" />
             </button>
           </div>
 
+
           <ul className="med-list">
             {medsHoy.map(med => {
               const totalTomas = med.total_tomas || 8;
               const tomadas = med.tomadas || 0;
+
 
               return (
                 <li key={med.id} className="med-item">
@@ -286,12 +322,13 @@ const Calendario = () => {
                     </div>
                   </div>
 
+
                   <div style={{ marginTop: 5, display: "flex", gap: 5 }}>
                     {tomadas < totalTomas ? (
                       <button onClick={() => registrarToma(med)}>Tomar dosis</button>
                     ) : med.desbloquearPremio ? (
                       <Link
-                        to="/Progresos3"
+                        to="/Progresos"
                         style={{
                           backgroundColor: "#facc15",
                           color: "#000",
@@ -326,16 +363,8 @@ const Calendario = () => {
   );
 };
 
+
 export default Calendario;
-
-
-
-
-
-
-
-
-
 
 
 
