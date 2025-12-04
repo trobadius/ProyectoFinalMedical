@@ -1,57 +1,61 @@
-import { useState } from "react";
 import OpenAI from "openai";
 
 
-export default function OpenAiApi() {
-  const [input, setInput] = useState("");
-  const [response, setResponse] = useState("");
-  const [loading, setLoading] = useState(false);
+export async function chatCerrado(prompt) {
+  const PROMPT = `
+  Quiero que analices el siguiente medicamento: ${prompt}
 
-  const sendMessage = async () => {
-    if (!input.trim()) return;
-    setLoading(true);
-    setResponse("");
+  Devuélveme la información exclusivamente en un JSON válido, sin texto adicional antes o después, y envuelto dentro de un bloque de código \`\`\`json.
 
+  El JSON debe tener exactamente estos campos:
+
+  {
+    "medicamento": "",
+    "descripcion": "",
+    "uso": [],
+    "dosis_recomendada": {
+      "adultos": "",
+      "niños": ""
+    },
+    "precauciones": [],
+    "efectos_secundarios": []
+  }
+
+  Reglas:
+  - "descripcion": Hazla muy resumida, simple y entendible para cualquier persona sin conocimientos médicos.
+  - "uso": Lista de para qué sirve el medicamento.
+  - "dosis_recomendada": Puede incluir diferentes dosis según edad. Si no aplica, escribe "No especificado".
+  - "precauciones": Lista clara y breve.
+  - "efectos_secundarios": Lista simple, enfocada en los más comunes.
+  - No agregues nada fuera del JSON.
+  - No hagas explicaciones.
+  - No uses texto técnico innecesario.
+  `;
+
+
+  try {
+    const result = await client.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [{ role: "user", content: PROMPT }]
+    });
+
+    const outputText = result.choices?.[0]?.message?.content || "Sin respuesta";
+    console.log("Respuesta de OpenAI cruda:", outputText);
+
+    // Extraemos el JSON del bloque ```json ... ```
+    const match = outputText.match(/```json([\s\S]*?)```/i);
+    const jsonText = match ? match[1].trim() : outputText.trim();
+
+    let outputJSON;
     try {
-      const result = await client.chat.completions.create({
-        model: "gpt-4o-mini",
-        messages: [
-          { role: "user", content: input }
-        ]
-      });
-
-      const output = result.choices?.[0]?.message?.content || "Sin respuesta";
-      setResponse(output);
-    } catch (error) {
-      console.error(error);
-      setResponse("Error al consultar la API");
-    } finally {
-      setLoading(false);
+      outputJSON = JSON.parse(jsonText);
+    } catch (err) {
+      outputJSON = { error: "Respuesta no es un JSON válido", raw: jsonText };
     }
-  };
 
-  return (
-    <div className="p-6 w-full max-w-xl mx-auto flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">Chat con OpenAI</h1>
-
-      <input
-        className="border rounded-xl p-3"
-        placeholder="Escribe tu texto..."
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-      />
-
-      <button
-        onClick={sendMessage}
-        className="bg-blue-500 hover:bg-blue-600 text-white rounded-xl p-3 disabled:opacity-50"
-        disabled={loading}
-      >
-        {loading ? "Enviando..." : "Enviar"}
-      </button>
-
-      <div className="border rounded-xl p-4 min-h-[100px] bg-gray-50 whitespace-pre-wrap">
-        {response}
-      </div>
-    </div>
-  );
+    return outputJSON;
+  } catch (error) {
+    console.error(error);
+    return { error: "Error al consultar la API" };
+  }
 }

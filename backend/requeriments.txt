@@ -7,3 +7,4 @@ PyJWT
 pytz
 psycopg2-binary
 python-dotenv
+twilio

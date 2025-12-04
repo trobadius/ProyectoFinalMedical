@@ -47,15 +47,12 @@ class Alimentos(models.Model):
         return self.nombre
 
 class Medicamentos(models.Model):
-    nombre_medicamento = models.CharField(max_length=100)
-    categoria = models.CharField(max_length=50)
-    descripcion = models.CharField(max_length=200)
-    f_caducidad = models.DateField(null=True, blank=True)
-    user = models.ForeignKey(ProfileUser, on_delete=models.CASCADE, null=True, blank=True, related_name = 'medicamentos_user')
-    alimento = models.ForeignKey(Alimentos, on_delete=models.CASCADE, null=True, blank=True, related_name='medicamentos_alimento')
+    medicamento = models.CharField(max_length=100)
+    descripcion = models.TextField()
+    user = models.ForeignKey(ProfileUser, on_delete=models.CASCADE, null=True, blank=True, related_name = 'medicamentos')
 
     def __str__(self):
-        return self.nombre_medicamento
+        return self.medicamento
 
 class MedicamentosProgramados(models.Model):
     nombre = models.CharField(max_length=100)

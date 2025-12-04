@@ -15,8 +15,6 @@ import NavbarOutlet from './components/NavbarOutlet.jsx';
 import TesseractOCR from './components/TesseractOCR.jsx';
 import CameraOCR from './components/CameraOCR.jsx';
 import Chatbot from './pages/Chatbot.jsx';
-import OpenAiApi from './components/OpenAiApi.jsx';
-import ZxingScanner from './components/ZxingScanner.jsx';
 
 
 export default function App() {
