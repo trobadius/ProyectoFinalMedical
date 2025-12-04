@@ -39,7 +39,7 @@ export default function StickyButton() {
       {/* Progresos (icono de trofeo/copa) */}
       <button
         className="sticky-btn"
-        onClick={() => navigate("/progresos1")}
+        onClick={() => navigate("/progresos")}
         aria-label="Progresos"
       >
         <FaTrophy />
