@@ -70,7 +70,7 @@ def NotificacionesView(request):
         return Response({"error": "El perfil no existe"}, status=status.HTTP_404_NOT_FOUND)
     #Obtiene todas las notificaciones del usuario
     try:
-        notificaciones = Notificaciones.objects.filter(profile=profile)
+        notificaciones = Notificaciones.objects.filter(user=profile)
     except Notificaciones.DoesNotExist:
         return Response({"error": "Notificación no encontrada"}, status=status.HTTP_404_NOT_FOUND)
     
@@ -82,7 +82,7 @@ def NotificacionesView(request):
     if request.method == 'POST':
         serializer = NotificacionesSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(profile=profile)
+            serializer.save(user=profile)
             return Response({"message": "Notificación creada"}, status = status.HTTP_201_CREATED)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
@@ -99,7 +99,7 @@ def NotificacionesDetailView(request, pk):
         return Response({"error": "El perfil no existe"}, status=status.HTTP_404_NOT_FOUND)
 
     try:
-        notificaciones = Notificaciones.objects.get(pk=pk, profile=profile)
+        notificaciones = Notificaciones.objects.get(pk=pk, user=profile)
     except Notificaciones.DoesNotExist:
         return Response({"error": "Notificación no encontrada"}, status=status.HTTP_404_NOT_FOUND)
     
@@ -131,7 +131,7 @@ def RecetasMedicasView(request):
         return Response({"error": "El perfil no existe"}, status=status.HTTP_404_NOT_FOUND)
     #Obtiene todas las recetas del usuario
     try:
-        recetas = RecetasMedicas.objects.filter(profile=profile)
+        recetas = RecetasMedicas.objects.filter(user=profile)
     except RecetasMedicas.DoesNotExist:
         return Response({"error": "Recetas no encontrada"}, status=status.HTTP_404_NOT_FOUND)
     
@@ -142,7 +142,7 @@ def RecetasMedicasView(request):
     if request.method == 'POST':
         serializer = RecetasMedicasSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(profile=profile)
+            serializer.save(user=profile)
             return Response({"message": "Receta medica creada"}, status = status.HTTP_201_CREATED)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
@@ -159,7 +159,7 @@ def RecetasMedicasDetailView(request, pk):
         return Response({"error": "El perfil no existe"}, status=status.HTTP_404_NOT_FOUND)
 
     try:
-        receta = RecetasMedicas.objects.get(pk=pk, profile=profile)
+        receta = RecetasMedicas.objects.get(pk=pk, user=profile)
     except RecetasMedicas.DoesNotExist:
         return Response({"error": "Receta no encontrada"}, status=status.HTTP_404_NOT_FOUND)
     
@@ -239,51 +239,64 @@ def AlimentosDetailView(request, pk):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 #CRUD Medicamentos
-@api_view(['GET', 'POST', 'PUT', 'DELETE'])
+@api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
-def MedicamentosView(request, pk=None):
+def MedicamentosView(request):
+    user = request.user
+    if user.is_anonymous:
+        return Response({"error": "Usuario no autenticado"}, status=status.HTTP_401_UNAUTHORIZED)
+    try:
+        profile = user.profile
+    except ProfileUser.DoesNotExist:
+        return Response({"error": "El perfil no existe"}, status=status.HTTP_404_NOT_FOUND)
+    #Obtiene todos los medicamentos del usuario
+    try:
+        medicamentos = Medicamentos.objects.filter(user=profile)
+    except Medicamentos.DoesNotExist:
+        return Response({"error": "Medicamentos no encontrados"}, status=status.HTTP_404_NOT_FOUND)
+    
     if request.method == 'GET':
-        if not pk:
-            medicamentos = Medicamentos.objects.select_related('alimento').all()
-            serializer = MedicamentosSerializer(medicamentos, many=True)
-            return Response(serializer.data)
-        else:
-            try:
-                medicamentos = Medicamentos.objects.select_related('alimento').get(id=pk)
-            except Medicamentos.DoesNotExist:
-                return Response({"error": "Medicamento no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-            serializer = MedicamentosSerializer(medicamentos)
-            return Response(serializer.data)
-
+        serializer = MedicamentosSerializer(medicamentos, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
     if request.method == 'POST':
         serializer = MedicamentosSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response({"message": "Medicamento creado"}, status = status.HTTP_201_CREATED)
+            serializer.save(user=profile)
+            return Response({"message": "Medicamento creada"}, status = status.HTTP_201_CREATED)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
-    if not pk:
-        return Response({'error': 'Se necesita ID'}, status=status.HTTP_400_BAD_REQUEST)
-  
-    if request.method == 'PUT':
-        try:
-            medicamentos = Medicamentos.objects.get(id=pk)
-        except Medicamentos.DoesNotExist:
-            return Response({"error": "Medicamento no encontrado"}, status=status.HTTP_400_BAD_REQUEST)
+@api_view(['GET', 'PUT', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def MedicamentosDetailView(request, pk):
+    user = request.user
+    if user.is_anonymous:
+        return Response({"error": "Usuario no autenticado"}, status=status.HTTP_401_UNAUTHORIZED)
 
+    try:
+        profile = user.profile
+    except ProfileUser.DoesNotExist:
+        return Response({"error": "El perfil no existe"}, status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        medicamentos = Medicamentos.objects.get(pk=pk, user=profile)
+    except Medicamentos.DoesNotExist:
+        return Response({"error": "Medicamento no encontrada"}, status=status.HTTP_404_NOT_FOUND)
+    
+    if request.method == 'GET':
+        serializer = MedicamentosSerializer(medicamentos)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    if request.method == 'PUT':
         serializer = MedicamentosSerializer(medicamentos, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response({"message": "Medicamento actualizado"}, status = status.HTTP_201_CREATED)
-        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     if request.method == 'DELETE':
-        try:
-            medicamentos = Medicamentos.objects.get(id=pk)
-        except Medicamentos.DoesNotExist:
-            return Response({"error": "Medicamento no encontrado"}, status=status.HTTP_404_NOT_FOUND)
         medicamentos.delete()
-        return Response({"message": "Medicamento eliminado"}, status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 # CRUD Medicamentos Programados
 @api_view(['GET', 'POST'])
