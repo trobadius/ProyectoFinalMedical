@@ -1,57 +1,77 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import { FaHome, FaCamera, FaCalendarAlt, FaUser, FaTrophy } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import '../styles/Stickybutton.css';
+import { House, CalendarDays, Camera, Trophy, UserRound } from 'lucide-react';
 
 export default function StickyButton() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [hidden, setHidden] = useState(false);
+
+  const isActive = (path) => location.pathname === path;
+
+  useEffect(() => {
+    let lastScroll = window.scrollY;
+
+    const handleScroll = () => {
+      const currentScroll = window.scrollY;
+
+      if (currentScroll > lastScroll && currentScroll > 50) {
+        setHidden(true);
+      } else {
+        setHidden(false);
+      }
+
+      lastScroll = currentScroll;
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <div className="sticky-button-container">
-      {/* Inicio */}
+    <div className={`sticky-button-container ${hidden ? "hide" : ""}`}>
       <button
-        className="sticky-btn"
+        className={`sticky-btn ${isActive("/") ? "active" : ""}`}
         onClick={() => navigate("/")}
         aria-label="Inicio"
       >
-        <FaHome />
+        <House />
       </button>
 
-
-      {/* Calendario (icono cambiado) */}
       <button
-        className="sticky-btn"
+        className={`sticky-btn ${isActive("/calendario") ? "active" : ""}`}
         onClick={() => navigate("/calendario")}
         aria-label="Calendario"
       >
-        <FaCalendarAlt />
+        <CalendarDays />
       </button>
-      
-          {/* Cámara */}
+
       <button
-        className="sticky-btn"
+        className={`sticky-btn camera-btn ${isActive("/tesseractOCR") ? "active" : ""}`}
         onClick={() => navigate("/tesseractOCR")}
         aria-label="Cámara"
       >
-        <FaCamera />
+        <Camera />
+        
+        <span className="corner-bl"></span>
+        <span className="corner-br"></span>
       </button>
 
-      {/* Progresos (icono de trofeo/copa) */}
       <button
-        className="sticky-btn"
+        className={`sticky-btn ${isActive("/progresos") ? "active" : ""}`}
         onClick={() => navigate("/progresos")}
         aria-label="Progresos"
       >
-        <FaTrophy />
+        <Trophy />
       </button>
 
-      {/* Perfil */}
       <button
-        className="sticky-btn"
+        className={`sticky-btn ${isActive("/perfil") ? "active" : ""}`}
         onClick={() => navigate("/perfil")}
         aria-label="Perfil"
       >
-        <FaUser />
+        <UserRound />
       </button>
     </div>
   );

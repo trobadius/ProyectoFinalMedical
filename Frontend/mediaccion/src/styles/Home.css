@@ -19,6 +19,7 @@
 }
 
 /*HOME - GENERAL Y HEADER*/
+/*Hao-
 .home-app {
     padding: 1rem;
     padding-bottom: 5rem;
@@ -28,7 +29,7 @@
     background-color: #f9fafb;
     min-height: 100vh;
 }
-
+*/
 .home-header {
     display: flex;
     justify-content: space-between;

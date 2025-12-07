@@ -1,10 +1,11 @@
-
-import React, { useState, useEffect } from "react";
-import { Pill, Plus } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { Pill, Plus, MessageCircle, LogOut } from 'lucide-react';
 import api from '../api';
 import '../styles/Calendario.css';
 import '../calendario.css';
 import { Link } from "react-router-dom";
+import '../App.css';
+import logo from "../assets/logo.svg";
 
 const Calendario = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -199,13 +200,34 @@ const Calendario = () => {
 
 
   return (
-    <div className="calendar-app">
+    <div className="main-app">
+      {/*-Hao
       <header className="app-header">
         <button onClick={prevMonth} className="nav-btn">‹</button>
         <h2>{currentDate.toLocaleDateString("es-ES", { month: "long" })} {year}</h2>
         <button onClick={nextMonth} className="nav-btn">›</button>
       </header>
-
+      */}
+      <header className="main-header">
+        <div className="header-components">
+            <Link to="/Chatbot" className="header-icon-chat">
+                <MessageCircle size={26} className="message-circle"/>
+            </Link>
+            <Link to="/" className="header-logo-wrapper">
+                    <img src={logo} alt="Medicacción Logo" className="header-logo" />
+            </Link>
+            <Link to="/logout">
+                <button className="header-icon-logout">
+                <LogOut size={26} className="header-logout" />
+                </button>
+            </Link>
+        </div>
+        <div className="app-header">
+          <button onClick={prevMonth} className="nav-btn">‹</button>
+          <h2>{currentDate.toLocaleDateString("es-ES", { month: "long" })} {year}</h2>
+          <button onClick={nextMonth} className="nav-btn">›</button>
+        </div>
+      </header>
 
       {error && <div style={{ color: 'red', padding: 10 }}>{error}</div>}
       {loading && <div style={{ color: '#666', padding: 10 }}>Cargando...</div>}
