@@ -1,145 +1,263 @@
-/* CSS PROGRESOS Y PRMEIOS 3 */
-
-/* Estas variables facilitan la modificación de los tonos de gris y formas */
-.progress-screen-custom {
-    --bg-color-custom: #f1f1f1;
-    --light-grey-custom: #CCC;
-    --medium-grey-custom: #666;
-    --dark-grey-custom: #fbaf3492;
-    --text-color-custom: #010101;
-    --border-radius-lg-custom: 30px;
-    --border-radius-sm-custom: 8px;
+/* --- VARIABLES DE ESTILO GLOBAL (REPLICADAS DEL CALENDARIO) --- */
+:root {
+    /* Paleta de colores Flo/Headspace */
+    --color-primary-violet: #5e989e;       
+    --color-accent-amber: #f59e0b;         
+    --color-card-green: #f59e0b;           
+    --color-text-gray: #6b7280;            /* Gris para texto secundario */
+    --color-bg-light: #f3f4f6;             /* Gris muy claro para fondo de tarjetas */
+    --color-gray-dark: #1f2937;            /* Gris muy oscuro para texto principal */
+    --color-gray-light: #e5e7eb;           
+    --color-red-danger: #ef4444;           /* Rojo para botones de bloqueo/peligro */
     
-    /* Configuración de la pantalla (fondo, ancho, padding) */
-    background-color: #fff;
-    color: var(--text-color-custom);
-    min-height: calc(100vh - 80px); /* Ajusta la altura si tu navbar mide 80px, por ejemplo */
-    width: 375px; 
-    margin: 0 auto;
-    padding: 20px 20px 0 20px; /* Padding inferior se maneja por el contenido */
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
+    /* Variables estructurales */
+    --border-radius-main: 16px; /* Más grande para el look de bienestar */
+    --border-radius-small: 10px;
+    --shadow-light: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
-/* --- Estilos de Íconos Placeholders (Forma y color de fondo) --- */
-.progress-screen-custom .icon-placeholder {
-    width: 35px;
-    height: 35px;
+/* -----------------------------------
+    CONTENEDOR PRINCIPAL
+-------------------------------------- */
+.progress-screen-custom {
+    /* Aseguramos el tamaño de "tarjeta móvil" (max-width: 450px) y centrado */
+    min-height: 100vh;
+    max-width: 450px; 
+    margin: 0 auto; 
+    background: white; 
+    padding: 20px 15px;
+    box-shadow: var(--shadow-light);
+    font-family: 'Inter', sans-serif;
+    color: var(--color-gray-dark);
+}
+
+/* -----------------------------------
+    ENCABEZADO (ESQUELETO)
+-------------------------------------- */
+.header-custom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    margin-bottom: 25px;
+}
+
+.icon-placeholder {
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 18px; 
-    padding: 2px;
+    font-size: 1.2rem; 
+    background-color: var(--color-bg-light); /* Fondo suave */
+    box-shadow: var(--shadow-light);
+    color: var(--color-gray-dark);
+    cursor: pointer;
+    transition: background-color 0.2s;
 }
 
-/* --- Encabezado --- */
-.progress-screen-custom .header-custom {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 20px;
+.header-icon-right {
+    border-radius: var(--border-radius-small); /* Para el ícono de "documento" */
 }
 
-/* Ajuste específico para el ícono superior derecho (cuadrado/rectángulo) */
-.progress-screen-custom .header-icon-right {
-    border-radius: var(--border-radius-sm-custom); 
+/* -----------------------------------
+    CONTENIDO DE PROGRESO (ESQUELETO)
+-------------------------------------- */
+.progress-container-custom {
+    padding: 0 5px;
 }
 
-/* --- Contenedor Principal (Cuerpo) --- */
-.progress-screen-custom .progress-container-custom {
-    flex-grow: 1; 
+.progress-title-custom {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--color-gray-dark);
+    margin-bottom: 10px; /* Reducido para acercar el subtítulo */
+}
+
+/* --- NUEVO SUBTÍTULO --- */
+.progress-subtitle-custom {
+    font-size: 1rem;
+    color: var(--color-text-gray); /* Gris suave para subtítulos */
+    margin-bottom: 30px; /* Espacio después del subtítulo */
+    line-height: 1.4;
+}
+
+/* Barras de Progreso (Diseño de Esqueleto) */
+.progress-bars-custom {
+    margin-bottom: 40px;
     padding: 0 10px;
 }
 
-.progress-screen-custom .progress-title-custom {
-    font-size: 1.5rem;
-    color: var(--text-color-custom);
-    margin-bottom: 20px;
+.progress-bar-short-custom, 
+.progress-bar-long-custom {
+    height: 6px;
+    background-color: var(--color-gray-light); /* Color base gris claro */
+    border-radius: 3px;
+    margin-bottom: 10px;
 }
 
-/* --- Barras de Progreso --- */
-.progress-screen-custom .progress-bars-custom {
-    margin-bottom: 40px;
-}
-
-.progress-screen-custom .progress-bar-short-custom {
-    height: 8px;
+.progress-bar-short-custom {
     width: 40%;
-    background-color: var(--medium-grey-custom);
-    border-radius: 4px;
-    margin-bottom: 8px;
+    background-color: var(--color-primary-violet); /* Simula el progreso completado */
 }
 
-.progress-screen-custom .progress-bar-long-custom {
-    height: 8px;
+.progress-bar-long-custom {
     width: 65%;
-    background-color: var(--medium-grey-custom);
-    border-radius: 4px;
+    background-color: var(--color-accent-amber); /* Simula otro progreso completado */
 }
 
-/* --- Bloques Principales (Rectángulos de Contenido) --- */
-.progress-screen-custom .main-block-custom {
-    border-radius: var(--border-radius-lg-custom);
-    margin-bottom: 20px;
-    padding: 15px; 
-    display: flex; 
-    align-items: center;
-    justify-content: space-between;
-    box-sizing: border-box;
-    width: 100%;
-}
 
-/* Bloque superior (claro, más corto) */
-.progress-screen-custom .primary-block-custom {
-    background-color: var(--light-grey-custom);
-    height: 60px; 
-}
+/* -----------------------------------
+    TARJETAS DE PREMIOS (AwardCard)
+-------------------------------------- */
 
-/* Simulación del contenido negro dentro del bloque claro */
-.progress-screen-custom .primary-block-content-custom {
-    background-color: var(--bg-color-custom); 
-    width: 70%;
-    height: 100%;
-    border-radius: 20px; 
-    margin-right: 10px;
-}
-
-.progress-screen-custom .block-icons-custom {
+.award-list {
     display: flex;
-    gap: 10px;
-    /* Asegura que los íconos no se "pegue" al borde del bloque */
-    margin-right: -5px; 
+    flex-direction: column;
+    gap: 20px; /* Espacio entre las tarjetas */
 }
 
-/* Ícono de estrella/documento pequeño */
-.progress-screen-custom .star-icon-custom, 
-.progress-screen-custom .doc-icon-small-custom {
-    width: 25px;
-    height: 25px;
-    background-color: var(--medium-grey-custom); 
-    border-radius: 50%;
-    font-size: 12px;
+.award-card {
+    background-color: var(--color-bg-light); 
+    padding: 20px;
+    border-radius: var(--border-radius-main);
+    box-shadow: var(--shadow-medium);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 180px; /* Altura mínima para una buena presencia */
 }
 
-/* El ícono de documento es cuadrado con bordes redondeados */
-.progress-screen-custom .doc-icon-small-custom {
-    border-radius: var(--border-radius-sm-custom); 
+.award-info {
+    margin-bottom: 15px;
 }
 
-/* Bloque inferior (oscuro y grande) */
-.progress-screen-custom .secondary-block-custom {
-    background-color: var(--dark-grey-custom);
-    height: 120px; 
-    justify-content: flex-start;
+.award-icon {
+    background-color: var(--color-card-green); /* Verde Esmeralda para el icono de premio */
+    width: 45px;
+    height: 45px;
+    margin-bottom: 10px;
 }
 
-/* --- Explicación del Premio --- */
-.progress-screen-custom .award-explanation-custom {
-    text-align: center;
+.award-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--color-gray-dark);
+    margin-bottom: 5px;
+}
+
+.award-description {
     font-size: 0.9rem;
-    color: var(--light-grey-custom);
-    margin-top: 40px;
-    padding-bottom: 20px; 
+    color: var(--color-text-gray);
+    line-height: 1.4;
+}
+
+/* Estado de la Tarjeta Bloqueada */
+.award-card.locked {
+    opacity: 0.6;
+    border: 2px solid var(--color-gray-light);
+}
+
+/* Botón de Canje */
+.redeem-btn {
+    padding: 12px;
+    border: none;
+    border-radius: var(--border-radius-small);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+/* Botón Activo (Violeta) */
+.redeem-btn.active {
+    background-color: var(--color-primary-violet);
+    color: white;
+}
+
+.redeem-btn.active:hover {
+    background-color: #7c4dff;
+    transform: translateY(-1px);
+}
+
+/* Botón Desactivado (Gris) */
+.redeem-btn.disabled {
+    background-color: var(--color-gray-light);
+    color: var(--color-text-gray);
+    cursor: not-allowed;
+}
+
+/* -----------------------------------
+    MODAL DE PREMIO
+-------------------------------------- */
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(31, 41, 55, 0.7); /* Gris oscuro semi-transparente */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    margin: 20px;
+    border-radius: var(--border-radius-main);
+    max-width: 350px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.modal-title {
+    font-size: 1.5rem;
+    color: var(--color-card-green); /* Verde Éxito */
+    margin-bottom: 15px;
+}
+
+.modal-message {
+    font-size: 1rem;
+    color: var(--color-gray-dark);
+    margin-bottom: 15px;
+}
+
+.prize-code {
+    background-color: var(--color-bg-light);
+    color: var(--color-primary-violet);
+    font-weight: 700;
+    padding: 10px;
+    border-radius: var(--border-radius-small);
+    margin-bottom: 25px;
+    border: 1px dashed var(--color-primary-violet);
+    letter-spacing: 1px;
+}
+
+.modal-close-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--color-primary-violet);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius-small);
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.modal-close-btn:hover {
+    background-color: #7c4dff;
 }

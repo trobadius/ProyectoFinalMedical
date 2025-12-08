@@ -1,51 +1,131 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Menu, Pill, Star, Stethoscope, ChevronRight } from 'lucide-react';
 import '../styles/Progresos.css';
-// Componente utilitario para simular los íconos con las formas requeridas
+
+// Componente utilitario para simular los íconos (usando emojis para simplicidad visual)
 const IconPlaceholder = ({ type, className }) => (
     <div className={`icon-placeholder ${className}`}>
-        {/* Usamos emojis como marcadores visuales */}
-        {type === 'star' && '⭐️'}
-        {type === 'file' && '📄'}
+        
+        {type === 'star' && '✨'}
     </div>
 );
 
-const ProgressScreenContent = () => {
-    return (
-        // Contenedor principal con una clase única para el CSS
-        <div className="progress-screen-custom">
-            {/* --- 1. Encabezado --- */}
-            <header className="header-custom">
-                {/* Ícono superior izquierdo (engranaje/configuración) */}
-                <IconPlaceholder type="gear" className="header-icon-left" /> 
-                {/* Ícono superior derecho (documento/lista) */}
-                <IconPlaceholder type="doc" className="header-icon-right" />
-            </header>
+// Componente Tarjeta de Premio Reutilizable
+const AwardCard = ({ title, description, code, onClick }) => {
+    // Determinar si el premio está desbloqueado (simulación simple)
+    const isUnlocked = title.includes('Oro') || title.includes('Plata');
 
-            {/* --- 2. Área de Progreso y Contenido --- */}
+    return (
+        <div className={`award-card ${isUnlocked ? 'unlocked' : 'locked'}`}>
+            <div className="award-info">
+                <IconPlaceholder type="star" className="award-icon" />
+                <h3 className="award-title">{title}</h3>
+                <p className="award-description">{description}</p>
+            </div>
+            <button 
+                className={`redeem-btn ${isUnlocked ? 'active' : 'disabled'}`}
+                onClick={() => isUnlocked && onClick(title, code)}
+                disabled={!isUnlocked}
+            >
+                {isUnlocked ? 'Canjear Premio' : 'Bloqueado'}
+            </button>
+        </div>
+    );
+};
+
+// Componente Modal/Popup
+const AwardModal = ({ prizeTitle, prizeCode, onClose }) => {
+    return (
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="modal-content" onClick={e => e.stopPropagation()}>
+                <h2 className="modal-title">¡Premio Desbloqueado!</h2>
+                <p className="modal-message">Aquí está tu código para canjear **{prizeTitle}**:</p>
+                <div className="prize-code">{prizeCode}</div>
+                <button className="modal-close-btn" onClick={onClose}>Cerrar</button>
+            </div>
+        </div>
+    );
+};
+
+
+const ProgressScreenContent = () => {
+    const [modalInfo, setModalInfo] = useState(null); // { title: '', code: '' }
+
+    const awards = [
+        { 
+            id: 1, 
+            title: "Medalla de Oro Mental", 
+            description: "Has completado 30 días seguidos. ¡Recibe un mes de suscripción premium en un servicio de meditación!", 
+            code: "MGM-7A2B-C9D4" 
+        },
+        { 
+            id: 2, 
+            title: "Plata en Consistencia", 
+            description: "5 semanas de seguimiento de hábitos sin falta. Canjea un 10% de descuento en tu próxima compra de vitaminas.", 
+            code: "PICON-F3E4-G5H6" 
+        },
+        { 
+            id: 3, 
+            title: "Bronce de Iniciación", 
+            description: "Tu primera semana con la app. Desbloquea un paquete de stickers digitales exclusivos.", 
+            code: "BRZ-8I9J-K0L1",
+            isLocked: true // Simulación de bloqueo
+        },
+    ];
+
+    const handleRedeem = (title, code) => {
+        setModalInfo({ title: title, code: code });
+    };
+
+    const closeModal = () => {
+        setModalInfo(null);
+    };
+
+    return (
+        // Contenedor principal
+        <div className="progress-screen-custom">
+            
+            
+
             <main className="progress-container-custom">
-                <h1 className="progress-title-custom">Tus progresos</h1>
+                <h1 className="progress-title-custom">Centro de Premios y Progresos</h1>
                 
+                {/* SUBTÍTULO*/}
+                <p className="progress-subtitle-custom">
+                    ¡Cada paso cuenta! Desbloquea recompensas especiales por tu dedicación al bienestar.
+                </p>
+
                 {/* Barras de progreso */}
-                <div className="progress-bars-custom">
+                {/* <div className="progress-bars-custom">
                     <div className="progress-bar-short-custom"></div>
                     <div className="progress-bar-long-custom"></div>
-                </div>
+                </div> */}
 
-                {/* Bloque superior principal (Claro) */}
-                <div className="main-block-custom primary-block-custom">
-                    <div className="primary-block-content-custom"></div> 
-                    <div className="block-icons-custom">
-                        <IconPlaceholder type="star" className="star-icon-custom" /> 
-                        <IconPlaceholder type="file" className="doc-icon-small-custom" />
-                    </div>
+                {/* Lista de Tarjetas de Premios */}
+                <div className="award-list">
+                    {awards.map(award => (
+                        <AwardCard 
+                            key={award.id}
+                            title={award.title}
+                            description={award.description}
+                            code={award.code}
+                            // Usamos handleRedeem, que abrirá el modal
+                            onClick={handleRedeem}
+                        />
+                    ))}
                 </div>
-
-                {/* Bloque inferior principal (Oscuro) */}
-                <div className="main-block-custom secondary-block-custom"></div>
             </main>
+
+            {/* Modal que se muestra si modalInfo tiene contenido */}
+            {modalInfo && (
+                <AwardModal 
+                    prizeTitle={modalInfo.title}
+                    prizeCode={modalInfo.code}
+                    onClose={closeModal}
+                />
+            )}
         </div>
     );
 };
 
 export default ProgressScreenContent;
-
