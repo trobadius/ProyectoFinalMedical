@@ -2,14 +2,15 @@ import React, { useEffect, useRef, useState } from "react";
 import RemedioModal from '../components/RemedioModal';
 import AguaModal from '../components/Agua';
 import HigadoModal from '../components/Higado';
-import { useNavigate } from "react-router-dom";
-import { Menu, Pill, Star, Stethoscope, ChevronRight } from 'lucide-react';
+import { useNavigate, Link } from "react-router-dom";
+import { Menu, Pill, Star, Stethoscope, ChevronRight, MessageCircle, LogOut } from 'lucide-react';
 import '../App.css'
 import '../styles/Home.css';
 import '../styles/Premium.css';
 import remedio from '../assets/remedio.png';
 import higado2 from '../assets/higado_2.png';
 import agua from '../assets/agua.png';
+import logo from "../assets/logo.svg";
 
 // Función para obtener los datos del mes
 const getMonthData = () => {
@@ -104,16 +105,40 @@ export default function Home() {
     }, [days]);
 
     return (
-        <div className="home-app">
+        <>
+        <div className="waves"></div>
+        <div className="main-app">
             {/* HEADER */}
+            <header className="main-header">
+                <div className="header-components">
+                    <Link to="/Chatbot" className="header-icon-chat">
+                        <MessageCircle size={26} className="message-circle"/>
+                    </Link>
+                    <Link to="/" className="header-logo-wrapper">
+                            <img src={logo} alt="Medicacción Logo" className="header-logo" />
+                    </Link>
+                    <Link to="/logout">
+                        <button className="header-icon-logout">
+                        <LogOut size={26} className="header-logout" />
+                        </button>
+                    </Link>
+                </div>
+                <div className="home-header">
+                    <div className="header-left">
+                        <p className="date">{monthName}</p>
+                    </div>
+                    {/* Espaciador para centrar el mes */}
+                    <div style={{ width: 24 }}></div>
+                </div>
+            </header>
+            {/*}-Hao
             <header className="home-header">
-                {/* <Menu size={24} color="#6b7280" /> */}
                 <div className="header-left">
                     <p className="date">{monthName}</p>
                 </div>
-                {/* Espaciador para centrar el mes */}
                 <div style={{ width: 24 }}></div>
             </header>
+            */}
 
             {/* CALENDARIO HORIZONTAL */}
             <div className="calendar-scroll" ref={calendarRef}>
@@ -265,6 +290,7 @@ export default function Home() {
                 </HigadoModal>
             )}
         </div>
+        </>
     );
 }
 

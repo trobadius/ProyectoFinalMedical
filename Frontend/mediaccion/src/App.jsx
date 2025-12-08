@@ -1,5 +1,3 @@
-import React from 'react';
-import './styles/App.css';
 import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home.jsx';
 import Calendario from './pages/Calendario.jsx';
@@ -11,13 +9,13 @@ import NotFound from './pages/NotFound.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import Register from './pages/Register.jsx';
 import NavbarOutlet from './components/NavbarOutlet.jsx';
-import TesseractOCR from './components/TesseractOCR.jsx';
-import CameraOCR from './components/CameraOCR.jsx';
+import TesseractOCR from './pages/TesseractOCR.jsx';
 import Chatbot from './pages/Chatbot.jsx';
 
 
 export default function App() {
   return (
+    /*
     <div className="app-root min-h-screen"
       style={{
 
@@ -27,13 +25,14 @@ export default function App() {
         minHeight: '100vh'
       }}
     >
-      <main className="w-full max-w-screen-lg mx-auto px-0 py-6">
+    */
+   <div>
+      <main>
         <Routes>
           <Route element={<ProtectedRoute />} >
             <Route element={<NavbarOutlet />} >
               <Route path="/" element={<Home />} />
               <Route path="/calendario" element={<Calendario />} />
-              <Route path="/cameraOCR" element={<CameraOCR />} />
               <Route path="/tesseractOCR" element={<TesseractOCR />} />
               <Route path="/perfil" element={<Perfil />} />
               <Route path="/progresos" element={<Progresos />} />
