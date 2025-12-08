@@ -1,10 +1,14 @@
-import React, { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import { createWorker } from "tesseract.js";
 import QR from "../assets/QR.png"; 
-import {chatCerrado} from "./OpenAiApi";
-import {cleanOcrText} from "./LimpiarTexto.jsx";
+import { chatCerrado } from "../components/OpenAiApi";
+import { cleanOcrText } from "../components/LimpiarTexto.jsx";
 import api from "../api";
 import { useNavigate, Link } from "react-router-dom";
+import '../App.css';
+import '../styles/tesseract.css'
+import { MessageCircle, LogOut } from 'lucide-react';
+import logo from "../assets/logo.svg";
   
 export default function TesseractOCR() {
   const videoRef = useRef(null);
@@ -328,11 +332,26 @@ export default function TesseractOCR() {
   // RENDER
   // ============================================================
   return (
-    <div className="camera-ocr-container">
+    <div className="main-app">
+      <header className="main-header">
+        <div className="header-components">
+            <Link to="/Chatbot" className="header-icon-chat">
+                <MessageCircle size={26} className="message-circle"/>
+            </Link>
+            <Link to="/" className="header-logo-wrapper">
+                    <img src={logo} alt="Medicacción Logo" className="header-logo" />
+            </Link>
+            <Link to="/logout">
+                <button className="header-icon-logout">
+                <LogOut size={26} className="header-logout" />
+                </button>
+            </Link>
+        </div>
+      </header>
       {/* Si NO estamos mostrando el modal del chat → mostramos todo lo demás */}
       {!(showResultChat && chatText) && (
         <>
-          <h2>Escanear</h2>
+          <h2 className="tesseract-titulo">Escanear</h2>
             
           <div className="camera-ocr-video-container">
             <video ref={videoRef} className="camera-ocr-video" />

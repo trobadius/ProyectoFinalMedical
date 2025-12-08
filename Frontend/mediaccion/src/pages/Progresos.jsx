@@ -1,5 +1,8 @@
-import React from 'react';
 import '../styles/Progresos.css';
+import '../App.css';
+import { MessageCircle, LogOut } from 'lucide-react';
+import logo from "../assets/logo.svg";
+import { Link } from "react-router-dom";
 // Componente utilitario para simular los íconos con las formas requeridas
 const IconPlaceholder = ({ type, className }) => (
     <div className={`icon-placeholder ${className}`}>
@@ -11,7 +14,23 @@ const IconPlaceholder = ({ type, className }) => (
 
 const ProgressScreenContent = () => {
     return (
-        // Contenedor principal con una clase única para el CSS
+    <div className="main-app">
+      <header className="main-header">
+        <div className="header-components">
+            <Link to="/Chatbot" className="header-icon-chat">
+                <MessageCircle size={26} className="message-circle"/>
+            </Link>
+            <Link to="/" className="header-logo-wrapper">
+                    <img src={logo} alt="Medicacción Logo" className="header-logo" />
+            </Link>
+            <Link to="/logout">
+                <button className="header-icon-logout">
+                <LogOut size={26} className="header-logout" />
+                </button>
+            </Link>
+        </div>
+      </header>
+        {/*// Contenedor principal con una clase única para el CSS*/}
         <div className="progress-screen-custom">
             {/* --- 1. Encabezado --- */}
             <header className="header-custom">
@@ -43,6 +62,7 @@ const ProgressScreenContent = () => {
                 {/* Bloque inferior principal (Oscuro) */}
                 <div className="main-block-custom secondary-block-custom"></div>
             </main>
+        </div>
         </div>
     );
 };
