@@ -5,11 +5,16 @@ import api from '../api';
 import '../styles/Calendario.css';
 import '../calendario.css';
 import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { MedContext } from "../context/MedContext.jsx";
+import { formatearFecha } from "../utils/formatearFecha.js";
 
 const Calendario = () => {
+  const { medicamentos, setMedicamentos } = useContext(MedContext);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [medicamentos, setMedicamentos] = useState({});
+
+
   const [nuevoMed, setNuevoMed] = useState({
     nombre: "",
     intervalo: 8,
@@ -236,9 +241,7 @@ const Calendario = () => {
 
       {selectedDate && (
         <div className="med-section">
-          <p>Añadir medicamento para: <strong>{selectedDate.toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" })}</strong></p>
-
-
+          <p>Añadir medicamento para: <br></br><strong>{selectedDate.toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" })}</strong></p>
           <div className="input-group">
             <input
               type="text"
@@ -247,7 +250,6 @@ const Calendario = () => {
               onChange={e => setNuevoMed(p => ({ ...p, nombre: e.target.value }))}
               disabled={loading}
             />
-
 
             <p>Cada (h)</p>
 

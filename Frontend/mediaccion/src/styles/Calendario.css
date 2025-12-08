@@ -227,7 +227,19 @@
   color: #fff;
 }
 
+/* .hoy-borde {
+  border: 3px solid orange;
+  border-radius: 12px;
+} */
+
+.day.today-highlight,
 .hoy-borde {
   border: 3px solid orange;
   border-radius: 12px;
+  color: #000 !important;
+  /* negro para el número */
+  font-weight: bold;
+  /* opcional: destacar más */
+  background-color: #f9fcfc;
+  /* opcional: fondo claro */
 }
