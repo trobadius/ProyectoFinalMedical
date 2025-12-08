@@ -1,7 +1,11 @@
 
 import React, { useState, useRef, useEffect } from "react";
-import StickyButton from "../components/Stickybutton.jsx";
+import StickyButton from "../components/StickyButton.jsx";
 import { FaUmbraco } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import '../App.css';
+import { MessageCircle, LogOut } from 'lucide-react';
+import logo from "../assets/logo.svg";
 
 export default function Chatbot() {
   const [messages, setMessages] = useState([
@@ -228,6 +232,21 @@ export default function Chatbot() {
 
   return (
     <div style={styles.container} >
+      <header className="main-header">
+        <div className="header-components">
+            <Link to="/Chatbot" className="header-icon-chat">
+                <MessageCircle size={26} className="message-circle"/>
+            </Link>
+            <Link to="/" className="header-logo-wrapper">
+                    <img src={logo} alt="Medicacción Logo" className="header-logo" />
+            </Link>
+            <Link to="/logout">
+                <button className="header-icon-logout">
+                <LogOut size={26} className="header-logout" />
+                </button>
+            </Link>
+        </div>
+      </header>
       <h2>Chatbot de Alimentación y Síntomas</h2>
       
 

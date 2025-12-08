@@ -4,6 +4,11 @@ import { validarCamposRepetidos} from "../utils/Validaciones";
 import { FaUserCircle, FaPencilAlt } from 'react-icons/fa';
 import '../styles/Perfil.css';
 
+import { Link } from "react-router-dom";
+import '../App.css';
+import { MessageCircle, LogOut } from 'lucide-react';
+import logo from "../assets/logo.svg";
+
 export default function Perfil() {
   const [loading, setLoading] = useState(false);
   const [userProfile, setGetUserData] = useState({
@@ -196,7 +201,22 @@ export default function Perfil() {
 };
 
   return (
-    <div className="perfil-container">
+    <div className="main-app">
+      <header className="main-header">
+        <div className="header-components">
+            <Link to="/Chatbot" className="header-icon-chat">
+                <MessageCircle size={26} className="message-circle"/>
+            </Link>
+            <Link to="/" className="header-logo-wrapper">
+                    <img src={logo} alt="Medicacción Logo" className="header-logo" />
+            </Link>
+            <Link to="/logout">
+                <button className="header-icon-logout">
+                <LogOut size={26} className="header-logout" />
+                </button>
+            </Link>
+        </div>
+      </header>
       <div className="perfil-card">
         <div className="perfil-header">
           <FaUserCircle className="perfil-icon" />
