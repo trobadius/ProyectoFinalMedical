@@ -105,6 +105,8 @@ export default function Home() {
     }, [days]);
 
     return (
+        <>
+        <div className="waves"></div>
         <div className="main-app">
             {/* HEADER */}
             <header className="main-header">
@@ -288,6 +290,7 @@ export default function Home() {
                 </HigadoModal>
             )}
         </div>
+        </>
     );
 }
 
