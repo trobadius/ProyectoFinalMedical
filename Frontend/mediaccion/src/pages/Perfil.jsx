@@ -3,7 +3,6 @@ import api from "../api";
 import { validarCamposRepetidos} from "../utils/Validaciones";
 import { FaUserCircle, FaPencilAlt } from 'react-icons/fa';
 import '../styles/Perfil.css';
-
 import { Link } from "react-router-dom";
 import '../App.css';
 import { MessageCircle, LogOut } from 'lucide-react';
@@ -201,6 +200,8 @@ export default function Perfil() {
 };
 
   return (
+    <>
+    <div className="waves"></div>
     <div className="main-app">
       <header className="main-header">
         <div className="header-components">
@@ -235,8 +236,6 @@ export default function Perfil() {
               <p><strong>Genero:</strong> {userProfile.genero || '—'}</p>
               <p><strong>Pais:</strong> {userProfile.pais || '—'}</p>
               <p><strong>Telefono:</strong> {userProfile.telefono || '—'}</p>
-
-
               {userProfile.telefono && (
                 <button 
                   className="whatsapp-test-btn" 
@@ -257,12 +256,6 @@ export default function Perfil() {
                 </button>
               )}
 
-
-
-
-
-
-
               <button className="edit-btn" onClick={() => setEditing(true)}>
                 <FaPencilAlt /> Editar perfil
               </button>
@@ -270,7 +263,7 @@ export default function Perfil() {
           ) : (
             <>
               <p><strong>Usuario:</strong> {userProfile.username || '—'}</p>
-
+              <p><strong>Nombre:</strong></p>
               <input
                 type="text"
                 name="first_name"
@@ -285,6 +278,7 @@ export default function Perfil() {
                 </label>
               )}
 
+              <p><strong>Apellidos:</strong></p>
               <input
                 type="text"
                 name="last_name"
@@ -298,7 +292,7 @@ export default function Perfil() {
                   {errors.last_name}
                 </label>
               )}
-
+              <p><strong>Email:</strong> {userProfile.email || '—'}</p>
               <input
                 type="date"
                 name="date_birth"
@@ -313,8 +307,7 @@ export default function Perfil() {
               )}
 
               <p><strong>Roles:</strong> {userProfile.roles || '—'}</p>
-
-              <label><strong>Genero:</strong></label>
+              <p><strong>Genero:</strong></p>
               <select 
                 className="genero" 
                 name="genero" 
@@ -327,7 +320,7 @@ export default function Perfil() {
                   <option value="mujer">Mujer</option>
                   <option value="no_decir">Prefiero no decirlo</option>
               </select>
-
+              <p><strong>Email:</strong></p>
               <input
                 type="email"
                 name="email"
@@ -341,7 +334,7 @@ export default function Perfil() {
                   {errors.email}
                 </label>
               )}
-
+              <p><strong>Telefono:</strong></p>
               <div className="phone-combo" id="phone">
                 <div className="select-wrap" aria-hidden="false">
                   <select 
@@ -380,5 +373,6 @@ export default function Perfil() {
         </div>
       </div>
     </div>
+    </>
   );
 }

@@ -200,14 +200,9 @@ const Calendario = () => {
 
 
   return (
+    <>
+    <div className="waves"></div>
     <div className="main-app">
-      {/*-Hao
-      <header className="app-header">
-        <button onClick={prevMonth} className="nav-btn">‹</button>
-        <h2>{currentDate.toLocaleDateString("es-ES", { month: "long" })} {year}</h2>
-        <button onClick={nextMonth} className="nav-btn">›</button>
-      </header>
-      */}
       <header className="main-header">
         <div className="header-components">
             <Link to="/Chatbot" className="header-icon-chat">
@@ -382,6 +377,7 @@ const Calendario = () => {
       )
       }
     </div >
+    </>
   );
 };
 

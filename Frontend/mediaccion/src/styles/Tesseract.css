@@ -1,6 +1,6 @@
 /* CAMARA CSS */
 /*Se tiene que quitar no sirve*/
-.camera-ocr-container{
+:root{
     --bg-color-custom: #f1f1f1;
     --light-grey-custom: #CCC;
     --medium-grey-custom: #666;
@@ -8,16 +8,6 @@
     --text-color-custom: #010101;
     --border-radius-lg-custom: 30px;
     --border-radius-sm-custom: 8px;
-  
-    background-color: #fff;
-    color: #000;
-    min-height: calc(100vh - 80px); /* Ajusta la altura si tu navbar mide 80px, por ejemplo */
-    width: 375px; 
-    margin: 0 auto;
-    padding: 20px 20px 0 20px; /* Padding inferior se maneja por el contenido */
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
 }
 
 .tesseract-titulo{
@@ -43,16 +33,6 @@
   border-radius: var(--border-radius-sm-custom);
 }
 
-.camera-ocr-button {
-  margin: 10px;
-  padding: 10px 15px;
-  border-radius: var(--border-radius-sm-custom);
-  border: none;
-  background-color: var(--dark-grey-custom);
-  color: white;
-  cursor: pointer;
-}
-
 .camera-ocr-result {
   white-space: pre-wrap;
   padding: 10px;
@@ -64,14 +44,40 @@
   display: none;
 }
 
+/*div botones*/
+.modal-buttons{
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+}
 
+.camera-ocr-button-activate {
+  margin-top: 3rem;
+  width: 10vw;
+  padding: 10px 15px;
+  border-radius: 1rem;
+  border: none;
+  background-color: var(--dark-grey-custom);
+  color: white;
+  cursor: pointer;
+}
 
-/* prueba */
+.camera-ocr-button-activate:hover {
+  background-color: var(--medium-grey-custom);
+}
 
-.camera-ocr-video-container {
-  position: relative; /* Muy importante */
-  width: 100%;
-  max-width: 600px;
+.camera-ocr-button {
+  margin: 10px;
+  padding: 10px 15px;
+  border-radius: var(--border-radius-sm-custom);
+  border: none;
+  background-color: var(--dark-grey-custom);
+  color: white;
+  cursor: pointer;
+}
+
+.camera-ocr-button:hover {
+  background-color: var(--medium-grey-custom);
 }
 
 .overlay-img {
@@ -84,6 +90,7 @@
   justify-content: center;
   align-items: center;
   pointer-events: none; /* Para que no bloquee clics */
+  margin-top: 30px;
 }
 
 .overlay-img img {
