@@ -1,4 +1,4 @@
-.calendar-scroll {
+/* .calendar-scroll {
     display: flex;
     overflow-x: auto;
     gap: 10px;
@@ -6,18 +6,23 @@
     scroll-snap-type: x mandatory;
     white-space: nowrap;
     /* Ocultar scrollbar */
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+-ms-overflow-style: none;
+/* IE and Edge */
+scrollbar-width: none;
+/* Firefox */
+
 }
 
 .calendar-scroll::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
+    display: none;
+    /* Chrome, Safari, Opera */
 }
 
 .calendar-day {
     /* CLAVE: Evita que el día se encoja y le da un ancho fijo */
-    flex: 0 0 55px; 
-    height: 70px; /* Alto fijo para una mejor estética */
+    flex: 0 0 55px;
+    height: 70px;
+    /* Alto fijo para una mejor estética */
     border-radius: 14px;
     background: #ffffff;
     box-shadow: var(--shadow-light);
@@ -26,7 +31,8 @@
     align-items: center;
     justify-content: center;
     padding: 5px;
-    scroll-snap-align: start; /* Para que el scroll se detenga limpiamente */
+    scroll-snap-align: start;
+    /* Para que el scroll se detenga limpiamente */
     transition: all 0.2s ease;
     border: 1px solid #e0e0e0;
 }
@@ -102,13 +108,15 @@
    SECCIONES DE SCROLL DE TARJETAS (Medicamentos y Sugerencias)
 -------------------------------------- */
 
-.daily-tips > h3, .cycle-section > h4 {
+.daily-tips>h3,
+.cycle-section>h4 {
     color: #444;
     font-weight: 600;
     margin-bottom: 10px;
 }
 
-.tips-scroll, .cycle-scroll {
+.tips-scroll,
+.cycle-scroll {
     display: flex;
     gap: 15px;
     overflow-x: auto;
@@ -118,7 +126,8 @@
     scrollbar-width: none;
 }
 
-.tips-scroll::-webkit-scrollbar, .cycle-scroll::-webkit-scrollbar {
+.tips-scroll::-webkit-scrollbar,
+.cycle-scroll::-webkit-scrollbar {
     display: none;
 }
 
@@ -129,7 +138,8 @@
     border-radius: 16px;
     padding: 15px;
     box-shadow: var(--shadow-light);
-    border-left: 5px solid transparent; /* Para el color de acento */
+    border-left: 5px solid transparent;
+    /* Para el color de acento */
     transition: transform 0.2s;
 }
 
@@ -168,17 +178,31 @@
 }
 
 /* Colores de acento para sugerencias */
-.placeholder-green { background: #d0f0c0; color: #4CAF50; }
-.placeholder-blue { background: #c0dff0; color: #2196F3; }
-.placeholder-purple { background: #e0c0f0; color: #9C27B0; }
-.placeholder-premium { 
-    background: rgb(161, 42, 9); 
-    color: #ffffff; 
+.placeholder-green {
+    background: #d0f0c0;
+    color: #4CAF50;
+}
+
+.placeholder-blue {
+    background: #c0dff0;
+    color: #2196F3;
+}
+
+.placeholder-purple {
+    background: #e0c0f0;
+    color: #9C27B0;
+}
+
+.placeholder-premium {
+    background: rgb(161, 42, 9);
+    color: #ffffff;
     font-size: 0.8rem;
     padding: 5px;
 }
+
 .cycle-card .placeholder-premium {
-    height: 100px; /* Más alto para el premium */
+    height: 100px;
+    /* Más alto para el premium */
     font-size: 1.2rem;
 }
 
@@ -252,7 +276,7 @@
     height: 70px;
     border-radius: 14px;
     background: #ffffff;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -331,3 +355,5 @@
     margin-bottom: 5px;
     font-size: 0.9rem;
 }
+
+*/
