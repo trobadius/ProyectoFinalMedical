@@ -26,7 +26,7 @@ export default function App() {
       }}
     >
     */
-   <div>
+    <div>
       <main>
         <Routes>
           <Route element={<ProtectedRoute />} >
