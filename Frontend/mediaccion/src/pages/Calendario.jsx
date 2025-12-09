@@ -224,6 +224,8 @@ const Calendario = () => {
   const medsHoy = selectedKey ? medicamentos[selectedKey] || [] : [];
 
   return (
+    <>
+    <div className="waves"></div>
     <div className="main-app">
       <header className="main-header">
         <div className="header-components">
@@ -372,9 +374,11 @@ const Calendario = () => {
             })}
           </ul>
         </div>
-      )}
+      )
+      }
       <ToastContainer />
-    </div>
-  )
+    </div >
+    </>
+  );
 };
 export default Calendario;

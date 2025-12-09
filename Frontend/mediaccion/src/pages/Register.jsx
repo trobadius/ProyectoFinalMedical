@@ -12,6 +12,7 @@ import {
   validarTelefonoNumero,
 } from "../utils/Validaciones";
 import '../styles/Register.css';
+import '../App.css';
 
 export default function Registration() {
   const [formData, setFormData] = useState({
@@ -149,6 +150,8 @@ export default function Registration() {
   };
 
   return (
+    <>
+    <div className="waves"></div>
     <div className="register-container">
       <div className="register-card">
         <h2 className="register-title">Crear cuenta</h2>
@@ -290,6 +293,7 @@ export default function Registration() {
         </footer>
       </div>
     </div>
+    </>
   );
 }
 

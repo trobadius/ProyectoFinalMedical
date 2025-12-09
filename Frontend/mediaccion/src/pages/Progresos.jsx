@@ -85,6 +85,8 @@ const ProgressScreenContent = () => {
     };
 
     return (
+    <>
+    <div className="waves"></div>
     <div className="main-app">
       <header className="main-header">
         <div className="header-components">
@@ -145,6 +147,7 @@ const ProgressScreenContent = () => {
             )}
         </div>
     </div>
+    </>
     );
 };
 
