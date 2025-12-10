@@ -341,7 +341,20 @@ const Calendario = () => {
 
                     <div style={{ marginTop: 5, display: "flex", gap: 5 }}>
                       {tomadas < totalTomas ? (
-                        <button onClick={() => registrarToma(med)}>Tomar dosis</button>
+                        <button
+                          onClick={() => registrarToma(med)}
+                          style={{
+                            backgroundColor: "#659FA6", // azul
+                            color: "#ffffff",           // texto blanco
+                            border: "none",
+                            borderRadius: "6px",
+                            padding: "6px 12px",
+                            fontWeight: "bold",
+                            cursor: "pointer",
+                          }}
+                        >
+                          Tomar dosis
+                        </button>
                       ) : med.desbloquearPremio ? (
                         <Link
                           to="/Progresos"
@@ -363,7 +376,7 @@ const Calendario = () => {
                       )}
                       <button
                         onClick={() => eliminarMedicamento(med)}
-                        style={{ backgroundColor: "#ef4444", color: "#fff" }}
+                        style={{ backgroundColor: "#ef4444", color: "#000000ff" }}
                       >
                         Eliminar
                       </button>
