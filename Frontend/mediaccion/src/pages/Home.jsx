@@ -334,7 +334,7 @@ import RemedioModal from '../components/RemedioModal';
 import AguaModal from '../components/Agua';
 import HigadoModal from '../components/Higado';
 import { useNavigate, Link } from "react-router-dom";
-import { Pill, Star, Stethoscope, MessageCircle, LogOut } from 'lucide-react';
+import { Pill, Star, Stethoscope, MessageCircle, LogOut, Camera } from 'lucide-react';
 import '../App.css'
 import '../styles/Home.css';
 import '../styles/Premium.css';
@@ -559,10 +559,30 @@ export default function Home() {
                             fontWeight: "bold",
                             border: "none",
                             cursor: "pointer",
+                            marginBottom: "10px",
                         }}
                     >
                         <Pill size={20} />
                         <span>Registrar nuevo medicamento</span>
+                    </button>
+                    <button
+                        className="btn-register"
+                        onClick={() => navigate("/TesseractOCR")}
+                        style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "8px",
+                            padding: "8px 16px",
+                            backgroundColor: "#659FA6",
+                            color: "#000",
+                            borderRadius: "8px",
+                            fontWeight: "bold",
+                            border: "none",
+                            cursor: "pointer",
+                        }}
+                    >
+                        <Camera size={20} />
+                        <span>Escanear nuevo medicamento</span>
                     </button>
                 </section>
 
