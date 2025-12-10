@@ -6,12 +6,7 @@ import { MessageCircle, LogOut } from 'lucide-react';
 import logo from "../assets/logo.svg";
 import { Link } from "react-router-dom";
 // Componente utilitario para simular los íconos con las formas requeridas
-const IconPlaceholder = ({ type, className }) => (
-    <div className={`icon-placeholder ${className}`}>
-        
-        {type === 'star' && '✨'}
-    </div>
-);
+
 
 // Componente Tarjeta de Premio Reutilizable
 const AwardCard = ({ title, description, code, onClick }) => {
@@ -21,7 +16,7 @@ const AwardCard = ({ title, description, code, onClick }) => {
     return (
         <div className={`award-card ${isUnlocked ? 'unlocked' : 'locked'}`}>
             <div className="award-info">
-                <IconPlaceholder type="star" className="award-icon" />
+                <Star size={25} color="#f59e0b" fill="#f59e0b" className="award-icon" />
                 <h3 className="award-title">{title}</h3>
                 <p className="award-description">{description}</p>
             </div>
@@ -53,6 +48,8 @@ const AwardModal = ({ prizeTitle, prizeCode, onClose }) => {
 
 const ProgressScreenContent = () => {
     const [modalInfo, setModalInfo] = useState(null); // { title: '', code: '' }
+    const [vista, setVista] = useState('premios'); // 'premios' | 'progresos'
+    const [tipoVista, setTipoVista] = useState(false); // 'premios' | 'progresos'
 
     const awards = [
         { 
@@ -84,6 +81,36 @@ const ProgressScreenContent = () => {
         setModalInfo(null);
     };
 
+    // Vista de estadísticas / progresos (simple placeholder con barras)
+    const ProgressView = () => (
+        <div className="progress-view">
+            <h2 className="progress-subtitle-custom">Tus Estadísticas</h2>
+            <p>Resumen de hábitos y cumplimiento de medicación.</p>
+
+            <div style={{marginTop: 16}}>
+                <div style={{marginBottom: 12}}>
+                    <div style={{display:'flex', justifyContent:'space-between'}}>
+                        <span>Consistencia</span>
+                        <span>70%</span>
+                    </div>
+                    <div style={{background:'#e5e7eb', borderRadius:8, overflow:'hidden', height:12}}>
+                        <div style={{width:'70%', height:'100%', background:'#10b981'}} />
+                    </div>
+                </div>
+
+                <div style={{marginBottom: 12}}>
+                    <div style={{display:'flex', justifyContent:'space-between'}}>
+                        <span>Recordatorios cumplidos</span>
+                        <span>45/60</span>
+                    </div>
+                    <div style={{background:'#e5e7eb', borderRadius:8, overflow:'hidden', height:12}}>
+                        <div style={{width:'75%', height:'100%', background:'#3b82f6'}} />
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
     return (
     <>
     <div className="waves"></div>
@@ -105,36 +132,61 @@ const ProgressScreenContent = () => {
       </header>
         {/*// Contenedor principal con una clase única para el CSS*/}
         <div className="progress-screen-custom">
-            
-            
+
+            {/* Switch de vistas: Premios / Progresos */}
+            <div className="progress-switch" style={{textAlign: 'center', gap: 8, marginBottom: 16}}>
+                <button
+                    className={`tab-btn ${vista === 'premios' ? 'active' : ''}`}
+                    onClick={() => {setVista('premios'), setTipoVista(false)}}
+                    aria-pressed={vista === 'premios'}
+                >
+                    Premios
+                </button>
+                <button
+                    className={`tab-btn ${vista === 'progresos' ? 'active' : ''}`}
+                    onClick={() => {setVista('progresos'), setTipoVista(true)}}
+                    aria-pressed={vista === 'progresos'}
+                >
+                    Progresos
+                </button>
+            </div>
 
             <main className="progress-container-custom">
-                <h1 className="progress-title-custom">Centro de Premios y Progresos</h1>
+                {!tipoVista ? (
+                    <>
+                    <h1 className="progress-title-custom">Centro de Premios y Progresos</h1>
+                    {/* SUBTÍTULO*/}
+                    <p className="progress-subtitle-custom">
+                        ¡Cada paso cuenta! Desbloquea recompensas especiales por tu dedicación al bienestar.
+                    </p>
+                    </>
+                ) : (
+                    <>
+                    <h1 className="progress-title-custom">Centro de Progresos</h1>
+                    {/* SUBTÍTULO*/}
+                    <p className="progress-subtitle-custom">
+                        Tu evolución al día: objetivos, mejoras y hábitos saludables en un solo vistazo.
+                    </p>
+                    </>
+                )}
+
                 
-                {/* SUBTÍTULO*/}
-                <p className="progress-subtitle-custom">
-                    ¡Cada paso cuenta! Desbloquea recompensas especiales por tu dedicación al bienestar.
-                </p>
-
-                {/* Barras de progreso */}
-                {/* <div className="progress-bars-custom">
-                    <div className="progress-bar-short-custom"></div>
-                    <div className="progress-bar-long-custom"></div>
-                </div> */}
-
-                {/* Lista de Tarjetas de Premios */}
-                <div className="award-list">
-                    {awards.map(award => (
-                        <AwardCard 
-                            key={award.id}
-                            title={award.title}
-                            description={award.description}
-                            code={award.code}
-                            // Usamos handleRedeem, que abrirá el modal
-                            onClick={handleRedeem}
-                        />
-                    ))}
-                </div>
+                {vista === 'premios' ? (
+                    <div className="award-list">
+                        {awards.map(award => (
+                            <AwardCard 
+                                key={award.id}
+                                title={award.title}
+                                description={award.description}
+                                code={award.code}
+                                // Usamos handleRedeem, que abrirá el modal
+                                onClick={handleRedeem}
+                            />
+                        ))}
+                    </div>
+                ) : (
+                    <ProgressView />
+                )}
             </main>
 
             {/* Modal que se muestra si modalInfo tiene contenido */}

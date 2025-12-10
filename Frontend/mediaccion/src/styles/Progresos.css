@@ -1,6 +1,6 @@
 /* --- VARIABLES DE ESTILO GLOBAL (REPLICADAS DEL CALENDARIO) --- */
 :root {
-    /* Paleta de colores Flo/Headspace */
+    
     --color-primary-violet: #5e989e;       
     --color-accent-amber: #f59e0b;         
     --color-card-green: #f59e0b;           
@@ -17,30 +17,32 @@
     --shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
-/* -----------------------------------
-    CONTENEDOR PRINCIPAL
--------------------------------------- */
+/* CONTENEDOR PRINCIPAL*/
 .progress-screen-custom {
-    /* Aseguramos el tamaño de "tarjeta móvil" (max-width: 450px) y centrado */
+    /* Aseguramos el tamaño de "tarjeta móvil y centrado */
     min-height: 100vh;
     max-width: 450px; 
     margin: 0 auto; 
     background: white; 
+    font-size: 1.25rem;
+    border-radius: 25px;
+    align-items: center;
+    margin-top: 1rem;
+    /* Alma-importante este tamaño en todos 1.25rem */
     padding: 20px 15px;
     box-shadow: var(--shadow-light);
     font-family: 'Inter', sans-serif;
-    color: var(--color-gray-dark);
+    color: #374151;
+    
 }
 
-/* -----------------------------------
-    ENCABEZADO (ESQUELETO)
--------------------------------------- */
+/* ENCABEZADO (ESQUELETO)*/
 .header-custom {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 10px 0;
-    margin-bottom: 25px;
+    margin-bottom: 1rem;
 }
 
 .icon-placeholder {
@@ -50,41 +52,39 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 1.2rem; 
+    font-size: 1.25rem; 
     background-color: var(--color-bg-light); /* Fondo suave */
     box-shadow: var(--shadow-light);
-    color: var(--color-gray-dark);
+    color: #374151;
     cursor: pointer;
-    transition: background-color 0.2s;
 }
 
 .header-icon-right {
     border-radius: var(--border-radius-small); /* Para el ícono de "documento" */
 }
 
-/* -----------------------------------
-    CONTENIDO DE PROGRESO (ESQUELETO)
--------------------------------------- */
+/* CONTENIDO DE PROGRESO */
 .progress-container-custom {
     padding: 0 5px;
+    font-size: 1.25rem;
 }
 
 .progress-title-custom {
-    font-size: 1.8rem;
+    font-size: 1.25rem;
     font-weight: 800;
-    color: var(--color-gray-dark);
+    color: #374151;
     margin-bottom: 10px; /* Reducido para acercar el subtítulo */
 }
 
-/* --- NUEVO SUBTÍTULO --- */
+/* SUBTÍTULO --- */
 .progress-subtitle-custom {
     font-size: 1rem;
-    color: var(--color-text-gray); /* Gris suave para subtítulos */
+    color: var(--color-text-gray);
     margin-bottom: 30px; /* Espacio después del subtítulo */
     line-height: 1.4;
 }
 
-/* Barras de Progreso (Diseño de Esqueleto) */
+/* Barras de Progreso*/
 .progress-bars-custom {
     margin-bottom: 40px;
     padding: 0 10px;
@@ -109,9 +109,7 @@
 }
 
 
-/* -----------------------------------
-    TARJETAS DE PREMIOS (AwardCard)
--------------------------------------- */
+/* TARJETAS DE PREMIOS (AwardCard)*/
 
 .award-list {
     display: flex;
@@ -135,9 +133,6 @@
 }
 
 .award-icon {
-    background-color: var(--color-card-green); /* Verde Esmeralda para el icono de premio */
-    width: 45px;
-    height: 45px;
     margin-bottom: 10px;
 }
 
@@ -172,7 +167,7 @@
     font-size: 0.9rem;
 }
 
-/* Botón Activo (Violeta) */
+/* Botón Activo*/
 .redeem-btn.active {
     background-color: var(--color-primary-violet);
     color: white;
@@ -190,9 +185,7 @@
     cursor: not-allowed;
 }
 
-/* -----------------------------------
-    MODAL DE PREMIO
--------------------------------------- */
+/* MODAL DE PREMIO*/
 
 .modal-overlay {
     position: fixed;
@@ -200,7 +193,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(31, 41, 55, 0.7); /* Gris oscuro semi-transparente */
+    background: rgba(31, 41, 55, 0.7);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -225,7 +218,7 @@
 
 .modal-title {
     font-size: 1.5rem;
-    color: var(--color-card-green); /* Verde Éxito */
+    color: var(--color-card-green);
     margin-bottom: 15px;
 }
 
@@ -260,4 +253,43 @@
 
 .modal-close-btn:hover {
     background-color: #7c4dff;
+}
+
+/* ===== SWITCH DE VISTAS (Premios / Progresos) ===== */
+.progress-switch {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* centra los botones horizontalmente */
+}
+
+.tab-btn {
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--color-gray-light);
+    background: transparent;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.15s ease, border-color 0.2s ease;
+    font-weight: 700;
+    color: var(--color-gray-dark);
+    display: inline-flex;
+    justify-content: center; /* centra el texto dentro del botón */
+    align-items: center;
+    min-width: 120px; /* ancho mínimo para que los botones queden centrados visualmente */
+    text-align: center;
+}
+
+.tab-btn:hover {
+    background: #f9fafb;
+    transform: translateY(-2px);
+}
+
+.tab-btn.active {
+    background: #4e9a99; /* mismo color que sticky-btn.active */
+    color: #ffffff;
+    transform: translateY(-3px);
+    border-color: #4e9a99;
+}
+
+@media (max-width: 600px) {
+    .tab-btn { padding: 6px 10px; font-size: 0.95rem; min-width: 90px; }
 }

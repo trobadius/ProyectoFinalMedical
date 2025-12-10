@@ -24,4 +24,12 @@ urlpatterns = [
     path('api/meds_programados/', views.MedicamentosProgramadosList),
 
     path('notificaciones/whats/', views.test_whatsapp, name='test_whatsapp'),
+
+
+
+    path('sexoedad/', views.SexoedadView),
+
+    path('medicamentos-mas-registrados/', views.MedicamentosMasRegistradosView),
+
+    path('busquedas-chat/', views.BusquedasChatView),
 ]
