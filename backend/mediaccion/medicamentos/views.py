@@ -400,10 +400,7 @@ def MedicamentosProgramadosList(request, pk):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def test_whatsapp(request):
-    """
-    Envía un mensaje de prueba de WhatsApp al número registrado del usuario.
-    """
-    print("!!!!!!!!!!!!!!!!!!!!!!!!!!TEST WHATSAPP VIEWSSSS!!!!!!!!!!!!!")
+    
     try:       
         telefono = request.data.get('telefonoCompleto')
         print("TELÉFONO USADO REAL:", request)
@@ -432,3 +429,47 @@ def test_whatsapp(request):
             "success": False,
             "error": str(e)
         }, status=500)
+
+
+#============ MODELOS GRAFICOS ============
+@api_view(['GET', 'POST'])
+def SexoedadView(request):
+    if request.method == 'GET':
+        sexoedad = Sexoedad.objects.all()
+        serializer = SexoedadSerializer(sexoedad, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    if request.method == 'POST':
+        serializer = SexoedadSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message':'Perfil guardado para vender datos😈'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'POST'])
+def MedicamentosMasRegistradosView(request):
+    if request.method == 'GET':
+        meds_mas_registrados = MedicamentosMasRegistrados.objects.all()
+        serializer = MedicamentosMasRegistradosSerializer(meds_mas_registrados, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    if request.method == 'POST':
+        serializer = MedicamentosMasRegistradosSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message':'Medicamento guardado para vender datos😈 '}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'POST'])
+def BusquedasChatView(request):
+    if request.method == 'GET':
+        busquedas_chat = BusquedasChat.objects.all()
+        serializer = BusquedasChatSerializer(busquedas_chat, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK) 
+
+    if request.method == 'POST':
+        serializer = BusquedasChatSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message':'Búsqueda guardada para vender datos😈'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
