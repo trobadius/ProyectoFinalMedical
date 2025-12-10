@@ -17,9 +17,9 @@ class ProfileUser(models.Model):
     GENEROS = [
         ('hombre', 'Hombre'),
         ('mujer', 'Mujer'),
-        ('no_decir', 'Prefiero no decirlo')
+        ('otro', 'Otro')
     ]
-    genero = models.CharField(max_length=20, choices=GENEROS, default='no_decir')
+    genero = models.CharField(max_length=20, choices=GENEROS, default='otro')
     pais = models.CharField(max_length=5, null=True)
     telefono = models.CharField(max_length=16, null=True)
 
@@ -68,3 +68,32 @@ class MedicamentosProgramados(models.Model):
     
     def __str__(self):
         return f"{self.nombre} - {self.fecha}"
+
+
+
+class Sexoedad(models.Model):
+    edad = models.IntegerField()
+    SEXO_CHOICES = [
+        ("M", "Hombre"),
+        ("F", "Mujer"),
+        ("O", "Otro"),
+    ]
+    sexo = models.CharField(max_length=1, choices=SEXO_CHOICES)
+    def __str__(self):
+        return f"{self.edad} - {self.sexo}"
+
+class MedicamentosMasRegistrados(models.Model):
+    medicamento = models.CharField(max_length=100)
+    edad = models.ForeignKey(Sexoedad, on_delete=models.CASCADE, null=True)
+    fecha_registro = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.medicamento
+
+class BusquedasChat(models.Model):
+    termino_busqueda = models.CharField(max_length=100)
+    edad = models.ForeignKey(Sexoedad, on_delete=models.CASCADE, null=True)
+    fecha_busqueda = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return self.termino_busqueda

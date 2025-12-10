@@ -13,6 +13,7 @@ const IconPlaceholder = ({ type, className }) => (
     </div>
 );
 
+
 // Componente Tarjeta de Premio Reutilizable
 const AwardCard = ({ title, description, code, onClick }) => {
     // Determinar si el premio está desbloqueado (simulación simple)
@@ -21,7 +22,7 @@ const AwardCard = ({ title, description, code, onClick }) => {
     return (
         <div className={`award-card ${isUnlocked ? 'unlocked' : 'locked'}`}>
             <div className="award-info">
-                <IconPlaceholder type="star" className="award-icon" />
+                <Star size={25} color="#f59e0b" fill="#f59e0b" className="award-icon" />
                 <h3 className="award-title">{title}</h3>
                 <p className="award-description">{description}</p>
             </div>
@@ -53,6 +54,8 @@ const AwardModal = ({ prizeTitle, prizeCode, onClose }) => {
 
 const ProgressScreenContent = () => {
     const [modalInfo, setModalInfo] = useState(null); // { title: '', code: '' }
+    const [vista, setVista] = useState('premios'); // 'premios' | 'progresos'
+    const [tipoVista, setTipoVista] = useState(false); // 'premios' | 'progresos'
 
     const awards = [
         {
@@ -84,14 +87,43 @@ const ProgressScreenContent = () => {
         setModalInfo(null);
     };
 
+    // Vista de estadísticas / progresos (simple placeholder con barras)
+    const ProgressView = () => (
+        <div className="progress-view">
+            <h2 className="progress-subtitle-custom">Tus Estadísticas</h2>
+            <p>Resumen de hábitos y cumplimiento de medicación.</p>
+
+            <div style={{ marginTop: 16 }}>
+                <div style={{ marginBottom: 12 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span>Consistencia</span>
+                        <span>70%</span>
+                    </div>
+                    <div style={{ background: '#e5e7eb', borderRadius: 8, overflow: 'hidden', height: 12 }}>
+                        <div style={{ width: '70%', height: '100%', background: '#10b981' }} />
+                    </div>
+                </div>
+
+                <div style={{ marginBottom: 12 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span>Recordatorios cumplidos</span>
+                        <span>45/60</span>
+                    </div>
+                    <div style={{ background: '#e5e7eb', borderRadius: 8, overflow: 'hidden', height: 12 }}>
+                        <div style={{ width: '75%', height: '100%', background: '#3b82f6' }} />
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
     return (
         <>
             <div className="waves"></div>
             <div className="main-app">
                 <header className="main-header">
                     <div className="header-components">
-                        <Link to="/Chatbot"
-                            state={{ from: location.pathname }} className="header-icon-chat">
+                        <Link to="/Chatbot" className="header-icon-chat">
                             <MessageCircle size={26} className="message-circle" />
                         </Link>
                         <Link to="/" className="header-logo-wrapper">
@@ -136,6 +168,43 @@ const ProgressScreenContent = () => {
                                 />
                             ))}
                         </div>
+                    </main>
+                    <main className="progress-container-custom">
+                        {!tipoVista ? (
+                            <>
+                                <h1 className="progress-title-custom">Centro de Premios y Progresos</h1>
+                                {/* SUBTÍTULO*/}
+                                <p className="progress-subtitle-custom">
+                                    ¡Cada paso cuenta! Desbloquea recompensas especiales por tu dedicación al bienestar.
+                                </p>
+                            </>
+                        ) : (
+                            <>
+                                <h1 className="progress-title-custom">Centro de Progresos</h1>
+                                {/* SUBTÍTULO*/}
+                                <p className="progress-subtitle-custom">
+                                    Tu evolución al día: objetivos, mejoras y hábitos saludables en un solo vistazo.
+                                </p>
+                            </>
+                        )}
+
+
+                        {vista === 'premios' ? (
+                            <div className="award-list">
+                                {awards.map(award => (
+                                    <AwardCard
+                                        key={award.id}
+                                        title={award.title}
+                                        description={award.description}
+                                        code={award.code}
+                                        // Usamos handleRedeem, que abrirá el modal
+                                        onClick={handleRedeem}
+                                    />
+                                ))}
+                            </div>
+                        ) : (
+                            <ProgressView />
+                        )}
                     </main>
 
                     {/* Modal que se muestra si modalInfo tiene contenido */}
