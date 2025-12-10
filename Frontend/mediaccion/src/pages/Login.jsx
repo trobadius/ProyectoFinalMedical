@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import logoimg from "../assets/logo_svg.svg";
 import { Link } from "react-router-dom";
 import '../styles/Login.css';
+import '../App.css';
 
 function Login(){
   const [username, setUsername] = useState("");
@@ -30,6 +31,8 @@ function Login(){
     }
   }
   return (
+    <>
+    <div className="waves"></div>
     <div className="login-container">
       <div className="login-card">
         <h1 className="login-title">MedicAcción</h1>
@@ -71,6 +74,7 @@ function Login(){
         </footer>
       </div>
     </div>
+    </>
   );
 };
 

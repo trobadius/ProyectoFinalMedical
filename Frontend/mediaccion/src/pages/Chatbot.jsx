@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import '../App.css';
 import { MessageCircle, LogOut } from 'lucide-react';
 import logo from "../assets/logo.svg";
+import '../styles/Chatbox.css';
 
 export default function Chatbot() {
   const [messages, setMessages] = useState([
@@ -231,154 +232,55 @@ export default function Chatbot() {
   }, [messages]);
 
   return (
-    <div style={styles.container} >
+    <>
+    <div className="waves"></div>
+    <div className="main-app">
       <header className="main-header">
         <div className="header-components">
-            <Link to="/Chatbot" className="header-icon-chat">
-                <MessageCircle size={26} className="message-circle"/>
-            </Link>
-            <Link to="/" className="header-logo-wrapper">
-                    <img src={logo} alt="Medicacción Logo" className="header-logo" />
-            </Link>
-            <Link to="/logout">
-                <button className="header-icon-logout">
-                <LogOut size={26} className="header-logout" />
-                </button>
-            </Link>
+          <Link to="/Chatbot" className="header-icon-chat">
+            <MessageCircle size={26} className="message-circle" />
+          </Link>
+          <Link to="/" className="header-logo-wrapper">
+            <img src={logo} alt="Medicacción Logo" className="header-logo" />
+          </Link>
+          <Link to="/logout">
+            <button className="header-icon-logout">
+              <LogOut size={26} className="header-logout" />
+            </button>
+          </Link>
         </div>
       </header>
-      <h2>Chatbot de Alimentación y Síntomas</h2>
-      
 
-      <div style={styles.chatBox} ref={chatBoxRef}>
+      <h2>Chatbot de Alimentación y Síntomas</h2>
+
+      <div className="chatBox" ref={chatBoxRef}>
         {messages.map((msg, i) => (
           <div
             key={i}
-            style={{
-              ...styles.message,
-              alignSelf: msg.from === "user" ? "flex-end" : "flex-start",
-              backgroundColor: msg.from === "user" ? "#bdbdbdff" : "#d0f0c0",
-              color: msg.from === "user" ? "#0b0101ff" : "#000",
-              whiteSpace: "pre-wrap",
-            }}
+            className={`message ${msg.from === "user" ? "user-msg" : "bot-msg"}`}
           >
             {msg.text}
           </div>
         ))}
       </div>
 
-      <div style={styles.inputRow}>
+      <div className="inputRow">
         <input
-          style={styles.input}
+          className="input"
           type="text"
           value={userInput}
           placeholder="Escribe tu síntoma..."
           onChange={(e) => setUserInput(e.target.value)}
           onKeyDown={handleKeyDown}
         />
-        <button style={styles.button} onClick={handleSend}>
+        <button className="button" onClick={handleSend}>
           Enviar
         </button>
       </div>
+
       <StickyButton />
     </div>
+    </>
   );
 }
-
-const styles = {
-  // CONTENEDOR PRINCIPAL DEL CHATBOT
-  container: {
-    backgroundColor: "#f1f1f1",     // Fondo suave del área principal
-    color: "#010101",              // Color del texto
-    width: "100%",                 // Ocupa el 100% del ancho (más flexible)
-    maxWidth: "480px",             // Máximo ancho para que no se estire demasiado en pantallas grandes
-    margin: "auto",              // Centrado horizontal
-    padding: "20px",               // Espaciado interno
-    paddingTop: "0px",             // Pegado totalmente arriba
-    display: "flex",
-    flexDirection: "column",
-    boxSizing: "border-box",
-    borderRadius: "20px",          // Esquinas redondeadas
-    minHeight: "100vh",    // Ocupa toda la altura del viewport     
-    marginTop: "20px",
-  },
-
-  // CAJA DONDE APARECEN LOS MENSAJES DEL CHAT
-  chatBox: {
-    height: "400px",               // Alto fijo en móvil
-    overflowY: "auto",             // Habilita scroll vertical
-    display: "flex",
-    flexDirection: "column",
-    padding: "15px",
-    background: "#f7f7f7",         // Fondo claro diferenciado
-    borderRadius: "10px",
-    marginBottom: "20px",
-    marginTop: "10px"
-  },
-
-  // CADA MENSAJE (USER o BOT)
-  message: {
-    padding: "10px",               // Espaciado interno del mensaje
-    borderRadius: "8px",           // Burbujas redondeadas
-    margin: "4px 0",
-    maxWidth: "80%",               // Para que no ocupen toda la pantalla
-    wordBreak: "break-word",       // Evita desbordes si hay palabras largas
-  },
-
-  // CONTENEDOR DEL INPUT Y BOTÓN
-  inputRow: {
-    display: "flex",
-    gap: "10px",                   // Separación entre botón e input
-  },
-
-  // INPUT DONDE EL USUARIO ESCRIBE
-  input: {
-    flex: 1,                       // Ocupa todo el espacio horizontal posible
-    padding: "10px",
-    borderRadius: "15px",
-    border: "1px solid #ccc",
-    fontSize: "16px",              // Tamaño agradable para móvil
-  },
-
-  // BOTÓN DE ENVIAR
-  button: {
-    padding: "10px 15px",
-    background: "#4CAF50",         // Verde suave
-    color: "#fff",
-    border: "none",
-    borderRadius: "8px",
-    cursor: "pointer",
-    fontSize: "16px",
-  },
-
-  // MEDIA QUERIES RESPONSIVE
-  // Para pantallas más grandes (tables y desktop)
-  "@media (min-width: 768px)": {
-    container: {
-      maxWidth: "600px",           // Más ancho en pantallas grandes
-      padding: "30px",             // Más respiro alrededor
-    },
-    chatBox: {
-      height: "500px",             // Chat un poco más alto
-    },
-    input: {
-      fontSize: "18px",
-    },
-    button: {
-      fontSize: "18px",
-    },
-  },
-
-  // Para pantallas muy grandes (desktop amplio)
-  "@media (min-width: 1024px)": {
-    container: {
-      maxWidth: "700px",           // Aumenta ancho máximo
-    },
-  },
-
-};
-
-
-
-
 

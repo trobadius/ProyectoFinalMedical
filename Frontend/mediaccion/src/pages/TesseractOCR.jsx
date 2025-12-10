@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 import { createWorker } from "tesseract.js";
-import QR from "../assets/QR.png"; 
+import ScanerImg from "../assets/scanner.jpg"; 
 import { chatCerrado } from "../components/OpenAiApi";
 import { cleanOcrText } from "../components/LimpiarTexto.jsx";
 import api from "../api";
@@ -332,6 +332,8 @@ export default function TesseractOCR() {
   // RENDER
   // ============================================================
   return (
+    <>
+    <div className="waves"></div>
     <div className="main-app">
       <header className="main-header">
         <div className="header-components">
@@ -358,17 +360,17 @@ export default function TesseractOCR() {
 
             {!started && (
               <div className="overlay-img">
-                <img src={QR} alt="QR" className="qr-image" />
+                <img src={ScanerImg} alt="scanner" className="scanner-image" />
               </div>
             )}
           </div>
 
           <canvas ref={canvasRef} className="camera-ocr-canvas" />
-
+          <div className="modal-buttons">
           {!cameraActive ? (
             <button
               onClick={() => handleActivateCamera("environment")}
-              className="camera-ocr-button"
+              className="camera-ocr-button-activate"
             >
               Activar
             </button>
@@ -383,36 +385,33 @@ export default function TesseractOCR() {
               Desactivar
             </button>
           )}
-
-          <>
-            {cameraActive && (
-              <>
-                {!scanned ? (
-                  <button
-                    onClick={() => setAutoScanOnce(true)}
-                    className="camera-ocr-button"
-                  >
-                    Escaneo automático
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => {
-                      setScanned(false);
-                      setResult("");
-                      setAutoScanOnce(true);
-                    }}
-                    className="camera-ocr-button"
-                  >
-                    Volver a escanear
-                  </button>
-                )}
-              </>
-            )}
-          </>
-
+          {cameraActive && (
+            <>
+              {!scanned ? (
+                <button
+                  onClick={() => setAutoScanOnce(true)}
+                  className="camera-ocr-button"
+                >
+                  Escaneo automático
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    setScanned(false);
+                    setResult("");
+                    setAutoScanOnce(true);
+                  }}
+                  className="camera-ocr-button"
+                >
+                  Volver a escanear
+                </button>
+              )}
+            </>
+          )}
+          </div>
           {showResultModal && (
-            <div className="modal-overlay">
-              <div className="modal-content">
+            <div className="camera-ocr-video-container">
+              <div className="camera-ocr-result">
                 <p>Resultado:</p>
                 <p>{ocrResult.medicamento}</p>
                 <p>{ocrResult.dosis}</p>
@@ -440,8 +439,8 @@ export default function TesseractOCR() {
         </>
       )}
       {showResultChat && chatText && (
-        <div className="modal-overlay">
-          <div className="modal-content">
+        <div className="camera-ocr-video-container">
+          <div className="camera-ocr-result">
 
             {!chatText.error ? (
               <div style={{ whiteSpace: "pre-line" }}>
@@ -509,5 +508,6 @@ export default function TesseractOCR() {
       )}
 
     </div>
+    </>
   );
 }
