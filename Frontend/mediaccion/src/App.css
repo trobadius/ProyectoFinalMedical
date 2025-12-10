@@ -134,6 +134,8 @@ button:hover,
   margin-left: 10px;
 }
 .header-logo{
+  margin-top: 1rem;
+  /* Alma-1rem para que no quede tan pegado arriba */
   height: 42px;
   width: auto;
 }
@@ -149,6 +151,8 @@ button:hover,
 .header-icon-chat{
   color: rgb(0, 0, 0);
   margin-left: 5px;
+  margin-top: 1rem;
+  /* Alma-1rem para margen en top */
 }
 
 .header-icon-chat .message-circle {
@@ -162,6 +166,8 @@ button:hover,
 .header-icon-logout{
   color: rgb(0, 0, 0);
   padding: 1px;
+  margin-top: 1rem;
+  /* alma-1rem para margen en top */
 }
 
 .header-icon-logout .header-logout {

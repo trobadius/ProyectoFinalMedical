@@ -127,8 +127,6 @@ export default function Home() {
                     <div className="header-left">
                         <p className="date">{monthName}</p>
                     </div>
-                    {/* Espaciador para centrar el mes */}
-                    <div style={{ width: 24 }}></div>
                 </div>
             </header>
             {/*}-Hao

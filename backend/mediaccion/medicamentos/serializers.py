@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import ProfileUser, Notificaciones, RecetasMedicas, Alimentos, Medicamentos, MedicamentosProgramados
+from .models import ProfileUser, Notificaciones, RecetasMedicas, Alimentos, Medicamentos, MedicamentosProgramados, Sexoedad, MedicamentosMasRegistrados, BusquedasChat
 from django.contrib.auth.models import User
 
 #Serializer ProfileUser y campos User en una sola
@@ -76,3 +76,18 @@ class MedicamentosProgramadosSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+
+class SexoedadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Sexoedad
+        exclude = '__all__'
+
+class MedicamentosMasRegistradosSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProfileUser
+        exclude = '__all__'
+
+class BusquedasChatsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BusquedasChat
+        exclude = '__all__'

@@ -32,7 +32,7 @@ function Login(){
   return (
     <div className="login-container">
       <div className="login-card">
-        <h1 className="login-title">MediAcción</h1>
+        <h1 className="login-title">MedicAcción</h1>
             <img
                 src={logoimg}
                 alt="MediAccion Logo"
@@ -67,7 +67,7 @@ function Login(){
           ¿No tienes cuenta? <Link className="register-link" to="/register">Registrate!</Link>
         </p>
         <footer className="login-footer">
-          <small>© {new Date().getFullYear()} MediAcción</small>
+          <small>© {new Date().getFullYear()} MedicAcción</small>
         </footer>
       </div>
     </div>
