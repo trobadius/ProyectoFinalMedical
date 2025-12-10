@@ -3,7 +3,6 @@ import { useState, useEffect, useContext } from "react";
 import { Pill, Plus, MessageCircle, LogOut } from 'lucide-react';
 import api from '../api';
 import '../styles/Calendario.css';
-import '../calendario.css';
 import { Link } from "react-router-dom";
 import { MedContext } from "../context/MedContext.jsx";
 import '../App.css';
@@ -225,159 +224,172 @@ const Calendario = () => {
 
   return (
     <>
-    <div className="waves"></div>
-    <div className="main-app">
-      <header className="main-header">
-        <div className="header-components">
-          <Link to="/Chatbot" className="header-icon-chat">
-            <MessageCircle size={26} className="message-circle" />
-          </Link>
-          <Link to="/" className="header-logo-wrapper">
-            <img src={logo} alt="Medicacción Logo" className="header-logo" />
-          </Link>
-          <Link to="/logout">
-            <button className="header-icon-logout">
-              <LogOut size={26} className="header-logout" />
-            </button>
-          </Link>
-        </div>
-        <div className="app-header">
-          <button onClick={prevMonth} className="nav-btn">‹</button>
-          <h2>{currentDate.toLocaleDateString("es-ES", { month: "long" })} {year}</h2>
-          <button onClick={nextMonth} className="nav-btn">›</button>
-        </div>
-      </header>
-
-      {error && <div style={{ color: 'red', padding: 10 }}>{error}</div>}
-      {loading && <div style={{ color: '#666', padding: 10 }}>Cargando...</div>}
-
-      <div className="calendar-grid">
-        {daysOfWeek.map(d => <div key={d} className="day-name">{d}</div>)}
-        {daysArray.map((day, i) => {
-          if (!day) return <div key={i} className="day empty" />;
-          const thisDate = new Date(year, month, day);
-          const key = `${thisDate.getFullYear()}-${String(thisDate.getMonth() + 1).padStart(2, '0')}-${String(thisDate.getDate()).padStart(2, '0')}`;
-          const hasMeds = Boolean(medicamentos[key]?.length);
-          const isToday = thisDate.toDateString() === new Date().toDateString();
-          const isSelected = selectedDate?.toDateString() === thisDate.toDateString();
-          return (
-            <div
-              key={i}
-              onClick={() => setSelectedDate(thisDate)}
-              className={`day ${isSelected ? "selected" : ""} ${hasMeds ? "has-meds" : ""} ${isToday ? "today-highlight" : ""} ${claseDia(key)}`}
-            >
-              <span>{day}</span>
-              {hasMeds && <Pill size={16} />}
-            </div>
-          );
-        })}
-      </div>
-
-      {selectedDate && (
-        <div className="med-section">
-          <p>Añadir medicamento para: <br /><strong>{selectedDate.toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" })}</strong></p>
-          <div className="input-group">
-            <input
-              type="text"
-              placeholder="Nombre del medicamento"
-              value={nuevoMed.nombre}
-              onChange={e => setNuevoMed(p => ({ ...p, nombre: e.target.value }))}
-              disabled={loading}
-            />
-            <p>Cada (h)</p>
-            <input
-              type="number"
-              min="1"
-              value={nuevoMed.intervalo}
-              onChange={e => setNuevoMed(p => ({ ...p, intervalo: Number(e.target.value) || 1 }))}
-              placeholder="Cada (h)"
-              disabled={loading}
-            />
-            <p>Tomas</p>
-            <input
-              type="number"
-              min="1"
-              value={nuevoMed.total_tomas}
-              onChange={e => setNuevoMed(p => ({ ...p, total_tomas: Number(e.target.value) || 1 }))}
-              placeholder="Número de tomas"
-              disabled={loading}
-            />
-            <p>Duración en días</p>
-            <input
-              type="number"
-              min="1"
-              value={nuevoMed.duracion_dias}
-              onChange={e => setNuevoMed(p => ({ ...p, duracion_dias: Number(e.target.value) || 1 }))}
-              placeholder="Días de tratamiento"
-              disabled={loading}
-            />
-            <button onClick={guardarMedicamento} disabled={loading}>
-              <Plus size={20} color="white" />
-            </button>
+      <div className="waves"></div>
+      <div className="main-app">
+        <header className="main-header">
+          <div className="header-components">
+            <Link to="/Chatbot" className="header-icon-chat">
+              <MessageCircle size={26} className="message-circle" />
+            </Link>
+            <Link to="/" className="header-logo-wrapper">
+              <img src={logo} alt="Medicacción Logo" className="header-logo" />
+            </Link>
+            <Link to="/logout">
+              <button className="header-icon-logout">
+                <LogOut size={26} className="header-logout" />
+              </button>
+            </Link>
           </div>
+          <div className="app-header">
+            <button onClick={prevMonth} className="nav-btn">‹</button>
+            <h2>{currentDate.toLocaleDateString("es-ES", { month: "long" })} {year}</h2>
+            <button onClick={nextMonth} className="nav-btn">›</button>
+          </div>
+        </header>
 
-          <ul className="med-list">
-            {medsHoy.map(med => {
-              const totalTomas = med.total_tomas || 8;
-              const tomadas = med.tomadas || 0;
-              return (
-                <li key={med.id} className="med-item">
-                  <div>
-                    <strong>{med.nombre}</strong> — {med.total_tomas} toma(s)
-                    <div className="progress-bar-container" style={{ display: "flex", gap: 2, marginTop: 5 }}>
-                      {[...Array(totalTomas)].map((_, idx) => (
-                        <div
-                          key={idx}
-                          style={{
-                            flex: 1,
-                            height: 12,
-                            backgroundColor: idx < tomadas ? "#4ade80" : "#e5e7eb",
-                            borderRadius: 3,
-                            transition: "background-color 0.3s",
-                          }}
-                        />
-                      ))}
-                    </div>
-                  </div>
+        {error && <div style={{ color: 'red', padding: 10 }}>{error}</div>}
+        {loading && <div style={{ color: '#666', padding: 10 }}>Cargando...</div>}
 
-                  <div style={{ marginTop: 5, display: "flex", gap: 5 }}>
-                    {tomadas < totalTomas ? (
-                      <button onClick={() => registrarToma(med)}>Tomar dosis</button>
-                    ) : med.desbloquearPremio ? (
-                      <Link
-                        to="/Progresos"
-                        style={{
-                          backgroundColor: "#facc15",
-                          color: "#000",
-                          padding: "10px 16px",
-                          borderRadius: "6px",
-                          display: "inline-block",
-                          textDecoration: "none"
-                        }}
-                      >
-                        ¡Desbloquear premio!
-                      </Link>
-                    ) : (
-                      <button style={{ backgroundColor: "#4ade80", color: "#000" }} disabled>
-                        Día completado
-                      </button>
-                    )}
-                    <button
-                      onClick={() => eliminarMedicamento(med)}
-                      style={{ backgroundColor: "#ef4444", color: "#fff" }}
-                    >
-                      Eliminar
-                    </button>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
+        <div className="calendar-grid">
+          {daysOfWeek.map(d => <div key={d} className="day-name">{d}</div>)}
+          {daysArray.map((day, i) => {
+            if (!day) return <div key={i} className="day empty" />;
+            const thisDate = new Date(year, month, day);
+            const key = `${thisDate.getFullYear()}-${String(thisDate.getMonth() + 1).padStart(2, '0')}-${String(thisDate.getDate()).padStart(2, '0')}`;
+            const hasMeds = Boolean(medicamentos[key]?.length);
+            const isToday = thisDate.toDateString() === new Date().toDateString();
+            const isSelected = selectedDate?.toDateString() === thisDate.toDateString();
+            return (
+              <div
+                key={i}
+                onClick={() => setSelectedDate(thisDate)}
+                className={`day ${isSelected ? "selected" : ""} ${hasMeds ? "has-meds" : ""} ${isToday ? "today-highlight" : ""} ${claseDia(key)}`}
+              >
+                <span>{day}</span>
+                {hasMeds && <Pill size={16} />}
+              </div>
+            );
+          })}
         </div>
-      )
-      }
-      <ToastContainer />
-    </div >
+
+        {selectedDate && (
+          <div className="med-section">
+            <p>Añadir medicamento para: <br /><strong>{selectedDate.toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" })}</strong></p>
+            <div className="input-group">
+              <input
+                type="text"
+                placeholder="Nombre del medicamento"
+                value={nuevoMed.nombre}
+                onChange={e => setNuevoMed(p => ({ ...p, nombre: e.target.value }))}
+                disabled={loading}
+              />
+              <p>Cada (h)</p>
+              <input
+                type="number"
+                min="1"
+                value={nuevoMed.intervalo}
+                onChange={e => setNuevoMed(p => ({ ...p, intervalo: Number(e.target.value) || 1 }))}
+                placeholder="Cada (h)"
+                disabled={loading}
+              />
+              <p>Tomas</p>
+              <input
+                type="number"
+                min="1"
+                value={nuevoMed.total_tomas}
+                onChange={e => setNuevoMed(p => ({ ...p, total_tomas: Number(e.target.value) || 1 }))}
+                placeholder="Número de tomas"
+                disabled={loading}
+              />
+              <p>Duración en días</p>
+              <input
+                type="number"
+                min="1"
+                value={nuevoMed.duracion_dias}
+                onChange={e => setNuevoMed(p => ({ ...p, duracion_dias: Number(e.target.value) || 1 }))}
+                placeholder="Días de tratamiento"
+                disabled={loading}
+              />
+              <button onClick={guardarMedicamento} disabled={loading}>
+                <Plus size={20} color="white" />
+              </button>
+            </div>
+
+            <ul className="med-list">
+              {medsHoy.map(med => {
+                const totalTomas = med.total_tomas || 8;
+                const tomadas = med.tomadas || 0;
+                return (
+                  <li key={med.id} className="med-item">
+                    <div>
+                      <strong>{med.nombre}</strong> — {med.total_tomas} toma(s)
+                      <div className="progress-bar-container" style={{ display: "flex", gap: 2, marginTop: 5 }}>
+                        {[...Array(totalTomas)].map((_, idx) => (
+                          <div
+                            key={idx}
+                            style={{
+                              flex: 1,
+                              height: 12,
+                              backgroundColor: idx < tomadas ? "#4ade80" : "#e5e7eb",
+                              borderRadius: 3,
+                              transition: "background-color 0.3s",
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+
+                    <div style={{ marginTop: 5, display: "flex", gap: 5 }}>
+                      {tomadas < totalTomas ? (
+                        <button
+                          onClick={() => registrarToma(med)}
+                          style={{
+                            backgroundColor: "#659FA6", // azul
+                            color: "#ffffff",           // texto blanco
+                            border: "none",
+                            borderRadius: "6px",
+                            padding: "6px 12px",
+                            fontWeight: "bold",
+                            cursor: "pointer",
+                          }}
+                        >
+                          Tomar dosis
+                        </button>
+                      ) : med.desbloquearPremio ? (
+                        <Link
+                          to="/Progresos"
+                          style={{
+                            backgroundColor: "#facc15",
+                            color: "#000",
+                            padding: "10px 16px",
+                            borderRadius: "6px",
+                            display: "inline-block",
+                            textDecoration: "none"
+                          }}
+                        >
+                          ¡Desbloquear premio!
+                        </Link>
+                      ) : (
+                        <button style={{ backgroundColor: "#4ade80", color: "#000" }} disabled>
+                          Día completado
+                        </button>
+                      )}
+                      <button
+                        onClick={() => eliminarMedicamento(med)}
+                        style={{ backgroundColor: "#ef4444", color: "#000000ff" }}
+                      >
+                        Eliminar
+                      </button>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )
+        }
+        <ToastContainer />
+      </div >
     </>
   );
 };
