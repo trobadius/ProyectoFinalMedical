@@ -818,33 +818,6 @@ export default function Home() {
                 </section>
             ) : null}
 
-                {/* SUGERENCIAS */}
-                <section className="cycle-section">
-                    <h4>Según tus búsquedas</h4>
-                    <div className="cycle-scroll">
-                        <div className="cycle-card" onClick={() => setShowHigadoModal(true)} style={{ cursor: 'pointer' }}>
-                            <img src={higado2} alt="Sugerencia hígado" className="card-img" style={{ objectFit: 'cover' }} />
-                            <p>Sugerencia alimenticia para el hígado🌟</p>
-                        </div>
-                        <div className="cycle-card" onClick={() => setShowAguaModal(true)} style={{ cursor: 'pointer' }}>
-                            <img src={agua} alt="Aumenta tu ingesta de agua" className="card-img" style={{ objectFit: 'cover' }} />
-                            <p>Aumenta tu ingesta de agua💧</p>
-                        </div>
-                        <div className="cycle-card" onClick={() => setShowRemedioModal(true)} style={{ cursor: 'pointer' }}>
-                            <img src={remedio} alt="Remedios naturales" className="card-img" style={{ objectFit: 'cover' }} />
-                            <p>Remedios naturales comprobados🥬</p>
-
-                        </div>
-                        <div className="cycle-card">
-                            <div className="card-img placeholder-premium">
-                                <Star size={20} color="white" fill="white" style={{ rotate: '45deg' }} />
-                                ¡PREMIUM! <Star size={20} color="white" fill="white" style={{ rotate: '90deg' }} />
-                            </div>
-                            <p style={{ color: '#000000ff', fontWeight: 'bold' }}>¡Desbloquéalo ahora!</p>
-                        </div>
-                    </div>
-                </section>
-
                 {/* TARJETA PREMIUM */}
                 <div className="premium-card-1">
                     <div className="title-premium">
