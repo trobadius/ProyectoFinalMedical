@@ -351,7 +351,7 @@ import RemedioModal from '../components/RemedioModal';
 import AguaModal from '../components/Agua';
 import HigadoModal from '../components/Higado';
 import { useNavigate, Link } from "react-router-dom";
-import { Pill, Star, Stethoscope, MessageCircle, LogOut, Camera } from 'lucide-react';
+import { Pill, Star, Stethoscope, MessageCircle, LogOut, Camera, Heart, Activity } from 'lucide-react';
 import '../App.css'
 import '../styles/Home.css';
 import '../styles/Premium.css';
@@ -363,6 +363,8 @@ import { MedContext } from "../context/MedContext.jsx";
 import { claseDia } from "../utils/calendarioColors";
 import { ToastContainer, toast } from "react-toastify";
 import api from "../api";
+import recomendacionesData from "../data/Recomendaciones.json";
+
 
 // Función para obtener los datos del mes
 const getMonthData = () => {
@@ -415,6 +417,7 @@ export default function Home() {
     const [showRemedioModal, setShowRemedioModal] = useState(false);
     const [showAguaModal, setShowAguaModal] = useState(false);
     const [showHigadoModal, setShowHigadoModal] = useState(false);
+    const [selectedRecomendacion, setSelectedRecomendacion] = useState(null);
 
     const calendarRef = useRef(null);
 
@@ -503,10 +506,93 @@ export default function Home() {
         }
     };
 
+    // 1. OBTENER PERFIL DEL USUARIO
+    const [profile, setProfile] = useState(null);
+    const [articulos, setArticulos] = useState([]);
+    const [loadingProfile, setLoadingProfile] = useState(true);
+
+    // 1.5 OBTENER PERFIL DEL USUARIO
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                setLoadingProfile(true);
+                const res = await api.get("/api/users/profile/me/");
+                setProfile(res.data);
+                console.log("✅ Perfil obtenido:", res.data);
+            } catch (err) {
+                console.error("❌ Error obteniendo perfil:", err);
+                console.error("Detalles del error:", err.response?.data);
+                // Si hay error, las recomendaciones simplemente no se mostrarán
+            } finally {
+                setLoadingProfile(false);
+            }
+        };
+
+        fetchProfile();
+    }, []);
+
+    function calcularEdad(fechaNacimiento) {
+        const hoy = new Date();
+        const nacimiento = new Date(fechaNacimiento);
+        let edad = hoy.getFullYear() - nacimiento.getFullYear();
+        const mes = hoy.getMonth() - nacimiento.getMonth();
+        if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
+            edad--;
+        }
+        return edad;
+    }
+
+    // Función para obtener el rango de edad
+    function obtenerRangoEdad(edad) {
+        if (edad <= 12) return "0-12";
+        if (edad >= 13 && edad <= 18) return "13-18";
+        if (edad >= 19 && edad <= 39) return "19-39";
+        if (edad >= 40 && edad <= 64) return "40-64";
+        return "65+";
+    }
+
+    // 2. FILTRAR ARTÍCULOS SEGÚN PERFIL
+    useEffect(() => {
+        if (!profile || !profile.date_birth || !profile.genero) return;
+
+        const edad = calcularEdad(profile.date_birth);
+        const genero = profile.genero; // "hombre", "mujer", "no_decir"
+        const rangoEdad = obtenerRangoEdad(edad);
+
+        // Si el genero es "no_decir", mostrar recomendaciones generales (combinamos ambos)
+        let recomendaciones = [];
+
+        if (recomendacionesData[rangoEdad]) {
+            if (genero === "no_decir") {
+                // Combinar recomendaciones de hombre y mujer
+                recomendaciones = [
+                    ...(recomendacionesData[rangoEdad].hombre || []),
+                    ...(recomendacionesData[rangoEdad].mujer || [])
+                ];
+            } else {
+                // Obtener recomendaciones específicas del género
+                recomendaciones = recomendacionesData[rangoEdad][genero] || [];
+            }
+        }
+
+        // Tomar solo las primeras 3 recomendaciones para mostrar en las tarjetas
+        setArticulos(recomendaciones.slice(0, 3));
+    }, [profile]);
+
+    // Función para obtener el icono según el índice
+    const getIconoRecomendacion = (index) => {
+        const iconos = [
+            { Icon: Activity, color: "#10b981" },
+            { Icon: Pill, color: "#4f46e5" },
+            { Icon: Stethoscope, color: "#ef4444" }
+        ];
+        return iconos[index % iconos.length];
+    };
+
     return (
-        <>
-            <div className="waves"></div>
-            <div className="main-app">
+    <>
+        <div className="waves"></div>
+        <div className="main-app">
 
                 {/* HEADER */}
                 <header className="main-header">
@@ -517,184 +603,220 @@ export default function Home() {
                             <MessageCircle size={26} className="message-circle" />
                         </Link>
 
-                        <Link to="/" className="header-logo-wrapper">
-                            <img src={logo} alt="Medicacción Logo" className="header-logo" />
-                        </Link>
+                    <Link to="/" className="header-logo-wrapper">
+                        <img src={logo} alt="Medicacción Logo" className="header-logo" />
+                    </Link>
 
-                        <Link to="/logout">
-                            <button className="header-icon-logout">
-                                <LogOut size={26} className="header-logout" />
-                            </button>
-                        </Link>
-                    </div>
-
-                    <div className="home-header">
-                        <div className="header-left">
-                            <p className="date">{monthName}</p>
-                        </div>
-                        <div style={{ width: 24 }}></div>
-                    </div>
-                </header>
-
-                {/* CALENDARIO */}
-                <div className="calendar-scroll" ref={calendarRef}>
-                    {days.map(d => {
-                        const now = new Date();
-                        const year = now.getFullYear();
-                        const month = now.getMonth();
-                        const fechaKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(d.number).padStart(2, '0')}`;
-                        const colorClass = claseDia(fechaKey, medicamentos);
-
-                        return (
-                            <div
-                                key={d.key}
-                                data-day={d.number}
-                                className={`calendar-day ${d.isToday ? "today" : ""} ${colorClass}`}
-                            >
-                                <p className="day-name">{d.dayName}</p>
-                                <p className="day-number">{d.number}</p>
-                            </div>
-                        );
-                    })}
+                    <Link to="/logout">
+                        <button className="header-icon-logout">
+                            <LogOut size={26} className="header-logout" />
+                        </button>
+                    </Link>
                 </div>
 
-                {/* REGISTRO NUEVO MEDICAMENTO */}
-                <section className="delay-block">
-                    <h2 className="delay-title">
-                        {greeting} <span>{userName}</span>
-                    </h2>
+                <div className="home-header">
+                    <div className="header-left">
+                        <p className="date">{monthName}</p>
+                    </div>
+                    <div style={{ width: 24 }}></div>
+                </div>
+            </header>
 
-                    <button
-                        className="btn-register"
-                        onClick={() => navigate("/calendario")}
-                        style={{
-                            display: "inline-flex",
-                            alignItems: "center",
-                            gap: "8px",
-                            padding: "8px 16px",
-                            backgroundColor: "#659FA6",
-                            color: "#000",
-                            borderRadius: "8px",
-                            fontWeight: "bold",
-                            border: "none",
-                            cursor: "pointer",
-                            marginBottom: "10px",
-                        }}
-                    >
-                        <Pill size={20} />
-                        <span>Registrar nuevo medicamento</span>
-                    </button>
-                    <button
-                        className="btn-register"
-                        onClick={() => navigate("/TesseractOCR")}
-                        style={{
-                            display: "inline-flex",
-                            alignItems: "center",
-                            gap: "8px",
-                            padding: "8px 16px",
-                            backgroundColor: "#659FA6",
-                            color: "#000",
-                            borderRadius: "8px",
-                            fontWeight: "bold",
-                            border: "none",
-                            cursor: "pointer",
-                        }}
-                    >
-                        <Camera size={20} />
-                        <span>Escanear nuevo medicamento</span>
-                    </button>
-                </section>
+            {/* CALENDARIO */}
+            <div className="calendar-scroll" ref={calendarRef}>
+                {days.map(d => {
+                    const now = new Date();
+                    const year = now.getFullYear();
+                    const month = now.getMonth();
+                    const fechaKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(d.number).padStart(2, '0')}`;
+                    const colorClass = claseDia(fechaKey, medicamentos);
 
-                {/* MEDICAMENTOS DE HOY */}
-                <section className="daily-tips">
-                    <h3>Tus medicamentos de · Hoy</h3>
+                    return (
+                        <div
+                            key={d.key}
+                            data-day={d.number}
+                            className={`calendar-day ${d.isToday ? "today" : ""} ${colorClass}`}
+                        >
+                            <p className="day-name">{d.dayName}</p>
+                            <p className="day-number">{d.number}</p>
+                        </div>
+                    );
+                })}
+            </div>
 
-                    {medsHoy.length > 0 ? (
-                        medsHoy.map(med => {
-                            const diaCompletado = (med.tomadas || 0) >= med.total_tomas;
+            {/* REGISTRO NUEVO MEDICAMENTO */}
+            <section className="delay-block">
+                <h2 className="delay-title">
+                    {greeting} <span>{userName}</span>
+                </h2>
 
-                            return (
-                                <div key={med.id} className="tip-card" style={{ borderLeftColor: '#3b82f6' }}>
-                                    <p style={{ fontWeight: 600 }}>
-                                        {med.nombre} <Pill size={16} color="#3b82f6" />
+                <button
+                    className="btn-register"
+                    onClick={() => navigate("/calendario")}
+                    style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "8px",
+                        padding: "8px 16px",
+                        backgroundColor: "#659FA6",
+                        color: "#000",
+                        borderRadius: "8px",
+                        fontWeight: "bold",
+                        border: "none",
+                        cursor: "pointer",
+                        marginBottom: "10px",
+                    }}
+                >
+                    <Pill size={20} />
+                    <span>Registrar nuevo medicamento</span>
+                </button>
+                <button
+                    className="btn-register"
+                    onClick={() => navigate("/TesseractOCR")}
+                    style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "8px",
+                        padding: "8px 16px",
+                        backgroundColor: "#659FA6",
+                        color: "#000",
+                        borderRadius: "8px",
+                        fontWeight: "bold",
+                        border: "none",
+                        cursor: "pointer",
+                    }}
+                >
+                    <Camera size={20} />
+                    <span>Escanear nuevo medicamento</span>
+                </button>
+            </section>
+
+            {/* MEDICAMENTOS DE HOY */}
+            <section className="daily-tips">
+                <h3>Tus medicamentos de · Hoy</h3>
+
+                {medsHoy.length > 0 ? (
+                    medsHoy.map(med => {
+                        const diaCompletado = (med.tomadas || 0) >= med.total_tomas;
+
+                        return (
+                            <div key={med.id} className="tip-card" style={{ borderLeftColor: '#3b82f6' }}>
+                                <p style={{ fontWeight: 600 }}>
+                                    {med.nombre} <Pill size={16} color="#3b82f6" />
+                                </p>
+
+                                {diaCompletado ? (
+                                    <p style={{ fontSize: '0.8rem', fontWeight: 600, color: '#4ade80' }}>
+                                        Día completado
                                     </p>
+                                ) : (
+                                    <p style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: 5 }}>
+                                        Dosis: {med.tomadas || 0} / {med.total_tomas}
+                                    </p>
+                                )}
 
-                                    {diaCompletado ? (
-                                        <p style={{ fontSize: '0.8rem', fontWeight: 600, color: '#4ade80' }}>
-                                            Día completado
-                                        </p>
-                                    ) : (
-                                        <p style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: 5 }}>
-                                            Dosis: {med.tomadas || 0} / {med.total_tomas}
-                                        </p>
-                                    )}
+                                {!diaCompletado && (
+                                    <button
+                                        onClick={() => registrarTomaHome(med)}
+                                        style={{
+                                            marginTop: 5,
+                                            padding: "6px 12px",
+                                            backgroundColor: "#4ade80",
+                                            color: "#000",
+                                            borderRadius: "6px",
+                                            fontWeight: "bold",
+                                            border: "none",
+                                            cursor: "pointer",
+                                        }}
+                                    >
+                                        Tomar dosis
+                                    </button>
+                                )}
 
-                                    {!diaCompletado && (
-                                        <button
-                                            onClick={() => registrarTomaHome(med)}
-                                            style={{
-                                                marginTop: 5,
-                                                padding: "6px 12px",
-                                                backgroundColor: "#4ade80",
-                                                color: "#000",
-                                                borderRadius: "6px",
-                                                fontWeight: "bold",
-                                                border: "none",
-                                                cursor: "pointer",
-                                            }}
-                                        >
-                                            Tomar dosis
-                                        </button>
-                                    )}
+                                {med.desbloquearPremio && (
+                                    <button
+                                        onClick={() => navigate("/Progresos")}
+                                        style={{
+                                            marginTop: "10px",
+                                            padding: "10px 14px",
+                                            backgroundColor: "#f5e500ff",
+                                            borderRadius: "8px",
+                                            border: "1px solid #f8ef03ff",
+                                            fontWeight: "bold",
+                                            cursor: "pointer",
+                                            width: "100%",
+                                            textAlign: "center",
+                                        }}
+                                    >
+                                        ¡Desbloquear premio!
 
-                                    {med.desbloquearPremio && (
-                                        <button
-                                            onClick={() => navigate("/Progresos")}
-                                            style={{
-                                                marginTop: "10px",
-                                                padding: "10px 14px",
-                                                backgroundColor: "#f5e500ff",
-                                                borderRadius: "8px",
-                                                border: "1px solid #f8ef03ff",
-                                                fontWeight: "bold",
-                                                cursor: "pointer",
-                                                width: "100%",
-                                                textAlign: "center",
-                                            }}
-                                        >
-                                            ¡Desbloquear premio!
+                                    </button>
+                                )}
+                            </div>
+                        );
+                    })
+                ) : (
+                    <p style={{ color: '#6b7280', fontStyle: 'italic' }}>No tienes medicamentos programados para hoy.</p>
+                )}
 
-                                        </button>
-                                    )}
-                                </div>
-                            );
-                        })
-                    ) : (
-                        <p style={{ color: '#6b7280', fontStyle: 'italic' }}>No tienes medicamentos programados para hoy</p>
-                    )}
-                    </section>
+                {/* Sugerencias */}
+                <section className="cycle-section">
+                    <h4>Según tus búsquedas</h4>
+                    <div className="cycle-scroll">
+                        <div className="cycle-card" onClick={() => setShowHigadoModal(true)} style={{ cursor: 'pointer' }}>
+                            <img src={higado2} alt="Sugerencia hígado" className="card-img" style={{ objectFit: 'cover' }} />
+                            <p>Sugerencia alimenticia para el hígado🌟</p>
+                        </div>
+                        <div className="cycle-card" onClick={() => setShowAguaModal(true)} style={{ cursor: 'pointer' }}>
+                            <img src={agua} alt="Aumenta tu ingesta de agua" className="card-img" style={{ objectFit: 'cover' }} />
+                            <p>Aumenta tu ingesta de agua💧</p>
+                        </div>
+                        <div className="cycle-card" onClick={() => setShowRemedioModal(true)} style={{ cursor: 'pointer' }}>
+                            <img src={remedio} alt="Remedios naturales" className="card-img" style={{ objectFit: 'cover' }} />
+                            <p>Remedios naturales comprobados🥬</p>
+                        </div>
+                        <div className="cycle-card">
+                            <div className="card-img placeholder-premium">
+                                <Star size={20} color="white" fill="white" style={{ rotate: '45deg' }} />
+                                ¡PREMIUM!
+                                <Star size={20} color="white" fill="white" style={{ rotate: '90deg' }} />
+                            </div>
+                            <p style={{ color: '#000000ff', fontWeight: 'bold' }}>¡Desbloquéalo ahora!</p>
+                        </div>
+                    </div>
+                </section>
+            </section>
 
 
-
-                   {/* NOTICIAS */}
+            {/* Recomendaciones personalizadas */}
+            {loadingProfile ? (
+                <section className="delay-extras">
+                    <h4>Puede interesarte...</h4>
+                    <p style={{ color: '#6b7280', fontStyle: 'italic', textAlign: 'center' }}>
+                        Cargando recomendaciones...
+                    </p>
+                </section>
+            ) : articulos.length > 0 ? (
                 <section className="delay-extras">
                     <h4>Puede interesarte...</h4>
                     <div className="extras-row">
-                        <div className="extra">
-                            <Star size={24} color="#f59e0b" />
-                            <p>Noticia sobre salud infantil</p>
-                        </div>
-
-                        <div className="extra">
-                            <Pill size={24} color="#4f46e5" />
-                            <p>Nuevos estudios de farmacéutica</p>
-                        </div>
-                        <div className="extra">
-                            <Stethoscope size={24} color="#ef4444" />
-                            <p>Guía de primeros auxilios</p>
-                        </div>
+                        {articulos.map((articulo, index) => {
+                            const { Icon, color } = getIconoRecomendacion(index);
+                            return (
+                                <div 
+                                    key={index} 
+                                    className="extra"
+                                    onClick={() => setSelectedRecomendacion(articulo)}
+                                    style={{ cursor: 'pointer' }}
+                                >
+                                    <Icon size={24} color={color} />
+                                    <p>{articulo.title}</p>
+                                </div>
+                            );
+                        })}
                     </div>
                 </section>
+            ) : null}
 
                 {/* SUGERENCIAS */}
                 <section className="cycle-section">
@@ -777,7 +899,7 @@ export default function Home() {
                 )}
             </div>
 
-            <ToastContainer />
-        </>
-    );
+        <ToastContainer />
+    </>
+);
 }
