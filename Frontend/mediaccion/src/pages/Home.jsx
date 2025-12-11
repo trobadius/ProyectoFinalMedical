@@ -670,38 +670,13 @@ export default function Home() {
                             );
                         })
                     ) : (
-                        <p style={{ color: '#6b7280', fontStyle: 'italic' }}>No tienes medicamentos programados para hoy.</p>
+                        <p style={{ color: '#6b7280', fontStyle: 'italic' }}>No tienes medicamentos programados para hoy</p>
                     )}
-
-                    {/* Sugerencias */}
-                    <section className="cycle-section">
-                        <h4>Según tus búsquedas</h4>
-                        <div className="cycle-scroll">
-                            <div className="cycle-card" onClick={() => setShowHigadoModal(true)} style={{ cursor: 'pointer' }}>
-                                <img src={higado2} alt="Sugerencia hígado" className="card-img" style={{ objectFit: 'cover' }} />
-                                <p>Sugerencia alimenticia para el hígado🌟</p>
-                            </div>
-                            <div className="cycle-card" onClick={() => setShowAguaModal(true)} style={{ cursor: 'pointer' }}>
-                                <img src={agua} alt="Aumenta tu ingesta de agua" className="card-img" style={{ objectFit: 'cover' }} />
-                                <p>Aumenta tu ingesta de agua💧</p>
-                            </div>
-                            <div className="cycle-card" onClick={() => setShowRemedioModal(true)} style={{ cursor: 'pointer' }}>
-                                <img src={remedio} alt="Remedios naturales" className="card-img" style={{ objectFit: 'cover' }} />
-                                <p>Remedios naturales comprobados🥬</p>
-                            </div>
-                            <div className="cycle-card">
-                                <div className="card-img placeholder-premium">
-                                    <Star size={20} color="white" fill="white" style={{ rotate: '45deg' }} />
-                                    ¡PREMIUM!
-                                    <Star size={20} color="white" fill="white" style={{ rotate: '90deg' }} />
-                                </div>
-                                <p style={{ color: '#000000ff', fontWeight: 'bold' }}>¡Desbloquéalo ahora!</p>
-                            </div>
-                        </div>
                     </section>
-                </section>
 
-                {/* Noticias */}
+
+
+                   {/* NOTICIAS */}
                 <section className="delay-extras">
                     <h4>Puede interesarte...</h4>
                     <div className="extras-row">
@@ -709,6 +684,7 @@ export default function Home() {
                             <Star size={24} color="#f59e0b" />
                             <p>Noticia sobre salud infantil</p>
                         </div>
+
                         <div className="extra">
                             <Pill size={24} color="#4f46e5" />
                             <p>Nuevos estudios de farmacéutica</p>
@@ -720,27 +696,55 @@ export default function Home() {
                     </div>
                 </section>
 
-                {/* Premium */}
+                {/* SUGERENCIAS */}
+                <section className="cycle-section">
+                    <h4>Según tus búsquedas</h4>
+                    <div className="cycle-scroll">
+                        <div className="cycle-card" onClick={() => setShowHigadoModal(true)} style={{ cursor: 'pointer' }}>
+                            <img src={higado2} alt="Sugerencia hígado" className="card-img" style={{ objectFit: 'cover' }} />
+                            <p>Sugerencia alimenticia para el hígado🌟</p>
+                        </div>
+                        <div className="cycle-card" onClick={() => setShowAguaModal(true)} style={{ cursor: 'pointer' }}>
+                            <img src={agua} alt="Aumenta tu ingesta de agua" className="card-img" style={{ objectFit: 'cover' }} />
+                            <p>Aumenta tu ingesta de agua💧</p>
+                        </div>
+                        <div className="cycle-card" onClick={() => setShowRemedioModal(true)} style={{ cursor: 'pointer' }}>
+                            <img src={remedio} alt="Remedios naturales" className="card-img" style={{ objectFit: 'cover' }} />
+                            <p>Remedios naturales comprobados🥬</p>
+
+                        </div>
+                        <div className="cycle-card">
+                            <div className="card-img placeholder-premium">
+                                <Star size={20} color="white" fill="white" style={{ rotate: '45deg' }} />
+                                ¡PREMIUM! <Star size={20} color="white" fill="white" style={{ rotate: '90deg' }} />
+                            </div>
+                            <p style={{ color: '#000000ff', fontWeight: 'bold' }}>¡Desbloquéalo ahora!</p>
+                        </div>
+                    </div>
+                </section>
+
+                {/* TARJETA PREMIUM */}
                 <div className="premium-card-1">
                     <div className="title-premium">
-                        <Star size={24} color="white" fill="white" style={{ rotate: "45deg" }} />
-                        ¡Pásate a Premium!
-                        <Star size={24} color="white" fill="white" style={{ rotate: "90deg" }} />
+                        <Star size={24} color="white" fill="white" style={{ rotate: '45deg' }} />
+                        ¡Pásate a Premium! <Star size={24} color="white" fill="white" style={{ rotate: '90deg' }} />
                     </div>
                     <p className="subtitle-premium">
                         Desbloquea historial ilimitado, notificaciones inteligentes y planifica el cuidado de tu familia.
                     </p>
-                    <button className="action-btn">
+                    <button className="action-btn" onClick={() => console.log('Ir a Premium')}>
                         Mejorar mi plan
                     </button>
                 </div>
 
-                <div style={{ height: "80px" }}></div>
+                {/* Espacio extra en la parte inferior para que la barra de navegación no cubra el contenido */}
 
-                {/* Modales */}
+                <div style={{ height: '80px' }}></div>
+
+                {/* MODAL FUERA DE CUALQUIER CONTENEDOR */}
                 {showRemedioModal && (
                     <RemedioModal onClose={() => setShowRemedioModal(false)}>
-                        <h2>🥬 Remedios naturales comprobados</h2>
+                        <h2>🥬 Remedios naturales comprobados</h2><br />
                         <p>
                             Algunos remedios naturales han demostrado efectos reales: el jengibre ayuda a la digestión, la manzanilla calma y la menta reduce molestias estomacales.
                             Consumidos con moderación, pueden complementar el cuidado diario sin sustituir tratamientos médicos.
@@ -749,9 +753,10 @@ export default function Home() {
                     </RemedioModal>
                 )}
 
+                
                 {showAguaModal && (
                     <AguaModal onClose={() => setShowAguaModal(false)}>
-                        <h2>💧Aumenta tu ingesta de agua</h2>
+                        <h2>💧Aumenta tu ingesta de agua</h2><br />
                         <p>
                             Beber más agua es una forma sencilla de mejorar energía, piel y digestión. Mantenerse hidratado ayuda a regular la temperatura corporal y favorece el funcionamiento de órganos clave.
                             Llevar una botella a mano o usar recordatorios facilita llegar a los 6–8 vasos diarios.
@@ -762,7 +767,7 @@ export default function Home() {
 
                 {showHigadoModal && (
                     <HigadoModal onClose={() => setShowHigadoModal(false)}>
-                        <h2>🌟 Sugerencia alimenticia para el hígado</h2>
+                        <h2>🌟 Sugerencia alimenticia para el hígado</h2><br />
                         <p>
                             Cuidar el hígado es más fácil de lo que parece: alimentos como alcachofa, brócoli y limón ayudan a mejorar su función y a depurar toxinas de manera natural.
                             También se recomienda reducir fritos y ultraprocesados para evitar sobrecarga.

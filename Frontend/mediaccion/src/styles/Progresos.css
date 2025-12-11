@@ -284,10 +284,10 @@
 }
 
 .tab-btn.active {
-    background: #4e9a99; /* mismo color que sticky-btn.active */
-    color: #ffffff;
+    background: #ffffff; 
+    color: #000000;
     transform: translateY(-3px);
-    border-color: #4e9a99;
+    border-color: #4e9a99; /* mismo color que sticky-btn.active */
 }
 
 @media (max-width: 600px) {
