@@ -236,7 +236,9 @@ const Calendario = () => {
       <div className="main-app">
         <header className="main-header">
           <div className="header-components">
-            <Link to="/Chatbot" className="header-icon-chat">
+            <Link to="/Chatbot"
+              state={{ from: location.pathname }}
+              className="header-icon-chat">
               <MessageCircle size={26} className="message-circle" />
             </Link>
             <Link to="/" className="header-logo-wrapper">
