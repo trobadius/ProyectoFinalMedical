@@ -723,9 +723,9 @@ export default function Home() {
                     <RemedioModal onClose={() => setShowRemedioModal(false)}>
                         <h2>🥬 Remedios naturales comprobados</h2>
                         <p>
-                            Algunos remedios naturales han demostrado efectos reales: el jengibre ayuda a la digestión,
-                            la manzanilla calma y la menta reduce molestias estomacales. Combinados con moderación,
-                            pueden complementar el cuidado diario sin sustituir tratamientos médicos.
+                            Algunos remedios naturales han demostrado efectos reales: el jengibre ayuda a la digestión, la manzanilla calma y la menta reduce molestias estomacales.
+                            Consumidos con moderación, pueden complementar el cuidado diario sin sustituir tratamientos médicos.
+                            Son opciones accesibles y útiles para aliviar síntomas leves de forma natural.
                         </p>
                     </RemedioModal>
                 )}
@@ -734,8 +734,9 @@ export default function Home() {
                     <AguaModal onClose={() => setShowAguaModal(false)}>
                         <h2>💧Aumenta tu ingesta de agua</h2>
                         <p>
-                            Mantenerte hidratado mejora la energía, la digestión y la piel.
-                            Llevar una botella a mano hace más fácil llegar a los 6–8 vasos diarios.
+                            Beber más agua es una forma sencilla de mejorar energía, piel y digestión. Mantenerse hidratado ayuda a regular la temperatura corporal y favorece el funcionamiento de órganos clave.
+                            Llevar una botella a mano o usar recordatorios facilita llegar a los 6–8 vasos diarios.
+                            Un hábito simple con grandes beneficios.
                         </p>
                     </AguaModal>
                 )}
@@ -744,7 +745,9 @@ export default function Home() {
                     <HigadoModal onClose={() => setShowHigadoModal(false)}>
                         <h2>🌟 Sugerencia alimenticia para el hígado</h2>
                         <p>
-                            Alimentos como alcachofa, brócoli y limón ayudan a depurar de forma natural.
+                            Cuidar el hígado es más fácil de lo que parece: alimentos como alcachofa, brócoli y limón ayudan a mejorar su función y a depurar toxinas de manera natural.
+                            También se recomienda reducir fritos y ultraprocesados para evitar sobrecarga.
+                            Pequeños cambios diarios pueden mejorar notablemente tu bienestar hepático.
                         </p>
                     </HigadoModal>
                 )}
