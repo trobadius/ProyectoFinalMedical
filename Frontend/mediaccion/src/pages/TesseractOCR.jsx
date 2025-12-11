@@ -1,6 +1,5 @@
 import { useRef, useState, useEffect } from "react";
 import { createWorker } from "tesseract.js";
-import ScanerImg from "../assets/scanner.jpg";
 import ScanerImg from "../assets/scanner.png";
 import { chatCerrado } from "../components/OpenAiApi";
 import { cleanOcrText } from "../components/LimpiarTexto.jsx";
@@ -353,15 +352,6 @@ export default function TesseractOCR() {
             </Link>
           </div>
         </header>
-        {/* Si NO estamos mostrando el modal del chat → mostramos todo lo demás */}
-        {!(showResultChat && chatText) && (
-          <>
-            <h2 className="tesseract-titulo">Escanear</h2>
-
-            <div className="camera-ocr-video-container">
-              <video ref={videoRef} className="camera-ocr-video" />
-            </div>
-          </header>
         {/* Si NO estamos mostrando el modal del chat → mostramos todo lo demás */}
         {!(showResultChat && chatText) && (
           <>
