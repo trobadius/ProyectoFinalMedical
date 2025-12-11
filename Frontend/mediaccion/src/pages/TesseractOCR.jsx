@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import { createWorker } from "tesseract.js";
 import ScanerImg from "../assets/scanner.jpg";
+import ScanerImg from "../assets/scanner.png";
 import { chatCerrado } from "../components/OpenAiApi";
 import { cleanOcrText } from "../components/LimpiarTexto.jsx";
 import api from "../api";
@@ -316,6 +317,7 @@ export default function TesseractOCR() {
   const guardarMedicamento = async () => {
     const medicamento = chatText.medicamento || "Desconocido";
     const descripcion = chatText.descripcion || "Sin descripción";
+    localStorage.setItem("medicamentoActual", medicamento);
 
     try {
       const res = await api.post("/api/medicamentos/", { medicamento, descripcion })
@@ -356,6 +358,13 @@ export default function TesseractOCR() {
           <>
             <h2 className="tesseract-titulo">Escanear</h2>
 
+            <div className="camera-ocr-video-container">
+              <video ref={videoRef} className="camera-ocr-video" />
+            </div>
+          </header>
+        {/* Si NO estamos mostrando el modal del chat → mostramos todo lo demás */}
+        {!(showResultChat && chatText) && (
+          <>
             <div className="camera-ocr-video-container">
               <video ref={videoRef} className="camera-ocr-video" />
 

@@ -306,6 +306,34 @@ export default function Perfil() {
                     {errors.date_birth}
                   </label>
                 )}
+                <p><strong>Apellidos:</strong></p>
+                <input
+                  type="text"
+                  name="last_name"
+                  value={userProfileCopy.last_name}
+                  onChange={handleChange}
+                  placeholder="Tus apellidos"
+                  required
+                />
+                {errors.last_name && (
+                  <label style={{ color: "red", fontSize: "12px", display: "block", marginTop: "4px" }}>
+                    {errors.last_name}
+                  </label>
+                )}
+                <p><strong>Email:</strong> {userProfile.email || '—'}</p>
+                <p><strong>Fecha de nacimiento:</strong></p>
+                <input
+                  type="date"
+                  name="date_birth"
+                  value={userProfileCopy.date_birth}
+                  onChange={handleChange}
+                  required
+                />
+                {errors.date_birth && (
+                  <label style={{ color: "red", fontSize: "12px", display: "block", marginTop: "4px" }}>
+                    {errors.date_birth}
+                  </label>
+                )}
 
                 <p><strong>Roles:</strong> {userProfile.roles || '—'}</p>
                 <p><strong>Genero:</strong></p>

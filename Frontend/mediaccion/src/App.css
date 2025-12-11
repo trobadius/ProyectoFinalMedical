@@ -34,7 +34,9 @@ body {
 .waves {
   position: absolute;
   width: 100%;
-  height: 100%;
+  margin-top: 1rem;
+  margin-left: 5rem;
+  height: 50%;
   top: -25%;
   left: -15%;
   background: radial-gradient(circle at 30% 30%, rgba(0, 255, 200, 0.25), transparent 60%),
@@ -52,7 +54,7 @@ body {
   }
 
   50% {
-    transform: rotate(180deg) scale(1.15);
+    transform: rotate(180deg) scale(1);
   }
 
   100% {
@@ -102,7 +104,6 @@ p {
     overflow-x: hidden;
     */
   border-radius: 20px;
-  height: 250vh;
 }
 
 /* Revisar TOCA BOTONES TUS MEDICAMENTOS*/
