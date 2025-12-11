@@ -4,7 +4,7 @@ from . import views
 urlpatterns = [
     path('users/', views.UsersViews),
     path('users/crear', views.CrearUser),
-    path('users/profile/me', views.ProfileView),
+    path('users/profile/me/', views.ProfileView),
 
     path('notificaciones/', views.NotificacionesView),
     path('notificaciones/<int:pk>/', views.NotificacionesDetailView),
