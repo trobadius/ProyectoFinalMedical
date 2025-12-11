@@ -27,16 +27,6 @@
 }
   */
 
-.sticky-button-container.hide {
-  opacity: 0;
-  transform: translateY(-50%, 120%);
-  pointer-events: none;
-}
-
-.sticky-button-container {
-  transition: opacity 2s ease, transform 1s ease; /* transición suave */
-}
-
 /* ===== BOTONES ===== */
 .sticky-btn {
   border: none;
@@ -62,6 +52,27 @@
 .sticky-btn.active {
   background: #4e9a99;
   transform: translateY(-3px);
+}
+
+.sticky-button-container.hide {
+  opacity: 0;
+  transform: translateY(-50%, 120%);
+  pointer-events: none;
+}
+
+.sticky-button-container {
+  transition: opacity 2s ease, transform 1s ease; /* transición suave */
+}
+
+.sticky-button-container.hide {
+  opacity: 0;
+  transform: translateY(-50%, 120%);
+  pointer-events: auto; /* Permitimos el hover */
+}
+
+.sticky-button-container.hide:hover {
+  opacity: 1;
+  transform: translateY(-50%, 120%);
 }
 
 /* ===== Asegura que los íconos NUNCA desborden ===== */

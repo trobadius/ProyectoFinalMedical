@@ -293,6 +293,7 @@ export default function Perfil() {
                 </label>
               )}
               <p><strong>Email:</strong> {userProfile.email || '—'}</p>
+              <p><strong>Fecha de nacimiento:</strong></p>
               <input
                 type="date"
                 name="date_birth"

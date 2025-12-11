@@ -6,31 +6,35 @@ import { House, CalendarDays, Camera, Trophy, UserRound } from 'lucide-react';
 export default function StickyButton() {
   const navigate = useNavigate();
   const location = useLocation();
+
   const [hidden, setHidden] = useState(false);
+  const [firstScrollDone, setFirstScrollDone] = useState(false);
 
   const isActive = (path) => location.pathname === path;
 
+  // 🔥 Cada vez que cambia la ruta, reiniciamos todo
   useEffect(() => {
-    let lastScroll = window.scrollY;
+    setHidden(false);
+    setFirstScrollDone(false);
+  }, [location.pathname]);
 
+  // 🔥 La primera vez que haces scroll → se esconde
+  useEffect(() => {
     const handleScroll = () => {
-      const currentScroll = window.scrollY;
-
-      if (currentScroll > lastScroll && currentScroll > 50) {
-        setHidden(true);
-      } else {
-        setHidden(false);
+      if (!firstScrollDone && window.scrollY > 20) {
+        setHidden(true);          // esconder
+        setFirstScrollDone(true); // marcar que ya pasó el primer scroll
       }
-
-      lastScroll = currentScroll;
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [firstScrollDone]);
 
   return (
-    <div className={`sticky-button-container ${hidden ? "hide" : ""}`}>
+    <div
+      className={`sticky-button-container ${hidden ? "hide" : ""}`}
+    >
       <button
         className={`sticky-btn ${isActive("/") ? "active" : ""}`}
         onClick={() => navigate("/")}
@@ -53,7 +57,6 @@ export default function StickyButton() {
         aria-label="Cámara"
       >
         <Camera />
-        
         <span className="corner-bl"></span>
         <span className="corner-br"></span>
       </button>
