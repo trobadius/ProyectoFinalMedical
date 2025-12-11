@@ -39,7 +39,11 @@
     /* Alma-linea separadora */
     margin-bottom: 1rem;
 }
-
+.header-left {
+    width: 100%;
+    height: auto;
+    text-align: center;
+}
 .date {
     font-size: 1.25rem;
     font-weight: 600;
@@ -224,11 +228,12 @@
     overflow-x: scroll;
     gap: 12px;
     padding-bottom: 8px;
+    scrollbar-width: none;
 }
 
 .cycle-card {
     flex-shrink: 0;
-    width: 120px;
+    width: 130px;
     text-align: center;
 }
 

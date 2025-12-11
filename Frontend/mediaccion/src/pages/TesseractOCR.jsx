@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 import { createWorker } from "tesseract.js";
-import ScanerImg from "../assets/scanner.jpg"; 
+import ScanerImg from "../assets/scanner.png";
 import { chatCerrado } from "../components/OpenAiApi";
 import { cleanOcrText } from "../components/LimpiarTexto.jsx";
 import api from "../api";
@@ -9,7 +9,7 @@ import '../App.css';
 import '../styles/tesseract.css'
 import { MessageCircle, LogOut } from 'lucide-react';
 import logo from "../assets/logo.svg";
-  
+
 export default function TesseractOCR() {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -19,7 +19,7 @@ export default function TesseractOCR() {
   const [started, setStarted] = useState(false);
   const [result, setResult] = useState("");
   const [autoScanOnce, setAutoScanOnce] = useState(false);
-  const [scanned, setScanned] = useState(false); 
+  const [scanned, setScanned] = useState(false);
   const [cameraActive, setCameraActive] = useState(false);
 
   //ventana modal
@@ -111,25 +111,25 @@ export default function TesseractOCR() {
   function cannyEdgeDetection(data, width, height) {
     const out = new Uint8ClampedArray(data.length);
 
-    const gx = [-1,0,1,-2,0,2,-1,0,1];
-    const gy = [-1,-2,-1,0,0,0,1,2,1];
+    const gx = [-1, 0, 1, -2, 0, 2, -1, 0, 1];
+    const gy = [-1, -2, -1, 0, 0, 0, 1, 2, 1];
 
     for (let y = 1; y < height - 1; y++) {
       for (let x = 1; x < width - 1; x++) {
         let sumX = 0, sumY = 0, idx = 0;
 
-        for (let ky=-1; ky<=1; ky++) {
-          for (let kx=-1; kx<=1; kx++) {
-            const pixel = data[((y+ky)*width + (x+kx))*4];
+        for (let ky = -1; ky <= 1; ky++) {
+          for (let kx = -1; kx <= 1; kx++) {
+            const pixel = data[((y + ky) * width + (x + kx)) * 4];
             sumX += pixel * gx[idx];
             sumY += pixel * gy[idx];
             idx++;
           }
         }
 
-        const mag = Math.sqrt(sumX*sumX + sumY*sumY);
-        const i = (y*width + x)*4;
-        out[i] = out[i+1] = out[i+2] = mag > 60 ? 255 : 0;
+        const mag = Math.sqrt(sumX * sumX + sumY * sumY);
+        const i = (y * width + x) * 4;
+        out[i] = out[i + 1] = out[i + 2] = mag > 60 ? 255 : 0;
       }
     }
 
@@ -144,36 +144,36 @@ export default function TesseractOCR() {
     let pts = [];
     for (let y = 0; y < canvas.height; y++) {
       for (let x = 0; x < canvas.width; x++) {
-        const idx = (y*canvas.width + x)*4;
-        if (data[idx] === 0) pts.push({x, y});
+        const idx = (y * canvas.width + x) * 4;
+        if (data[idx] === 0) pts.push({ x, y });
       }
     }
 
     if (pts.length < 10) return;
 
-    let sumX=0, sumY=0, sumXY=0, sumX2=0;
+    let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
     for (const p of pts) {
       sumX += p.x;
       sumY += p.y;
-      sumXY += p.x*p.y;
-      sumX2 += p.x*p.x;
+      sumXY += p.x * p.y;
+      sumX2 += p.x * p.x;
     }
 
     const n = pts.length;
-    const slope = (n*sumXY - sumX*sumY) / (n*sumX2 - sumX*sumX);
-    const angle = Math.atan(slope) * (180/Math.PI);
+    const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+    const angle = Math.atan(slope) * (180 / Math.PI);
 
     const temp = document.createElement("canvas");
     temp.width = canvas.width;
     temp.height = canvas.height;
 
     const tctx = temp.getContext("2d");
-    tctx.translate(canvas.width/2, canvas.height/2);
+    tctx.translate(canvas.width / 2, canvas.height / 2);
     tctx.rotate((-angle * Math.PI) / 180);
-    tctx.drawImage(canvas, -canvas.width/2, -canvas.height/2);
+    tctx.drawImage(canvas, -canvas.width / 2, -canvas.height / 2);
 
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    ctx.drawImage(temp,0,0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(temp, 0, 0);
   }
 
   // ============================================================
@@ -190,87 +190,87 @@ export default function TesseractOCR() {
     const ctx = canvas.getContext("2d");
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    let imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
+    let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     let data = imageData.data;
     const w = canvas.width, h = canvas.height;
-    const totalPixels = w*h;
+    const totalPixels = w * h;
 
     // 1) Grayscale
-    for (let i=0;i<data.length;i+=4) {
-      const g = data[i]*0.299 + data[i+1]*0.587 + data[i+2]*0.114;
-      data[i]=data[i+1]=data[i+2]=g;
+    for (let i = 0; i < data.length; i += 4) {
+      const g = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
+      data[i] = data[i + 1] = data[i + 2] = g;
     }
     const originalGray = new Uint8ClampedArray(data);
 
     // 2) Mediana
-    const median = arr => arr.sort((a,b)=>a-b)[4];
+    const median = arr => arr.sort((a, b) => a - b)[4];
     let filtered = new Uint8ClampedArray(data);
 
-    for (let y=1;y<h-1;y++){
-      for (let x=1;x<w-1;x++){
-        let neighbors=[];
-        for (let ky=-1;ky<=1;ky++){
-          for (let kx=-1;kx<=1;kx++){
-            neighbors.push(originalGray[((y+ky)*w + (x+kx))*4]);
+    for (let y = 1; y < h - 1; y++) {
+      for (let x = 1; x < w - 1; x++) {
+        let neighbors = [];
+        for (let ky = -1; ky <= 1; ky++) {
+          for (let kx = -1; kx <= 1; kx++) {
+            neighbors.push(originalGray[((y + ky) * w + (x + kx)) * 4]);
           }
         }
-        const med=median(neighbors);
-        const i=(y*w+x)*4;
-        filtered[i]=filtered[i+1]=filtered[i+2]=med;
+        const med = median(neighbors);
+        const i = (y * w + x) * 4;
+        filtered[i] = filtered[i + 1] = filtered[i + 2] = med;
       }
     }
     data.set(filtered);
 
     // 3) Aumento Contraste
-    let mn=255, mx=0;
-    for(let i=0;i<data.length;i+=4){
-      if(data[i]<mn) mn=data[i];
-      if(data[i]>mx) mx=data[i];
+    let mn = 255, mx = 0;
+    for (let i = 0; i < data.length; i += 4) {
+      if (data[i] < mn) mn = data[i];
+      if (data[i] > mx) mx = data[i];
     }
-    const range=mx-mn;
-    if(range>0){
-      for(let i=0;i<data.length;i+=4){
-        const v=((data[i]-mn)/range)*255;
-        data[i]=data[i+1]=data[i+2]=v;
+    const range = mx - mn;
+    if (range > 0) {
+      for (let i = 0; i < data.length; i += 4) {
+        const v = ((data[i] - mn) / range) * 255;
+        data[i] = data[i + 1] = data[i + 2] = v;
       }
     }
 
     // 4) Canny
-    const edges = cannyEdgeDetection(data,w,h);
-    for(let i=0;i<data.length;i+=4){
-      data[i]=data[i+1]=data[i+2]=edges[i];
+    const edges = cannyEdgeDetection(data, w, h);
+    for (let i = 0; i < data.length; i += 4) {
+      data[i] = data[i + 1] = data[i + 2] = edges[i];
     }
-    ctx.putImageData(imageData,0,0);
+    ctx.putImageData(imageData, 0, 0);
 
     // 5) Deskew
     deskewCanvas(canvas);
 
     // recargar datos tras deskew
-    imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
+    imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     data = imageData.data;
 
     // 6) Bounding Box
-    let minX=w, minY=h, maxX=0, maxY=0;
-    for(let i=0;i<data.length;i+=4){
-      if(data[i]===0){
-        const idx=i/4;
-        const x=idx%w, y=Math.floor(idx/w);
-        if(x<minX)minX=x;
-        if(x>maxX)maxX=x;
-        if(y<minY)minY=y;
-        if(y>maxY)maxY=y;
+    let minX = w, minY = h, maxX = 0, maxY = 0;
+    for (let i = 0; i < data.length; i += 4) {
+      if (data[i] === 0) {
+        const idx = i / 4;
+        const x = idx % w, y = Math.floor(idx / w);
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
       }
     }
 
-    ctx.strokeStyle="red";
-    ctx.lineWidth=3;
-    ctx.strokeRect(minX,minY,maxX-minX,maxY-minY);
+    ctx.strokeStyle = "red";
+    ctx.lineWidth = 3;
+    ctx.strokeRect(minX, minY, maxX - minX, maxY - minY);
 
-    if(maxX>minX && maxY>minY){
-      const crop=ctx.getImageData(minX,minY,maxX-minX,maxY-minY);
-      canvas.width=maxX-minX;
-      canvas.height=maxY-minY;
-      ctx.putImageData(crop,0,0);
+    if (maxX > minX && maxY > minY) {
+      const crop = ctx.getImageData(minX, minY, maxX - minX, maxY - minY);
+      canvas.width = maxX - minX;
+      canvas.height = maxY - minY;
+      ctx.putImageData(crop, 0, 0);
     }
 
     // 7) OCR final
@@ -279,16 +279,16 @@ export default function TesseractOCR() {
     setScanned(true);   // Marca que ya terminó
 
     console.log("OCR:", ocrData.text);
-    if(ocrData.text){
+    if (ocrData.text) {
       const cleanText = cleanOcrText(ocrData.text)
       setOcrResult(cleanText);
       console.log(cleanText)
       //const laia = chatCerrado(ocrResult);
       //setModalText(ocrResult);
       setShowResultModal(true);
-    } 
+    }
 
-    
+
   };
 
   const buscarMecicamento = async () => {
@@ -316,13 +316,14 @@ export default function TesseractOCR() {
   const guardarMedicamento = async () => {
     const medicamento = chatText.medicamento || "Desconocido";
     const descripcion = chatText.descripcion || "Sin descripción";
+    localStorage.setItem("medicamentoActual", medicamento);
 
-    try{
-      const res = await api.post("/api/medicamentos/",{medicamento, descripcion})
+    try {
+      const res = await api.post("/api/medicamentos/", { medicamento, descripcion })
       alert("Medicamento registrado con éxito 🩺");
       apagarCamara();
       navigate("/calendario")
-    }catch(error){
+    } catch (error) {
       alert(error)
 
     }
@@ -333,181 +334,180 @@ export default function TesseractOCR() {
   // ============================================================
   return (
     <>
-    <div className="waves"></div>
-    <div className="main-app">
-      <header className="main-header">
-        <div className="header-components">
-            <Link to="/Chatbot" className="header-icon-chat">
-                <MessageCircle size={26} className="message-circle"/>
+      <div className="waves"></div>
+      <div className="main-app">
+        <header className="main-header">
+          <div className="header-components">
+            <Link to="/Chatbot"
+              state={{ from: location.pathname }} className="header-icon-chat">
+              <MessageCircle size={26} className="message-circle" />
             </Link>
             <Link to="/" className="header-logo-wrapper">
-                    <img src={logo} alt="Medicacción Logo" className="header-logo" />
+              <img src={logo} alt="Medicacción Logo" className="header-logo" />
             </Link>
             <Link to="/logout">
-                <button className="header-icon-logout">
+              <button className="header-icon-logout">
                 <LogOut size={26} className="header-logout" />
-                </button>
+              </button>
             </Link>
-        </div>
-      </header>
-      {/* Si NO estamos mostrando el modal del chat → mostramos todo lo demás */}
-      {!(showResultChat && chatText) && (
-        <>
-          <h2 className="tesseract-titulo">Escanear</h2>
-            
-          <div className="camera-ocr-video-container">
-            <video ref={videoRef} className="camera-ocr-video" />
-
-            {!started && (
-              <div className="overlay-img">
-                <img src={ScanerImg} alt="scanner" className="scanner-image" />
-              </div>
-            )}
           </div>
+        </header>
+        {/* Si NO estamos mostrando el modal del chat → mostramos todo lo demás */}
+        {!(showResultChat && chatText) && (
+          <>
+            <div className="camera-ocr-video-container">
+              <video ref={videoRef} className="camera-ocr-video" />
 
-          <canvas ref={canvasRef} className="camera-ocr-canvas" />
-          <div className="modal-buttons">
-          {!cameraActive ? (
-            <button
-              onClick={() => handleActivateCamera("environment")}
-              className="camera-ocr-button-activate"
-            >
-              Activar
-            </button>
-          ) : (
-            <button
-              onClick={() => {
-                apagarCamara();
-                setCameraActive(false);
-              }}
-              className="camera-ocr-button"
-            >
-              Desactivar
-            </button>
-          )}
-          {cameraActive && (
-            <>
-              {!scanned ? (
+              {!started && (
+                <div className="overlay-img">
+                  <img src={ScanerImg} alt="scanner" className="scanner-image" />
+                </div>
+              )}
+            </div>
+
+            <canvas ref={canvasRef} className="camera-ocr-canvas" />
+            <div className="modal-buttons">
+              {!cameraActive ? (
                 <button
-                  onClick={() => setAutoScanOnce(true)}
-                  className="camera-ocr-button"
+                  onClick={() => handleActivateCamera("environment")}
+                  className="camera-ocr-button-activate"
                 >
-                  Escaneo automático
+                  Activar
                 </button>
               ) : (
                 <button
                   onClick={() => {
-                    setScanned(false);
-                    setResult("");
-                    setAutoScanOnce(true);
+                    apagarCamara();
+                    setCameraActive(false);
                   }}
                   className="camera-ocr-button"
                 >
-                  Volver a escanear
+                  Desactivar
                 </button>
               )}
-            </>
-          )}
-          </div>
-          {showResultModal && (
-            <div className="camera-ocr-video-container">
-              <div className="camera-ocr-result">
-                <p>Resultado:</p>
-                <p>{ocrResult.medicamento}</p>
-                <p>{ocrResult.dosis}</p>
-                <p>{ocrResult.via}</p>
-                <hr />
+              {cameraActive && (
+                <>
+                  {!scanned ? (
+                    <button
+                      onClick={() => setAutoScanOnce(true)}
+                      className="camera-ocr-button"
+                    >
+                      Escaneo automático
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        setScanned(false);
+                        setResult("");
+                        setAutoScanOnce(true);
+                      }}
+                      className="camera-ocr-button"
+                    >
+                      Volver a escanear
+                    </button>
+                  )}
+                </>
+              )}
+            </div>
+            {showResultModal && (
+              <div className="camera-ocr-video-container">
+                <div className="camera-ocr-result">
+                  <p>Resultado:</p>
+                  <p>{ocrResult.medicamento}</p>
+                  <p>{ocrResult.dosis}</p>
+                  <p>{ocrResult.via}</p>
+                  <hr />
 
-                <p>¿Quieres buscar este medicamento?</p>
-                <div className="modal-buttons">
-                  <button
-                    onClick={() => buscarMecicamento()}
-                    className="camera-ocr-button"
-                  >
-                    Aceptar
-                  </button>
-                  <button
-                    onClick={() => setShowResultModal(false)}
-                    className="camera-ocr-button"
-                  >
-                    Cancelar
-                  </button>
+                  <p>¿Quieres buscar este medicamento?</p>
+                  <div className="modal-buttons">
+                    <button
+                      onClick={() => buscarMecicamento()}
+                      className="camera-ocr-button"
+                    >
+                      Aceptar
+                    </button>
+                    <button
+                      onClick={() => setShowResultModal(false)}
+                      className="camera-ocr-button"
+                    >
+                      Cancelar
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
-        </>
-      )}
-      {showResultChat && chatText && (
-        <div className="camera-ocr-video-container">
-          <div className="camera-ocr-result">
-
-            {!chatText.error ? (
-              <div style={{ whiteSpace: "pre-line" }}>
-
-                <p><strong>Medicamento:</strong> {chatText.medicamento || "N/A"}</p>
-
-                <p><strong>Descripción:</strong> {chatText.descripcion || "N/A"}</p>
-
-                <p><strong>Uso:</strong></p>
-                {Array.isArray(chatText.uso) ? (
-                  chatText.uso.map((item, index) => (
-                    <p key={index}> - {item}</p>
-                  ))
-                ) : (
-                  <p>N/A</p>
-                )}
-
-                <p><strong>Dosis recomendada:</strong></p>
-                {chatText.dosis_recomendada && typeof chatText.dosis_recomendada === "object" ? (
-                  Object.entries(chatText.dosis_recomendada).map(([key, value]) => (
-                    <p key={key}>{key.charAt(0).toUpperCase() + key.slice(1)}: {value}</p>
-                  ))
-                ) : (
-                  <p>N/A</p>
-                )}
-
-                <p><strong>Precauciones:</strong></p>
-                {Array.isArray(chatText.precauciones) ? (
-                  chatText.precauciones.map((item, index) => (
-                    <p key={index}> - {item}</p>
-                  ))
-                ) : (
-                  <p>N/A</p>
-                )}
-
-                <p><strong>Efectos secundarios:</strong></p>
-                {Array.isArray(chatText.efectos_secundarios) ? (
-                  chatText.efectos_secundarios.map((item, index) => (
-                    <p key={index}> - {item}</p>
-                  ))
-                ) : (
-                  <p>N/A</p>
-                )}
-
-              </div>
-            ) : (
-              <p style={{ color: 'red' }}>
-                Error: {chatText.error}<br />{chatText.raw || ""}
-              </p>
             )}
+          </>
+        )}
+        {showResultChat && chatText && (
+          <div className="camera-ocr-video-container">
+            <div className="camera-ocr-result">
 
-            <hr />
+              {!chatText.error ? (
+                <div style={{ whiteSpace: "pre-line" }}>
 
-            <p>¿Quieres guardar este medicamento?</p>
-            <div className="modal-buttons">
-              <button onClick={() => guardarMedicamento()} className="camera-ocr-button">Aceptar</button>
-              <button onClick={() => {
-                setShowResultChat(false);
-                startCamera();
+                  <p><strong>Medicamento:</strong> {chatText.medicamento || "N/A"}</p>
+
+                  <p><strong>Descripción:</strong> {chatText.descripcion || "N/A"}</p>
+
+                  <p><strong>Uso:</strong></p>
+                  {Array.isArray(chatText.uso) ? (
+                    chatText.uso.map((item, index) => (
+                      <p key={index}> - {item}</p>
+                    ))
+                  ) : (
+                    <p>N/A</p>
+                  )}
+
+                  <p><strong>Dosis recomendada:</strong></p>
+                  {chatText.dosis_recomendada && typeof chatText.dosis_recomendada === "object" ? (
+                    Object.entries(chatText.dosis_recomendada).map(([key, value]) => (
+                      <p key={key}>{key.charAt(0).toUpperCase() + key.slice(1)}: {value}</p>
+                    ))
+                  ) : (
+                    <p>N/A</p>
+                  )}
+
+                  <p><strong>Precauciones:</strong></p>
+                  {Array.isArray(chatText.precauciones) ? (
+                    chatText.precauciones.map((item, index) => (
+                      <p key={index}> - {item}</p>
+                    ))
+                  ) : (
+                    <p>N/A</p>
+                  )}
+
+                  <p><strong>Efectos secundarios:</strong></p>
+                  {Array.isArray(chatText.efectos_secundarios) ? (
+                    chatText.efectos_secundarios.map((item, index) => (
+                      <p key={index}> - {item}</p>
+                    ))
+                  ) : (
+                    <p>N/A</p>
+                  )}
+
+                </div>
+              ) : (
+                <p style={{ color: 'red' }}>
+                  Error: {chatText.error}<br />{chatText.raw || ""}
+                </p>
+              )}
+
+              <hr />
+
+              <p>¿Quieres guardar este medicamento?</p>
+              <div className="modal-buttons">
+                <button onClick={() => guardarMedicamento()} className="camera-ocr-button">Aceptar</button>
+                <button onClick={() => {
+                  setShowResultChat(false);
+                  startCamera();
                 }} className="camera-ocr-button">Cancelar</button>
+              </div>
+
             </div>
-
           </div>
-        </div>
-      )}
+        )}
 
-    </div>
+      </div>
     </>
   );
 }

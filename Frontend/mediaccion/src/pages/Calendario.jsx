@@ -30,6 +30,14 @@ const Calendario = () => {
     fetchMedicamentos();
   }, []);
 
+  useEffect(() => {
+    const med = localStorage.getItem("medicamentoActual");
+    if (med) {
+      setNuevoMed(p => ({ ...p, nombre: med }));
+    }
+  }, []);
+
+
   const fetchMedicamentos = async () => {
     try {
       setLoading(true);
@@ -228,7 +236,9 @@ const Calendario = () => {
       <div className="main-app">
         <header className="main-header">
           <div className="header-components">
-            <Link to="/Chatbot" className="header-icon-chat">
+            <Link to="/Chatbot"
+              state={{ from: location.pathname }}
+              className="header-icon-chat">
               <MessageCircle size={26} className="message-circle" />
             </Link>
             <Link to="/" className="header-logo-wrapper">
@@ -272,23 +282,31 @@ const Calendario = () => {
           })}
         </div>
 
-
       {selectedDate && (
         <div className="med-section">
           <p>Añadir medicamento para: <strong>{selectedDate.toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" })}</strong></p>
 
-
-          <div className="input-group">
-            <input
-              type="text"
-              placeholder="Nombre del medicamento"
-              
-              value={nuevoMed.nombre}
-              onChange={e => setNuevoMed(p => ({ ...p, nombre: e.target.value }))}
-              disabled={loading}
-            />
-          </div>
-
+          {localStorage.getItem("medicamentoActual") ? (
+            <div className="input-group">
+              <input
+                type="text"              
+                value={localStorage.getItem("medicamentoActual")}
+                disabled={loading}
+              />
+            </div>
+            ): (
+            <div className="input-group">
+              <input
+                type="text"
+                placeholder="Nombre del medicamento"
+                
+                value={nuevoMed.nombre}
+                onChange={e => setNuevoMed(p => ({ ...p, nombre: e.target.value }))}
+                disabled={loading}
+              />
+            </div>
+            )}
+          
           <div className="input-group">
             <p>Cada (h)</p>
             <input
@@ -301,7 +319,6 @@ const Calendario = () => {
             />
             <p>Tomas</p>
 
-
             <input
               type="number"
               min="1"
@@ -310,11 +327,9 @@ const Calendario = () => {
               placeholder="Número de tomas"
               disabled={loading}
             />
-
 
             <p>Dias</p>
 
-
             <input
               type="number"
               min="1"
@@ -324,54 +339,11 @@ const Calendario = () => {
               disabled={loading}
             />
 
-          {/* Alma - <div className="input-group">
-            <input
-              type="text"
-              placeholder="Nombre del medicamento"
-              
-              value={nuevoMed.nombre}
-              onChange={e => setNuevoMed(p => ({ ...p, nombre: e.target.value }))}
-              disabled={loading}
-            />
-
-            <p>Cada (h)</p>
-
-
-            <input
-              type="number"
-              min="1"
-              value={nuevoMed.intervalo}
-              onChange={e => setNuevoMed(p => ({ ...p, intervalo: Number(e.target.value) || 1 }))}
-              placeholder="Cada (h)"
-              disabled={loading}
-            />
-            <p>Tomas</p>
-
-
-            <input
-              type="number"
-              min="1"
-              value={nuevoMed.total_tomas}
-              onChange={e => setNuevoMed(p => ({ ...p, total_tomas: Number(e.target.value) || 1 }))}
-              placeholder="Número de tomas"
-              disabled={loading}
-            />
-
-
-            <p>Duración en dias</p>
-
-
-            <input
-              type="number"
-              min="1"
-              value={nuevoMed.duracion_dias}
-              onChange={e => setNuevoMed(p => ({ ...p, duracion_dias: Number(e.target.value) || 1 }))}
-              placeholder="Días de tratamiento"
-              disabled={loading}
-            /> */}
-
-
-            <button onClick={guardarMedicamento} disabled={loading}>
+            <button onClick={() => {
+                localStorage.removeItem("medicamentoActual");
+                guardarMedicamento();
+              }} 
+              disabled={loading}>
               <Plus size={20} color="white" />
             </button>
           </div>
