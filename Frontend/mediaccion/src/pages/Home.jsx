@@ -576,7 +576,10 @@ export default function Home() {
         }
 
         // Tomar solo las primeras 3 recomendaciones para mostrar en las tarjetas
-        setArticulos(recomendaciones.slice(0, 3));
+        const articulosFinales = recomendaciones.slice(0, 3);
+        setArticulos(articulosFinales);
+        console.log("📋 Recomendaciones cargadas:", articulosFinales);
+        console.log("Edad:", edad, "Género:", genero, "Rango:", rangoEdad);
     }, [profile]);
 
     // Función para obtener el icono según el índice
@@ -869,6 +872,15 @@ export default function Home() {
                             Pequeños cambios diarios pueden mejorar notablemente tu bienestar hepático.
                         </p>
                     </HigadoModal>
+                )}
+
+                {selectedRecomendacion && (
+                    <RemedioModal onClose={() => setSelectedRecomendacion(null)}>
+                        <h2>📋 {selectedRecomendacion.title}</h2><br />
+                        <p>
+                            {selectedRecomendacion.content}
+                        </p>
+                    </RemedioModal>
                 )}
             </div>
 
