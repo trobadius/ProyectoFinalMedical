@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
+import { LanguageProvider } from './context/LanguageContext.jsx';
 import Home from './pages/Home.jsx';
 import Calendario from './pages/Calendario.jsx';
 import Perfil from './pages/Perfil.jsx';
@@ -26,8 +27,9 @@ export default function App() {
       }}
     >
     */
-    <div>
-      <main>
+    <LanguageProvider>
+      <div>
+        <main>
         <Routes>
           <Route element={<ProtectedRoute />} >
             <Route element={<NavbarOutlet />} >
@@ -47,8 +49,8 @@ export default function App() {
         </Routes>
       </main>
 
-
-    </div>
+      </div>
+    </LanguageProvider>
   );
 }
 

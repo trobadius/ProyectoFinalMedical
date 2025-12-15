@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import '../styles/Stickybutton.css';
-import { House, CalendarDays, Camera, Trophy, UserRound } from 'lucide-react';
+import { House, CalendarDays, Camera, ChartNoAxesCombined, UserRound } from 'lucide-react';
 
 export default function StickyButton() {
   const navigate = useNavigate();
@@ -66,7 +66,7 @@ export default function StickyButton() {
         onClick={() => navigate("/progresos")}
         aria-label="Progresos"
       >
-        <Trophy />
+        <ChartNoAxesCombined />
       </button>
 
       <button
