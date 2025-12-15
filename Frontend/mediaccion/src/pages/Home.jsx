@@ -1,6 +1,4 @@
 import { useEffect, useRef, useState, useContext } from "react";
-
-import React, { useEffect, useRef, useState, useContext } from "react";
 import RemedioModal from '../components/RemedioModal';
 import AguaModal from '../components/Agua';
 import HigadoModal from '../components/Higado';
