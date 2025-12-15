@@ -22,7 +22,7 @@ const Calendario = () => {
     intervalo: 8,
     tomadas: 0,
     total_tomas: 1,
-    duracion_dias: 1
+    duracion_días: 1
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -387,7 +387,7 @@ Te ayudaremos a no olvidar ninguna dosis 💙`;
                 disabled={loading}
               />
 
-              <p>Dias</p>
+              <p>Días</p>
 
               <input
                 type="number"
@@ -415,7 +415,7 @@ Te ayudaremos a no olvidar ninguna dosis 💙`;
                 }}
                 disabled={loading || testingWhatsApp}
               >
-                <Plus size={20} color="white" />
+                <Plus className="plus" size={20} color="white" />
               </button>
 
             </div>
