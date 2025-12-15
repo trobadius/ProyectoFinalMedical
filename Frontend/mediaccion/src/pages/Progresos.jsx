@@ -22,7 +22,7 @@ const AwardCard = ({ title, description, code, onClick }) => {
                 <h3 className="award-title">{title}</h3>
                 <p className="award-description">{description}</p>
             </div>
-            <button 
+            <button
                 className={`redeem-btn ${isUnlocked ? 'active' : 'disabled'}`}
                 onClick={() => isUnlocked && onClick(title, code)}
                 disabled={!isUnlocked}
@@ -83,22 +83,22 @@ const ProgressScreenContent = () => {
     };
 
     const awards = [
-        { 
-            id: 1, 
-            title: "Medalla de Oro Mental", 
-            description: "Has completado 30 días seguidos. ¡Recibe un mes de descuentos exclusivos en farmacias asociadas!", 
-            code: "MGM-7A2B-C9D4" 
+        {
+            id: 1,
+            title: "Medalla de Oro Mental",
+            description: "Has completado 30 días seguidos. ¡Recibe un mes de descuentos exclusivos en farmacias asociadas!",
+            code: "MGM-7A2B-C9D4"
         },
-        { 
-            id: 2, 
-            title: "Plata en Consistencia", 
-            description: "5 semanas de seguimiento de hábitos sin falta. Canjea un 10% de descuento en tu próxima compra de vitaminas.", 
-            code: "PICON-F3E4-G5H6" 
+        {
+            id: 2,
+            title: "Plata en Consistencia",
+            description: "5 semanas de seguimiento de hábitos sin falta. Canjea un 10% de descuento en tu próxima compra de vitaminas.",
+            code: "PICON-F3E4-G5H6"
         },
-        { 
-            id: 3, 
-            title: "Bronce de Iniciación", 
-            description: "Tu primera semana con la app. Desbloquea sugerencias nutricionales adaptadas a tu medicación.", 
+        {
+            id: 3,
+            title: "Bronce de Iniciación",
+            description: "Tu primera semana con la app. Desbloquea sugerencias nutricionales adaptadas a tu medicación.",
             code: "BRZ-8I9J-K0L1",
             isLocked: true // Simulación de bloqueo
         },
@@ -131,7 +131,7 @@ const ProgressScreenContent = () => {
         const porcentajeGeneral = totalTomas > 0 ? Math.round((tomasCumplidas / totalTomas) * 100) : 0;
 
         if (loading) return <p>Cargando medicamentos...</p>;
-        if (error) return <p style={{color: 'red'}}>{error}</p>;
+        if (error) return <p style={{ color: 'red' }}>{error}</p>;
         if (allMeds.length === 0) return <p>No tienes medicamentos registrados.</p>;
 
         // Filtrar por mes seleccionado
@@ -161,10 +161,10 @@ const ProgressScreenContent = () => {
             tomadas: byName[name].tomadas,
             expected: byName[name].expected,
             dias: byName[name].days.size
-        })).sort((a,b) => b.tomadas - a.tomadas);
+        })).sort((a, b) => b.tomadas - a.tomadas);
 
-        const totalTaken = items.reduce((s,it) => s + it.tomadas, 0);
-        const totalExpected = items.reduce((s,it) => s + it.expected, 0);
+        const totalTaken = items.reduce((s, it) => s + it.tomadas, 0);
+        const totalExpected = items.reduce((s, it) => s + it.expected, 0);
         const totalForgotten = Math.max(0, totalExpected - totalTaken);
 
         // Desglose de olvidados por medicamento y por día
@@ -178,59 +178,59 @@ const ProgressScreenContent = () => {
 
         return (
             <div className="progress-view">
-                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
                         <h2 className="progress-subtitle-custom">Tus Medicamentos</h2>
-                        <p>Tus progresos durante ({currentDate.toLocaleString('es-ES',{month:'long', year:'numeric'})}):</p>
+                        <p>Tus progresos durante ({currentDate.toLocaleString('es-ES', { month: 'long', year: 'numeric' })}):</p>
                     </div>
-                    <div style={{display:'flex', gap:8, alignItems:'center'}}>
-                        <button onClick={() => { const d = new Date(currentDate); d.setMonth(d.getMonth()-1); setCurrentDate(d); }} aria-label="Mes anterior">‹</button>
-                        <button onClick={() => { const d = new Date(currentDate); d.setMonth(d.getMonth()+1); setCurrentDate(d); }} aria-label="Mes siguiente">›</button>
+                    <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                        <button onClick={() => { const d = new Date(currentDate); d.setMonth(d.getMonth() - 1); setCurrentDate(d); }} aria-label="Mes anterior">‹</button>
+                        <button onClick={() => { const d = new Date(currentDate); d.setMonth(d.getMonth() + 1); setCurrentDate(d); }} aria-label="Mes siguiente">›</button>
                     </div>
                 </div>
 
-                <div style={{display:'flex', gap:20, marginTop: 12, flexWrap:'wrap'}}>
+                <div style={{ display: 'flex', gap: 20, marginTop: 12, flexWrap: 'wrap' }}>
                     {/* Pie chart */}
-                    <div style={{width: 360, minWidth: 260}}>
+                    <div style={{ width: 360, minWidth: 260 }}>
                         <PieChart items={items} totalForgotten={totalForgotten} includeOlvidados={includeOlvidados} onSliceClick={name => setSelectedMed(name)} selected={selectedMed} />
-                        <div style={{display:'flex', gap:8, marginTop:8, alignItems:'center'}}>
-                            <label style={{display:'inline-flex', alignItems:'center', gap:6}}>
+                        <div style={{ display: 'flex', gap: 8, marginTop: 8, alignItems: 'center' }}>
+                            <label style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
                                 <input type="checkbox" checked={includeOlvidados} onChange={e => setIncludeOlvidados(e.target.checked)} /> Incluir olvidados
                             </label>
-                            <div style={{marginLeft: 'auto', fontWeight:100}}>
-                                Olvidados: {totalForgotten} ({totalExpected>0?Math.round((totalForgotten/totalExpected)*100):0}%)
+                            <div style={{ marginLeft: 'auto', fontWeight: 100 }}>
+                                Olvidados: {totalForgotten} ({totalExpected > 0 ? Math.round((totalForgotten / totalExpected) * 100) : 0}%)
                             </div>
                         </div>
                     </div>
 
                     {/* Lista / resumen */}
-                    <div style={{flex: 1, minWidth: 300}}>
-                        <div style={{marginBottom: 12, padding: 12, background: '#f3f4f6', borderRadius: 8}}>
-                            <div style={{display:'flex', justifyContent:'space-between', marginBottom: 8}}>
-                                <span style={{fontWeight: 600}}>Progreso General</span>
-                                <span style={{fontWeight: 600}}>{Math.round(totalTaken / (totalExpected||1) * 100)}%</span>
+                    <div style={{ flex: 1, minWidth: 300 }}>
+                        <div style={{ marginBottom: 12, padding: 12, background: '#f3f4f6', borderRadius: 8 }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                                <span style={{ fontWeight: 600 }}>Progreso General</span>
+                                <span style={{ fontWeight: 600 }}>{Math.round(totalTaken / (totalExpected || 1) * 100)}%</span>
                             </div>
-                            <div style={{background:'#e5e7eb', borderRadius:8, overflow:'hidden', height:14}}>
-                                <div style={{width: `${Math.round(totalTaken / (totalExpected||1) * 100)}%`, height:'100%', background: '#10b981', transition: 'width 0.3s ease'}} />
+                            <div style={{ background: '#e5e7eb', borderRadius: 8, overflow: 'hidden', height: 14 }}>
+                                <div style={{ width: `${Math.round(totalTaken / (totalExpected || 1) * 100)}%`, height: '100%', background: '#10b981', transition: 'width 0.3s ease' }} />
                             </div>
                         </div>
 
                         {/* Si hay una medicina seleccionada mostrar detalle con barras */}
                         {selectedMed ? (
                             <div>
-                                <h3 style={{marginTop:0, fontSize: '1rem'}}>{selectedMed} — Resumen del mes</h3>
+                                <h3 style={{ marginTop: 0, fontSize: '1rem' }}>{selectedMed} — Resumen del mes</h3>
                                 {/* calcular detalle del medicamento seleccionado o mostrar olvidados */}
                                 {selectedMed === 'Olvidados' ? (
-                                    <div style={{padding:12, background:'#fff', border:'1px solid #e5e7eb', borderRadius:8}}>
-                                        <h4 style={{margin:0, marginBottom:8, fontSize:'0.95rem'}}>Desglose de medicamentos olvidados</h4>
+                                    <div style={{ padding: 12, background: '#fff', border: '1px solid #e5e7eb', borderRadius: 8 }}>
+                                        <h4 style={{ margin: 0, marginBottom: 8, fontSize: '0.95rem' }}>Desglose de medicamentos olvidados</h4>
                                         {forgottenDetails.length === 0 ? (
-                                            <p style={{fontSize:'0.9rem', color:'#6b7280'}}>No hay olvidos registrados este mes.</p>
+                                            <p style={{ fontSize: '0.9rem', color: '#6b7280' }}>No hay olvidos registrados este mes.</p>
                                         ) : (
-                                            <ul style={{margin:0, padding:0, listStyle:'none'}}>
+                                            <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
                                                 {forgottenDetails.map((f, i) => (
-                                                    <li key={i} style={{display:'flex', justifyContent:'space-between', padding:'6px 0', borderBottom: '1px solid #f3f4f6', fontSize:'0.9rem'}}>
-                                                        <span style={{fontWeight:600}}>{f.nombre}</span>
-                                                        <span style={{color:'#6b7280'}}>{f.fecha} — {f.missed} olvidada(s)</span>
+                                                    <li key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #f3f4f6', fontSize: '0.9rem' }}>
+                                                        <span style={{ fontWeight: 600 }}>{f.nombre}</span>
+                                                        <span style={{ color: '#6b7280' }}>{f.fecha} — {f.missed} olvidada(s)</span>
                                                     </li>
                                                 ))}
                                             </ul>
@@ -239,18 +239,18 @@ const ProgressScreenContent = () => {
                                 ) : (
                                     (() => {
                                         const data = items.find(it => it.nombre === selectedMed);
-                                        if (!data) return <p style={{fontSize:'0.9rem', color:'#6b7280'}}>No hay datos para este medicamento este mes.</p>;
-                                        const pct = data.expected>0?Math.round(data.tomadas/data.expected*100):0;
+                                        if (!data) return <p style={{ fontSize: '0.9rem', color: '#6b7280' }}>No hay datos para este medicamento este mes.</p>;
+                                        const pct = data.expected > 0 ? Math.round(data.tomadas / data.expected * 100) : 0;
                                         return (
-                                            <div style={{padding:12, background:'#fff', border:'1px solid #e5e7eb', borderRadius:8}}>
-                                                <div style={{display:'flex', justifyContent:'space-between'}}>
-                                                    <strong style={{fontSize:'0.95rem'}}>Tomas totales</strong>
-                                                    <span style={{fontSize:'0.95rem'}}>{data.tomadas}/{data.expected}</span>
+                                            <div style={{ padding: 12, background: '#fff', border: '1px solid #e5e7eb', borderRadius: 8 }}>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                    <strong style={{ fontSize: '0.95rem' }}>Tomas totales</strong>
+                                                    <span style={{ fontSize: '0.95rem' }}>{data.tomadas}/{data.expected}</span>
                                                 </div>
-                                                <div style={{height:10, background:'#e5e7eb', borderRadius:6, overflow:'hidden', marginTop:8}}>
-                                                    <div style={{width:`${pct}%`, height:'100%', background:'#3b82f6'}} />
+                                                <div style={{ height: 10, background: '#e5e7eb', borderRadius: 6, overflow: 'hidden', marginTop: 8 }}>
+                                                    <div style={{ width: `${pct}%`, height: '100%', background: '#3b82f6' }} />
                                                 </div>
-                                                <p style={{fontSize:'0.9rem', color:'#6b7280', marginTop:8}}>Días con tomas registradas: {data.dias}</p>
+                                                <p style={{ fontSize: '0.9rem', color: '#6b7280', marginTop: 8 }}>Días con tomas registradas: {data.dias}</p>
                                             </div>
                                         );
                                     })()
@@ -258,8 +258,8 @@ const ProgressScreenContent = () => {
                             </div>
                         ) : (
                             <div>
-                                <h3 style={{fontSize:'1rem'}}>Medicamentos del mes</h3>
-                                <p style={{color:'#6b7280', fontSize:'0.9rem'}}>Haz click en un segmento del gráfico para ver el resumen mensual.</p>
+                                <h3 style={{ fontSize: '1rem' }}>Medicamentos del mes</h3>
+                                <p style={{ color: '#6b7280', fontSize: '0.9rem' }}>Haz click en un segmento del gráfico para ver el resumen mensual.</p>
                             </div>
                         )}
                     </div>
@@ -269,97 +269,97 @@ const ProgressScreenContent = () => {
     };
 
     return (
-    <>
-    <div className="waves"></div>
-    <div className="main-app">
-      <header className="main-header">
-        <div className="header-components">
-            <Link to="/Chatbot" className="header-icon-chat">
-                <MessageCircle size={26} className="message-circle"/>
-            </Link>
-            <Link to="/" className="header-logo-wrapper">
-                    <img src={logo} alt="Medicacción Logo" className="header-logo" />
-            </Link>
-            <Link to="/logout">
-                <button className="header-icon-logout">
-                <LogOut size={26} className="header-logout" />
-                </button>
-            </Link>
-        </div>
-      </header>
-        {/*// Contenedor principal con una clase única para el CSS*/}
-        <div className="progress-screen-custom">
-
-            {/* Switch de vistas: Premios / Progresos */}
-            <div className="progress-switch" style={{textAlign: 'center', gap: 8, marginBottom: 16}}>
-
-                <button
-                    className={`tab-btn ${vista === 'progresos' ? 'active' : ''}`}
-                    onClick={() => {setVista('progresos'), setTipoVista(true)}}
-                    aria-pressed={vista === 'progresos'}
-                >
-                    Progresos
-                </button>
-                
-                <button
-                    className={`tab-btn ${vista === 'premios' ? 'active' : ''}`}
-                    onClick={() => {setVista('premios'), setTipoVista(false)}}
-                    aria-pressed={vista === 'premios'}
-                >
-                    Premios
-                </button>
-                
-            </div>
-
-            <main className="progress-container-custom">
-                {!tipoVista ? (
-                    <>
-                    <h1 className="progress-title-custom">Centro de Premios y Progresos</h1>
-                    {/* SUBTÍTULO*/}
-                    <p className="progress-subtitle-custom">
-                        ¡Cada paso cuenta! Desbloquea recompensas especiales por tu dedicación al bienestar.
-                    </p>
-                    </>
-                ) : (
-                    <>
-                    <h1 className="progress-title-custom">Centro de Progresos</h1>
-                    {/* SUBTÍTULO*/}
-                    <p className="progress-subtitle-custom">
-                        Tu evolución al día: objetivos, mejoras y hábitos saludables en un solo vistazo.
-                    </p>
-                    </>
-                )}
-
-                
-                {vista === 'premios' ? (
-                    <div className="award-list">
-                        {awards.map(award => (
-                            <AwardCard 
-                                key={award.id}
-                                title={award.title}
-                                description={award.description}
-                                code={award.code}
-                                // Usamos handleRedeem, que abrirá el modal
-                                onClick={handleRedeem}
-                            />
-                        ))}
+        <>
+            <div className="waves"></div>
+            <div className="main-app">
+                <header className="main-header">
+                    <div className="header-components">
+                        <Link to="/Chatbot" className="header-icon-chat">
+                            <MessageCircle size={26} className="message-circle" />
+                        </Link>
+                        <Link to="/" className="header-logo-wrapper">
+                            <img src={logo} alt="Medicacción Logo" className="header-logo" />
+                        </Link>
+                        <Link to="/logout">
+                            <button className="header-icon-logout">
+                                <LogOut size={26} className="header-logout" />
+                            </button>
+                        </Link>
                     </div>
-                ) : (
-                    <ProgressView />
-                )}
-            </main>
+                </header>
+                {/*// Contenedor principal con una clase única para el CSS*/}
+                <div className="progress-screen-custom">
 
-            {/* Modal que se muestra si modalInfo tiene contenido */}
-            {modalInfo && (
-                <AwardModal 
-                    prizeTitle={modalInfo.title}
-                    prizeCode={modalInfo.code}
-                    onClose={closeModal}
-                />
-            )}
-        </div>
-    </div>
-    </>
+                    {/* Switch de vistas: Premios / Progresos */}
+                    <div className="progress-switch" style={{ textAlign: 'center', gap: 8, marginBottom: 16 }}>
+
+                        <button
+                            className={`tab-btn ${vista === 'progresos' ? 'active' : ''}`}
+                            onClick={() => { setVista('progresos'), setTipoVista(true) }}
+                            aria-pressed={vista === 'progresos'}
+                        >
+                            Progresos
+                        </button>
+
+                        <button
+                            className={`tab-btn ${vista === 'premios' ? 'active' : ''}`}
+                            onClick={() => { setVista('premios'), setTipoVista(false) }}
+                            aria-pressed={vista === 'premios'}
+                        >
+                            Premios
+                        </button>
+
+                    </div>
+
+                    <main className="progress-container-custom">
+                        {!tipoVista ? (
+                            <>
+                                <h1 className="progress-title-custom">Centro de Premios</h1>
+                                {/* SUBTÍTULO*/}
+                                <p className="progress-subtitle-custom">
+                                    ¡Cada paso cuenta! Desbloquea recompensas especiales por tu dedicación al bienestar.
+                                </p>
+                            </>
+                        ) : (
+                            <>
+                                <h1 className="progress-title-custom">Centro de Progresos</h1>
+                                {/* SUBTÍTULO*/}
+                                <p className="progress-subtitle-custom">
+                                    Tu evolución al día: objetivos, mejoras y hábitos saludables en un solo vistazo.
+                                </p>
+                            </>
+                        )}
+
+
+                        {vista === 'premios' ? (
+                            <div className="award-list">
+                                {awards.map(award => (
+                                    <AwardCard
+                                        key={award.id}
+                                        title={award.title}
+                                        description={award.description}
+                                        code={award.code}
+                                        // Usamos handleRedeem, que abrirá el modal
+                                        onClick={handleRedeem}
+                                    />
+                                ))}
+                            </div>
+                        ) : (
+                            <ProgressView />
+                        )}
+                    </main>
+
+                    {/* Modal que se muestra si modalInfo tiene contenido */}
+                    {modalInfo && (
+                        <AwardModal
+                            prizeTitle={modalInfo.title}
+                            prizeCode={modalInfo.code}
+                            onClose={closeModal}
+                        />
+                    )}
+                </div>
+            </div>
+        </>
     );
 };
 
@@ -371,17 +371,17 @@ function PieChart({ items, totalForgotten = 0, includeOlvidados = true, onSliceC
     const data = items.map(it => ({ label: it.nombre, value: it.tomadas }));
     if (includeOlvidados && totalForgotten > 0) data.push({ label: 'Olvidados', value: totalForgotten });
 
-    const total = data.reduce((s,d) => s + d.value, 0) || 1;
+    const total = data.reduce((s, d) => s + d.value, 0) || 1;
     const radius = 90;
     const cx = radius + 10;
     const cy = radius + 10;
     let angle = -90; // start at top
 
-    const colors = ['#3b82f6','#10b981','#f59e0b','#ef4444','#7c4dff','#06b6d4','#f97316','#8b5cf6'];
+    const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#7c4dff', '#06b6d4', '#f97316', '#8b5cf6'];
 
     return (
         <div className="pie-chart">
-            <svg width={(radius+10)*2} height={(radius+10)*2} viewBox={`0 0 ${(radius+10)*2} ${(radius+10)*2}`}>
+            <svg width={(radius + 10) * 2} height={(radius + 10) * 2} viewBox={`0 0 ${(radius + 10) * 2} ${(radius + 10) * 2}`}>
                 {data.map((d, i) => {
                     const value = d.value;
                     const portion = value / total;
@@ -389,8 +389,8 @@ function PieChart({ items, totalForgotten = 0, includeOlvidados = true, onSliceC
                     const large = sliceAngle > 180 ? 1 : 0;
                     const start = angle;
                     const end = angle + sliceAngle;
-                    const startRad = (Math.PI/180) * start;
-                    const endRad = (Math.PI/180) * end;
+                    const startRad = (Math.PI / 180) * start;
+                    const endRad = (Math.PI / 180) * end;
                     const x1 = cx + radius * Math.cos(startRad);
                     const y1 = cy + radius * Math.sin(startRad);
                     const x2 = cx + radius * Math.cos(endRad);
@@ -398,29 +398,29 @@ function PieChart({ items, totalForgotten = 0, includeOlvidados = true, onSliceC
 
                     // centroid for pull-out effect
                     const midAngle = (start + end) / 2;
-                    const midRad = (Math.PI/180) * midAngle;
+                    const midRad = (Math.PI / 180) * midAngle;
                     const offset = selected === d.label ? 10 : 0;
                     const tx = Math.cos(midRad) * offset;
                     const ty = Math.sin(midRad) * offset;
 
-                    const path = `M ${cx+tx} ${cy+ty} L ${x1+tx} ${y1+ty} A ${radius} ${radius} 0 ${large} 1 ${x2+tx} ${y2+ty} Z`;
+                    const path = `M ${cx + tx} ${cy + ty} L ${x1 + tx} ${y1 + ty} A ${radius} ${radius} 0 ${large} 1 ${x2 + tx} ${y2 + ty} Z`;
                     angle += sliceAngle;
 
                     return (
                         <path key={d.label} d={path} fill={colors[i % colors.length]} stroke="#fff" strokeWidth={1.5}
-                              className={`slice ${selected===d.label? 'active':''}`}
-                              onClick={() => onSliceClick && onSliceClick(d.label)}
-                              style={{cursor:'pointer'}} />
+                            className={`slice ${selected === d.label ? 'active' : ''}`}
+                            onClick={() => onSliceClick && onSliceClick(d.label)}
+                            style={{ cursor: 'pointer' }} />
                     );
                 })}
                 {/* center circle for donut look */}
-                <circle cx={cx} cy={cy} r={radius*0.5} fill="#ffffff" />
+                <circle cx={cx} cy={cy} r={radius * 0.5} fill="#ffffff" />
             </svg>
-            <div style={{display:'flex', flexWrap:'wrap', gap:8, marginTop:8}}>
-                {data.map((d,i)=> (
-                    <div key={d.label} style={{display:'flex', gap:8, alignItems:'center', minWidth:120}}>
-                        <div style={{width:12, height:12, background: colors[i%colors.length], borderRadius:3}} />
-                        <div style={{fontSize:'0.9rem'}}>{d.label} — {d.value}</div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
+                {data.map((d, i) => (
+                    <div key={d.label} style={{ display: 'flex', gap: 8, alignItems: 'center', minWidth: 120 }}>
+                        <div style={{ width: 12, height: 12, background: colors[i % colors.length], borderRadius: 3 }} />
+                        <div style={{ fontSize: '0.9rem' }}>{d.label} — {d.value}</div>
                     </div>
                 ))}
             </div>

@@ -87,7 +87,6 @@ export default function Perfil() {
 
   const [editing, setEditing] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
-  const [testingWhatsApp, setTestingWhatsApp] = useState(false);
   const { t } = useLanguage();
 
   // Recuperamos el perfil del usuario
@@ -186,58 +185,6 @@ export default function Perfil() {
     }
   };
 
-  // Probar conexión de WhatsApp (primero intenta ejecutar script servidor, luego fallback API directa)
-  const handleTestWhatsApp = async () => {
-    // Validar que haya teléfono
-    if (!userProfile.telefono) {
-      alert(t('numero_no_guardado'));
-      return;
-    }
-    if (!userProfile.pais) {
-      alert(t('prefijo_no_guardado'));
-      return;
-    }
-
-    const telefonoCompleto = userProfile.pais + userProfile.telefono;
-
-    setTestingWhatsApp(true);
-    try {
-      console.log('[WhatsApp Test] Enviando a:', userProfile.telefono);
-
-      // Usar solo el endpoint directo que funciona
-      const response = await api.post('/api/notificaciones/whats/', { telefonoCompleto });
-      const data = response.data || {};
-
-      console.log('[WhatsApp Test] Respuesta:', data);
-
-      if (data.success) {
-        alert(
-          '✅ Mensaje de prueba enviado!\n\n' +
-          `📱 Número: ${data.telefono_usado || userProfile.telefono}\n` +
-          `📬 SID: ${data.message_sid || '—'}\n` +
-          `📊 Estado: ${data.status || '—'}\n\n` +
-          'Revisa tu WhatsApp en unos segundos.'
-        );
-      } else {
-        alert(`❌ Error: ${data.error || data.message || 'Error desconocido'}`);
-      }
-    } catch (error) {
-      console.error('[WhatsApp Test] Error:', error);
-      const status = error?.response?.status;
-      const serverMsg = error?.response?.data?.error || error?.response?.data?.message || error.message;
-
-      if (status === 401) {
-        alert('🔐 Sesión expirada. Inicia sesión nuevamente.');
-      } else if (status === 403) {
-        alert('🛡️ CSRF inválido. Recarga la página.');
-      } else {
-        alert(`❌ Error al conectar:\n\n${serverMsg}`);
-      }
-    } finally {
-      setTestingWhatsApp(false);
-    }
-  };
-
   return (
     <>
       <div className="waves"></div>
@@ -277,34 +224,14 @@ export default function Perfil() {
                 <p><strong>{t('genero')}:</strong> {userProfile.genero || '—'}</p>
                 <p><strong>{t('pais')}:</strong> {userProfile.pais || '—'}</p>
                 <p><strong>{t('telefono')}:</strong> {userProfile.telefono || '—'}</p>
-                {userProfile.telefono && (
-                  <button
-                    className="whatsapp-test-btn"
-                    onClick={handleTestWhatsApp}
-                    disabled={testingWhatsApp}
-                    style={{
-                      backgroundColor: '#25D366',
-                      color: 'white',
-                      padding: '10px 20px',
-                      border: 'none',
-                      borderRadius: '5px',
-                      cursor: testingWhatsApp ? 'not-allowed' : 'pointer',
-                      marginTop: '10px',
-                      fontSize: '14px'
-                    }}
-                  >
-                    {testingWhatsApp ? '⏳ Enviando...' : '📱 Probar Conexión WhatsApp'}
-                    {testingWhatsApp ? t('enviando') : t('probar_whatsapp')}
-                  </button>
-                )}
 
                 <button className="edit-btn" onClick={() => setEditing(true)}>
                   <FaPencilAlt /> {t('editar_perfil')}
                 </button>
 
                 {/* Selector de idioma */}
-                <div style={{marginTop:12}}>
-                  <label style={{display:'block', marginBottom:6, fontWeight:700}}>{t('cambiar_idioma')}</label>
+                <div style={{ marginTop: 12 }}>
+                  <label style={{ display: 'block', marginBottom: 6, fontWeight: 700 }}>{t('cambiar_idioma')}</label>
                   <LanguageSelector />
                 </div>
               </>
@@ -327,8 +254,8 @@ export default function Perfil() {
                 )}
 
                 <p><strong>Apellidos:</strong></p>
-                                <p><strong>{t('apellidos')}:</strong></p>
-                                <p><strong>{t('email')}:</strong> {userProfile.email || '—'}</p>
+                <p><strong>{t('apellidos')}:</strong></p>
+                <p><strong>{t('email')}:</strong> {userProfile.email || '—'}</p>
                 <input
                   type="text"
                   name="last_name"
@@ -371,7 +298,7 @@ export default function Perfil() {
                 )}
                 <p><strong>Email:</strong> {userProfile.email || '—'}</p>
                 <p><strong>Fecha de nacimiento:</strong></p>
-                                <p><strong>{t('fecha_nacimiento')}:</strong></p>
+                <p><strong>{t('fecha_nacimiento')}:</strong></p>
                 <input
                   type="date"
                   name="date_birth"

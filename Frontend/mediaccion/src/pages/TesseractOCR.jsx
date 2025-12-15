@@ -297,7 +297,16 @@ export default function TesseractOCR() {
             </div>
 
             <canvas ref={canvasRef} className="camera-ocr-canvas" />
+            <div className="instrucciones">
+              <h3 className="h3">Instrucciones para escanear su medicamento correctamente:</h3>
+              <ol>
+                <li>Activa la cámara y acepta los permisos para que la app pueda acceder a ella.</li>
 
+                <li>Coloca el medicamento frente a la cámara, con buena luz y sin sombras.</li>
+
+                <li>Enfoca la caja correctamente, asegurándote de que el nombre y el texto se vean nítidos.</li>
+              </ol>
+            </div>
             <div className="modal-buttons">
               {!cameraActive ? (
                 <button onClick={() => handleActivateCamera("environment")} className="camera-ocr-button-activate">
@@ -403,7 +412,7 @@ export default function TesseractOCR() {
                       <p>N/A</p>
                     )}
 
-                    <hr/>
+                    <hr />
                     <p>¿Quieres añadirlo a tu calendario?</p>
                     <div className="modal-buttons">
                       <button onClick={() => guardarMedicamento()} className="camera-ocr-button">Aceptar</button>
