@@ -1,211 +1,502 @@
-import React, { useState, useEffect } from "react";
 
+import { useState, useEffect, useContext } from "react";
+import { Pill, Plus, MessageCircle, LogOut } from 'lucide-react';
+import api from '../api';
+import '../styles/Calendario.css';
+import { Link } from "react-router-dom";
+import { MedContext } from "../context/MedContext.jsx";
+import '../App.css';
+import logo from "../assets/logo.svg";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-
-const CalendarMedicamentosResponsive = () => {
-  const [showResumen, setShowResumen] = useState(false);
+const Calendario = () => {
+  const { medicamentos, setMedicamentos } = useContext(MedContext);
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [medicamentos, setMedicamentos] = useState({});
-  const [nuevoMed, setNuevoMed] = useState({ nombre: "", intervalo: 8 });
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [testingWhatsApp, setTestingWhatsApp] = useState(false);
 
-  // === Cargar medicamentos desde localStorage ===
+
+  const [nuevoMed, setNuevoMed] = useState({
+    nombre: "",
+    intervalo: 8,
+    tomadas: 0,
+    total_tomas: 1,
+    duracion_días: 1
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // --- Cargar medicamentos
+
   useEffect(() => {
-    const storedMeds = localStorage.getItem("medicamentosCalendario");
-    if (storedMeds) setMedicamentos(JSON.parse(storedMeds));
+    fetchMedicamentos();
   }, []);
 
-  // === Guardar medicamentos ===
   useEffect(() => {
-    localStorage.setItem("medicamentosCalendario", JSON.stringify(medicamentos));
-  }, [medicamentos]);
-
-  // === Pedir permiso de notificaciones ===
-  useEffect(() => {
-    if ("Notification" in window) {
-      Notification.requestPermission();
+    const med = localStorage.getItem("medicamentoActual");
+    if (med) {
+      setNuevoMed(p => ({ ...p, nombre: med }));
     }
   }, []);
 
-  // === Sistema de recordatorios automáticos ===
-  useEffect(() => {
-    const checkNotifications = () => {
-      const now = new Date();
-      const todayKey = now.toDateString();
-      const medsHoy = medicamentos[todayKey] || [];
-
-      // map para no mutar el estado directamente
-      const updated = medsHoy.map((med) => {
-        const ultimaToma = med.ultimaToma ? new Date(med.ultimaToma) : null;
-        const diffHoras = ultimaToma ? (now - ultimaToma) / (1000 * 60 * 60) : Infinity;
-
-        if (diffHoras >= (med.intervalo ?? Infinity)) {
-          if (window.Notification && Notification.permission === "granted") {
-            new Notification("💊 Recordatorio de medicamento", {
-              body: `${med.nombre} — Tómalo ahora.`,
-            });
-          }
-          return { ...med, ultimaToma: now.toISOString() };
-        }
-        return med;
+  // --- Enviar notificación de WhatsApp personalizada
+  const enviarNotificacionWhatsAppPersonalizada = async () => {
+    try {
+      const fechaInicio = selectedDate.toLocaleDateString("es-ES", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric"
       });
 
-      // sólo actualizar si hay cambios
-      if (JSON.stringify(updated) !== JSON.stringify(medsHoy)) {
-        setMedicamentos((prev) => ({ ...prev, [todayKey]: updated }));
+      const mensaje = `🩺 *MediAcción - Medicamento Registrado*
+
+✅ Has añadido: *${nuevoMed.nombre}*
+
+📅 Inicio: ${fechaInicio}
+⏱️ Cada ${nuevoMed.intervalo} hora(s)
+� ${nuevoMed.total_tomas} toma(s) al día
+🗓️ Durante ${nuevoMed.duracion_dias} día(s)
+
+Te ayudaremos a no olvidar ninguna dosis 💙`;
+
+      console.log('[WhatsApp] Enviando mensaje personalizado...');
+
+      const response = await api.post("/api/notificaciones/whats/", {
+        mensaje: mensaje
+      });
+
+      if (response.data?.success) {
+        toast.success(`📱 Recordatorio enviado por WhatsApp para ${nuevoMed.nombre}`, {
+          position: "top-right",
+          autoClose: 3000,
+          theme: "colored"
+        });
       }
-    };
+    } catch (error) {
+      console.error('[WhatsApp] Error:', error);
+      // No mostramos error al usuario para no interrumpir el flujo
+    }
+  };
 
-    const interval = setInterval(checkNotifications, 60 * 1000);
-    // comprobar al iniciar también
-    checkNotifications();
-    return () => clearInterval(interval);
-  }, [medicamentos]);
+  const fetchMedicamentos = async () => {
+    try {
+      setLoading(true);
+      const res = await api.get("/api/medicamentos-programados/");
+      const grouped = {};
+      res.data.forEach(m => {
+        if (!grouped[m.fecha]) grouped[m.fecha] = [];
+        grouped[m.fecha].push(m);
+      });
+      setMedicamentos(grouped);
+      setError(null);
+    } catch (err) {
+      setError("Error al cargar medicamentos");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // === Cálculos del calendario ===
+  // --- Guardar medicamento varios días
+  const guardarMedicamento = async () => {
+    if (!nuevoMed.nombre.trim()) return;
+
+    try {
+      setLoading(true);
+      const baseDate = new Date(selectedDate);
+
+      for (let i = 0; i < nuevoMed.duracion_dias; i++) {
+        const fecha = new Date(baseDate);
+        fecha.setDate(baseDate.getDate() + i);
+
+        // Fecha en formato local para evitar desfase UTC
+        const fechaStr = `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}-${String(fecha.getDate()).padStart(2, '0')}`;
+
+        await api.post("/api/medicamentos-programados/", {
+          nombre: nuevoMed.nombre.trim(),
+          intervalo: Number(nuevoMed.intervalo) || 8,
+          tomadas: 0,
+          total_tomas: Number(nuevoMed.total_tomas) || 1,
+          fecha: fechaStr,
+          ultima_toma: null
+        });
+      }
+
+      // Enviar notificación de WhatsApp con mensaje personalizado
+      await enviarNotificacionWhatsAppPersonalizada();
+
+      toast.success(`Medicamento "${nuevoMed.nombre}" agregado correctamente`, {
+        position: "top-right",
+        autoClose: 3000,
+        theme: "colored"
+      });
+
+      setNuevoMed({
+        nombre: "",
+        intervalo: 8,
+        total_tomas: 1,
+        duracion_dias: 1,
+        tomadas: 0
+      });
+
+      await fetchMedicamentos();
+
+    } catch (err) {
+      setError("Error al guardar medicamento");
+      toast.error("Error al guardar medicamento", {
+        position: "top-right",
+        autoClose: 3000,
+        theme: "colored"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+
+  // --- Registrar una toma de medicamento
+  const registrarToma = async (med) => {
+    const ahora = new Date();
+    const nuevasTomadas = (med.tomadas || 0) + 1;
+
+    // Actualizamos el estado primero
+    setMedicamentos(prev => {
+      const fechaKey = med.fecha;
+      const medsDelDia = (prev[fechaKey] || []).map(m => {
+        if (m.id === med.id) return { ...m, tomadas: nuevasTomadas, ultima_toma: ahora.toISOString() };
+        return m;
+      });
+      return { ...prev, [fechaKey]: medsDelDia };
+    });
+
+    try {
+      await api.put(`/api/medicamentos-programados/${med.id}/`, {
+        tomadas: nuevasTomadas,
+        ultima_toma: ahora.toISOString()
+      });
+
+      const todasCompletas = nuevasTomadas === med.total_tomas;
+
+      if (todasCompletas) {
+        // Toast para día completado
+        toast.success(`¡Día de ${med.nombre} completado!`, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          theme: "colored"
+        });
+
+        // Verificar si es el último día del medicamento
+        const fechasMedicamento = Object.keys(medicamentos).filter(f =>
+          medicamentos[f].some(mItem => mItem.nombre === med.nombre)
+        );
+        const ultimaFecha = fechasMedicamento.sort().reverse()[0];
+
+        if (med.fecha === ultimaFecha) {
+          // Actualizamos el estado para desbloquear premio
+          setMedicamentos(prev => {
+            const medsDelDia = (prev[med.fecha] || []).map(mItem => {
+              if (mItem.id === med.id) return { ...mItem, desbloquearPremio: true };
+              return mItem;
+            });
+            return { ...prev, [med.fecha]: medsDelDia };
+          });
+
+          // Toast para premio DESPUÉS de actualizar el estado
+          toast.info(`🏆 ¡Premio desbloqueado por haber completado tu tratamiento con  ${med.nombre}!`, {
+            position: "top-right",
+            autoClose: 4000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            theme: "colored"
+          });
+        }
+      }
+    } catch (err) {
+      toast.error("Error al registrar la toma", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "colored"
+      });
+    }
+  };
+
+  // --- Eliminar medicamento
+  const eliminarMedicamento = async (med) => {
+    try {
+      await api.delete(`/api/medicamentos-programados/${med.id}/`);
+      setMedicamentos(prev => {
+        const fechaKey = med.fecha;
+        const nuevos = (prev[fechaKey] || []).filter(m => m.id !== med.id);
+        const nuevoEstado = { ...prev };
+        if (nuevos.length > 0) {
+          nuevoEstado[fechaKey] = nuevos;
+        } else {
+          delete nuevoEstado[fechaKey];
+        }
+        return nuevoEstado;
+      });
+    } catch (err) {
+      setError("Error al eliminar medicamento:", err);
+    }
+  };
+
+  // --- Función para determinar color del día
+  const claseDia = (fechaKey) => {
+    const meds = medicamentos[fechaKey] || [];
+    if (meds.length === 0) return "";
+
+    const fecha = new Date(fechaKey);
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+
+    const todasCompletas = meds.every(m => (m.tomadas || 0) >= (m.total_tomas || 1));
+
+    if (todasCompletas) return "dia-completo";
+    if (fecha < hoy) return "dia-incompleto";
+    return "dia-registrado";
+  };
+
+  // --- Calendario básico
   const daysOfWeek = ["L", "M", "X", "J", "V", "S", "D"];
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
-  const firstDay = new Date(year, month, 1);
-  const lastDay = new Date(year, month + 1, 0);
-  const totalDays = lastDay.getDate();
-  const startingDay = (firstDay.getDay() + 6) % 7;
+  const lastDay = new Date(year, month + 1, 0).getDate();
+  const firstDay = new Date(year, month, 1).getDay();
+  const startingDay = (firstDay + 6) % 7;
 
   const prevMonth = () => setCurrentDate(new Date(year, month - 1, 1));
   const nextMonth = () => setCurrentDate(new Date(year, month + 1, 1));
 
   const daysArray = [];
   for (let i = 0; i < startingDay; i++) daysArray.push(null);
-  for (let i = 1; i <= totalDays; i++) daysArray.push(i);
+  for (let i = 1; i <= lastDay; i++) daysArray.push(i);
 
-  const guardarMedicamento = () => {
-    if (!nuevoMed.nombre.trim() || !selectedDate) return;
-    const key = selectedDate.toDateString();
-    const medsDelDia = medicamentos[key] || [];
-    setMedicamentos((prev) => ({
-      ...prev,
-      [key]: [
-        ...medsDelDia,
-        { nombre: nuevoMed.nombre.trim(), intervalo: Number(nuevoMed.intervalo) },
-      ],
-    }));
-    setNuevoMed({ nombre: "", intervalo: 8 });
-  };
+  const selectedKey = selectedDate
+    ? `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`
+    : null;
 
-  const hoyKey = new Date().toDateString();
-  const medsHoy = medicamentos[hoyKey] || [];
+  const medsHoy = selectedKey ? medicamentos[selectedKey] || [] : [];
 
   return (
-    <div className="calendar-app">
-      <header className="app-header">
-        <button onClick={prevMonth} className="nav-btn">‹</button>
-        <h1>
-          {currentDate.toLocaleString("es-ES", { month: "long" })} {year}
-        </h1>
-        <button onClick={nextMonth} className="nav-btn">›</button>
-      </header>
-
-      <div className="calendar-grid">
-        {daysOfWeek.map((d) => (
-          <div key={d} className="day-name">{d}</div>
-        ))}
-
-        {daysArray.map((day, i) => {
-          if (!day) return <div key={`empty-${i}`} className="day empty" />;
-          const thisDate = new Date(year, month, day);
-          const key = thisDate.toDateString();
-          const hasMeds = Boolean(medicamentos[key]?.length);
-          return (
-            <div
-              key={`day-${day}-${i}`}
-              onClick={() => setSelectedDate(thisDate)}
-              className={`day ${selectedDate?.toDateString() === key ? "selected" : ""} ${
-                hasMeds ? "has-meds" : ""
-              }`}
-            >
-              <span>{day}</span>
-              {hasMeds && <small>💊</small>}
-            </div>
-          );
-        })}
-      </div>
-
-      {selectedDate && (
-        <div className="med-section">
-          <h2>
-            {selectedDate.toLocaleDateString("es-ES", {
-              weekday: "long",
-              day: "numeric",
-              month: "long",
-            })}
-          </h2>
-
-          <div className="input-group">
-            <input
-              type="text"
-              placeholder="Nombre del medicamento"
-              value={nuevoMed.nombre}
-              onChange={(e) =>
-                setNuevoMed((p) => ({ ...p, nombre: e.target.value }))
-              }
-            />
-            <input
-              type="number"
-              min="1"
-              value={nuevoMed.intervalo}
-              onChange={(e) =>
-                setNuevoMed((p) => ({ ...p, intervalo: Number(e.target.value) || 1 }))
-              }
-              placeholder="Cada (h)"
-            />
-            <button onClick={guardarMedicamento}>➕ Añadir</button>
+    <>
+      <div className="waves"></div>
+      <div className="main-app">
+        <header className="main-header">
+          <div className="header-components">
+            <Link to="/Chatbot"
+              state={{ from: location.pathname }}
+              className="header-icon-chat">
+              <MessageCircle size={26} className="message-circle" />
+            </Link>
+            <Link to="/" className="header-logo-wrapper">
+              <img src={logo} alt="Medicacción Logo" className="header-logo" />
+            </Link>
+            <Link to="/logout">
+              <button className="header-icon-logout">
+                <LogOut size={26} className="header-logout" />
+              </button>
+            </Link>
           </div>
+          <div className="app-header">
+            <button onClick={prevMonth} className="nav-btn">‹</button>
+            <h2>{currentDate.toLocaleDateString("es-ES", { month: "long" })} {year}</h2>
+            <button onClick={nextMonth} className="nav-btn">›</button>
+          </div>
+        </header>
 
-          <ul className="med-list">
-            {(medicamentos[selectedDate.toDateString()] || []).map(
-              (med, idx) => (
-                <li key={idx}>
-                  <strong>{med.nombre}</strong> — cada {med.intervalo}h
-                </li>
-              )
-            )}
-          </ul>
+        {error && <div style={{ color: 'red', padding: 10 }}>{error}</div>}
+        {loading && <div style={{ color: '#666', padding: 10 }}>Cargando...</div>}
+
+        <div className="calendar-grid">
+          {daysOfWeek.map(d => <div key={d} className="day-name">{d}</div>)}
+          {daysArray.map((day, i) => {
+            if (!day) return <div key={i} className="day empty" />;
+            const thisDate = new Date(year, month, day);
+            const key = `${thisDate.getFullYear()}-${String(thisDate.getMonth() + 1).padStart(2, '0')}-${String(thisDate.getDate()).padStart(2, '0')}`;
+            const hasMeds = Boolean(medicamentos[key]?.length);
+            const isToday = thisDate.toDateString() === new Date().toDateString();
+            const isSelected = selectedDate?.toDateString() === thisDate.toDateString();
+            return (
+              <div
+                key={i}
+                onClick={() => setSelectedDate(thisDate)}
+                className={`day ${isSelected ? "selected" : ""} ${hasMeds ? "has-meds" : ""} ${isToday ? "today-highlight" : ""} ${claseDia(key)}`}
+              >
+                <span>{day}</span>
+                {hasMeds && <Pill size={16} />}
+              </div>
+            );
+          })}
         </div>
-      )}
 
-      {/* === Botón flotante global === */}
-      <button
-        className={`floating-btn ${medsHoy.length > 0 ? "activo" : ""}`}
-        onClick={() => setShowResumen((prev) => !prev)}
-      >
-        💊 {medsHoy.length}
-      </button>
+        {selectedDate && (
+          <div className="med-section">
+            <p>Añadir medicamento para: <strong>{selectedDate.toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" })}</strong></p>
 
-
-      {/* === Panel flotante de resumen === */}
-      {showResumen && (
-        <div className="resumen-overlay" onClick={() => setShowResumen(false)}>
-          <div className="resumen-card" onClick={(e) => e.stopPropagation()}>
-            <h3>Medicamentos de hoy</h3>
-            {medsHoy.length === 0 ? (
-              <p>No hay medicamentos programados hoy.</p>
+            {localStorage.getItem("medicamentoActual") ? (
+              <div className="input-group">
+                <input
+                  type="text"
+                  value={localStorage.getItem("medicamentoActual")}
+                  disabled={loading}
+                />
+              </div>
             ) : (
-              <ul>
-                {medsHoy.map((m, i) => (
-                  <li key={i}>
-                    <strong>{m.nombre}</strong> — cada {m.intervalo}h
-                  </li>
-                ))}
-              </ul>
+              <div className="input-group">
+                <input
+                  type="text"
+                  placeholder="Nombre del medicamento"
+
+                  value={nuevoMed.nombre}
+                  onChange={e => setNuevoMed(p => ({ ...p, nombre: e.target.value }))}
+                  disabled={loading}
+                />
+              </div>
             )}
-            <button className="cerrar-btn" onClick={() => setShowResumen(false)}>
-              Cerrar
-            </button>
+
+            <div className="input-group">
+              <p>Cada (h)</p>
+              <input
+                type="number"
+                min="1"
+                value={nuevoMed.intervalo}
+                onChange={e => setNuevoMed(p => ({ ...p, intervalo: Number(e.target.value) || 1 }))}
+                placeholder="Cada (h)"
+                disabled={loading}
+              />
+              <p>Tomas</p>
+
+              <input
+                type="number"
+                min="1"
+                value={nuevoMed.total_tomas}
+                onChange={e => setNuevoMed(p => ({ ...p, total_tomas: Number(e.target.value) || 1 }))}
+                placeholder="Número de tomas"
+                disabled={loading}
+              />
+
+              <p>Días</p>
+
+              <input
+                type="number"
+                min="1"
+                value={nuevoMed.duracion_dias}
+                onChange={e => setNuevoMed(p => ({ ...p, duracion_dias: Number(e.target.value) || 1 }))}
+                placeholder="Días de tratamiento"
+                disabled={loading}
+              />
+
+              <button onClick={() => {
+                localStorage.removeItem("medicamentoActual");
+                guardarMedicamento();
+              }}
+                disabled={loading}>
+                <Plus size={20} color="white" />
+              </button>
+            </div>
+            <div>
+              <button
+                onClick={async () => {
+                  localStorage.removeItem("medicamentoActual");
+                  await guardarMedicamento();
+                  await handleTestWhatsApp(); // 👈 nueva funcionalidad
+                }}
+                disabled={loading || testingWhatsApp}
+              >
+                <Plus className="plus" size={20} color="white" />
+              </button>
+
+            </div>
+
+
+            <ul className="med-list">
+              {medsHoy.map(med => {
+                const totalTomas = med.total_tomas || 8;
+                const tomadas = med.tomadas || 0;
+                return (
+                  <li key={med.id} className="med-item">
+                    <div>
+                      <strong>{med.nombre}</strong> — {med.total_tomas} toma(s)
+                      <div className="progress-bar-container" style={{ display: "flex", gap: 2, marginTop: 5 }}>
+                        {[...Array(totalTomas)].map((_, idx) => (
+                          <div
+                            key={idx}
+                            style={{
+                              flex: 1,
+                              height: 12,
+                              backgroundColor: idx < tomadas ? "#4ade80" : "#e5e7eb",
+                              borderRadius: 3,
+                              transition: "background-color 0.3s",
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+
+                    <div style={{ marginTop: 5, display: "flex", gap: 5 }}>
+                      {tomadas < totalTomas ? (
+                        <button
+                          onClick={() => registrarToma(med)}
+                          style={{
+                            backgroundColor: "#659FA6", // azul
+                            color: "#ffffff",           // texto blanco
+                            border: "none",
+                            borderRadius: "6px",
+                            padding: "6px 12px",
+                            fontWeight: "bold",
+                            cursor: "pointer",
+                          }}
+                        >
+                          Tomar dosis
+                        </button>
+                      ) : med.desbloquearPremio ? (
+                        <Link
+                          to="/Progresos"
+                          style={{
+                            backgroundColor: "#facc15",
+                            color: "#000",
+                            padding: "10px 16px",
+                            borderRadius: "6px",
+                            display: "inline-block",
+                            textDecoration: "none"
+                          }}
+                        >
+                          ¡Desbloquear premio!
+                        </Link>
+                      ) : (
+                        <button style={{ backgroundColor: "#4ade80", color: "#000" }} disabled>
+                          Día completado
+                        </button>
+                      )}
+                      <button
+                        onClick={() => eliminarMedicamento(med)}
+                        style={{ backgroundColor: "#ef4444", color: "#000000ff" }}
+                      >
+                        Eliminar
+                      </button>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
           </div>
-        </div>
-      )}
-    </div>
+        )
+        }
+        <ToastContainer />
+      </div >
+    </>
   );
 };
-
-export default CalendarMedicamentosResponsive;
+export default Calendario;

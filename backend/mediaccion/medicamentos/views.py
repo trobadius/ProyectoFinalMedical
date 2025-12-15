@@ -1,247 +1,475 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from .models import ProfileUser, Notificaciones, RecetasMedicas, Alimentos, Medicamentos
-from .serializers import ProfileUserSerializer, NotificacionesSerializer, RecetasMedicasSerializer, AlimentosSerializer, MedicamentosSerializer, RegisterSerializer
-from django.contrib.auth.models import User
+from .models import ProfileUser, Notificaciones, RecetasMedicas, Alimentos, Medicamentos, MedicamentosProgramados
+from .serializers import ProfileUserSerializer, NotificacionesSerializer, RecetasMedicasSerializer, AlimentosSerializer, MedicamentosSerializer, RegisterSerializer, MedicamentosProgramadosSerializer
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from django.utils import timezone
+from django.conf import settings
+from twilio.rest import Client
+import logging
+
 
 #Solo permitimos a no usuarios registrados crearse la cuenta
+#CRUD Usuarios  
 @api_view(['POST'])
 @permission_classes([AllowAny])
-def CrearUser(request, pk=None):
+def CrearUser(request):
     serializer = RegisterSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
         return Response({"message": "Usuario creado"}, status = status.HTTP_201_CREATED)
     return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
-
-#CRUD Usuarios    
+  
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def UsersViews(request):
+    if request.method == 'GET':
+        perfiles = ProfileUser.objects.select_related('user').all()
+        serializer = ProfileUserSerializer(perfiles, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
 @api_view(['GET', 'PUT', 'DELETE'])
 @permission_classes([IsAuthenticated])
-def UserCrud(request, pk=None):
+def ProfileView(request):
+    user = request.user
+    print(user)
+    #Validaciones buenas practicas
+    if user.is_anonymous:
+        return Response({"error": "Usuario no autenticado"}, status=status.HTTP_401_UNAUTHORIZED)
+    try:
+        profile = user.profile
+    except ProfileUser.DoesNotExist:
+        return Response({"error": "El perfil no existe"}, status=status.HTTP_404_NOT_FOUND)
+    
     if request.method == 'GET':
-        if not pk:
-            perfiles = ProfileUser.objects.select_related('user').all()
-            serializer = ProfileUserSerializer(perfiles, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        else:
-            try:
-                perfil = ProfileUser.objects.select_related('user').get(id=pk)
-            except ProfileUser.DoesNotExist:
-                return Response({"error": "Usuario no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-            serializer = ProfileUserSerializer(perfil)
-            return Response(serializer.data)    
-
-    if not pk:
-        return Response({'error': 'Se necesita ID'}, status=status.HTTP_400_BAD_REQUEST)
-            
+        serializer = ProfileUserSerializer(profile)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
     if request.method == 'PUT':
-        try:
-            perfil = ProfileUser.objects.get(id=pk)
-        except ProfileUser.DoesNotExist:
-            return Response({"error": "Usuario no encontrado"}, status=status.HTTP_400_BAD_REQUEST)
-
-        serializer = ProfileUserSerializer(perfil, data=request.data, partial=True)
+        serializer = ProfileUserSerializer(profile, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response({"message": "Usuario actualizado"}, status = status.HTTP_201_CREATED)
-        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)    
-
+            return Response({"message": "Usuario actualizado"}, status = status.HTTP_200_OK)
+        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+    #Al estar autenticado con JWT sigue existiendo el token pero al intentar acceder dara un 401
     if request.method == 'DELETE':
-        try:
-            user = ProfileUser.objects.get(id=pk)
-        except ProfileUser.DoesNotExist:
-            return Response({"error": "Usuario no encontrado"}, status=status.HTTP_404_NOT_FOUND)
         user.delete()
-        return Response({"message": "Usuario eliminado"}, status=status.HTTP_200_OK)
+        return Response({"message": "Usuario eliminado"}, status=status.HTTP_204_NO_CONTENT)
         
 # CRUD Notificaciones
-@api_view(['GET', 'POST', 'PUT', 'DELETE'])
+@api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
-def NotificacionesView(request, pk=None):
+def NotificacionesView(request):
+    user = request.user
+    #Validaciones buenas practicas
+    if user.is_anonymous:
+        return Response({"error": "Usuario no autenticado"}, status=status.HTTP_401_UNAUTHORIZED)
+    try:
+        profile = user.profile
+    except ProfileUser.DoesNotExist:
+        return Response({"error": "El perfil no existe"}, status=status.HTTP_404_NOT_FOUND)
+    #Obtiene todas las notificaciones del usuario
+    try:
+        notificaciones = Notificaciones.objects.filter(user=profile)
+    except Notificaciones.DoesNotExist:
+        return Response({"error": "Notificación no encontrada"}, status=status.HTTP_404_NOT_FOUND)
+    
+    #el profile=profile hace que asigne este profile si o si si tiene el campo user obligatorio
     if request.method == 'GET':
-        if not pk:
-            notificaciones = Notificaciones.objects.all()
-            serializer = NotificacionesSerializer(notificaciones, many=True)
-            return Response(serializer.data)
-        else:
-            try:
-                notificaciones = Notificaciones.objects.get(id=pk)
-            except ProfileUser.DoesNotExist:
-                return Response({"error": "Notificacion no encontrada"}, status=status.HTTP_404_NOT_FOUND)
-            serializer = NotificacionesSerializer(notificaciones)
-            return Response(serializer.data)
-            
+        serializer = NotificacionesSerializer(notificaciones, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
     if request.method == 'POST':
         serializer = NotificacionesSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response({"message": "Notificacion creada"}, status = status.HTTP_201_CREATED)
+            serializer.save(user=profile)
+            return Response({"message": "Notificación creada"}, status = status.HTTP_201_CREATED)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
-        #return Response(serializer.data)
 
-    if not pk:
-        return Response({'error': 'Se necesita ID'}, status=status.HTTP_400_BAD_REQUEST)
-               
+@api_view(['GET', 'PUT', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def NotificacionesDetailView(request, pk):
+    user = request.user
+    if user.is_anonymous:
+        return Response({"error": "Usuario no autenticado"}, status=status.HTTP_401_UNAUTHORIZED)
+
+    try:
+        profile = user.profile
+    except ProfileUser.DoesNotExist:
+        return Response({"error": "El perfil no existe"}, status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        notificaciones = Notificaciones.objects.get(pk=pk, user=profile)
+    except Notificaciones.DoesNotExist:
+        return Response({"error": "Notificación no encontrada"}, status=status.HTTP_404_NOT_FOUND)
+    
+    if request.method == 'GET':
+        serializer = NotificacionesSerializer(notificaciones)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     if request.method == 'PUT':
-        try:
-            notificacion = Notificaciones.objects.get(id=pk)
-        except Notificaciones.DoesNotExist:
-            return Response({"error": "Notificacion no encontrada"}, status=status.HTTP_400_BAD_REQUEST)
-
-        serializer = NotificacionesSerializer(notificacion, data=request.data, partial=True)
+        serializer = NotificacionesSerializer(notificaciones, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response({"message": "Notificacion actualizada"}, status = status.HTTP_201_CREATED)
-        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     if request.method == 'DELETE':
-        try:
-            notificacion = Notificaciones.objects.get(id=pk)
-        except Notificaciones.DoesNotExist:
-            return Response({"error": "Notificacion no encontrada"}, status=status.HTTP_404_NOT_FOUND)
-        notificacion.delete()
-        return Response({"message": "Notificacion eliminada"}, status=status.HTTP_204_NO_CONTENT)
+        notificaciones.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 #CRUD Recetas Medicas
-@api_view(['GET', 'POST', 'PUT', 'DELETE'])
+@api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
-def RecetasMedicasView(request, pk=None):
+def RecetasMedicasView(request):
+    user = request.user
+    if user.is_anonymous:
+        return Response({"error": "Usuario no autenticado"}, status=status.HTTP_401_UNAUTHORIZED)
+    try:
+        profile = user.profile
+    except ProfileUser.DoesNotExist:
+        return Response({"error": "El perfil no existe"}, status=status.HTTP_404_NOT_FOUND)
+    #Obtiene todas las recetas del usuario
+    try:
+        recetas = RecetasMedicas.objects.filter(user=profile)
+    except RecetasMedicas.DoesNotExist:
+        return Response({"error": "Recetas no encontrada"}, status=status.HTTP_404_NOT_FOUND)
+    
     if request.method == 'GET':
-        if not pk:
-            recetas = RecetasMedicas.objects.all()
-            serializer = RecetasMedicasSerializer(recetas, many=True)
-            return Response(serializer.data)
-        else:
-            try:
-                recetas = RecetasMedicas.objects.get(id=pk)
-            except RecetasMedicas.DoesNotExist:
-                return Response({"error": "Receta medica no encontrada"}, status=status.HTTP_404_NOT_FOUND)
-            serializer = RecetasMedicasSerializer(recetas)
-            return Response(serializer.data)
-            
+        serializer = RecetasMedicasSerializer(recetas, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
     if request.method == 'POST':
         serializer = RecetasMedicasSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(user=profile)
             return Response({"message": "Receta medica creada"}, status = status.HTTP_201_CREATED)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
-    if not pk:
-        return Response({'error': 'Se necesita ID'}, status=status.HTTP_400_BAD_REQUEST)
-    
-    if request.method == 'PUT':
-        try:
-            recetas = RecetasMedicas.objects.get(id=pk)
-        except RecetasMedicas.DoesNotExist:
-            return Response({"error": "Recetas medica no encontrada"}, status=status.HTTP_400_BAD_REQUEST)
+@api_view(['GET', 'PUT', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def RecetasMedicasDetailView(request, pk):
+    user = request.user
+    if user.is_anonymous:
+        return Response({"error": "Usuario no autenticado"}, status=status.HTTP_401_UNAUTHORIZED)
 
-        serializer = RecetasMedicasSerializer(recetas, data=request.data, partial=True)
+    try:
+        profile = user.profile
+    except ProfileUser.DoesNotExist:
+        return Response({"error": "El perfil no existe"}, status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        receta = RecetasMedicas.objects.get(pk=pk, user=profile)
+    except RecetasMedicas.DoesNotExist:
+        return Response({"error": "Receta no encontrada"}, status=status.HTTP_404_NOT_FOUND)
+    
+    if request.method == 'GET':
+        serializer = RecetasMedicasSerializer(receta)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    if request.method == 'PUT':
+        serializer = RecetasMedicasSerializer(receta, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response({"message": "Receta medica actualizada"}, status = status.HTTP_201_CREATED)
-        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     if request.method == 'DELETE':
-        try:
-            recetas = RecetasMedicas.objects.get(id=pk)
-        except RecetasMedicas.DoesNotExist:
-            return Response({"error": "Receta medica no encontrada"}, status=status.HTTP_404_NOT_FOUND)
-        recetas.delete()
-        return Response({"message": "Receta medica eliminada"}, status=status.HTTP_204_NO_CONTENT)
+        receta.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 #CRUD Alimentos
-@api_view(['GET', 'POST', 'PUT', 'DELETE'])
+@api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
-def AlimentosView(request, pk=None):
+def AlimentosView(request):
+    user = request.user
+    if user.is_anonymous:
+        return Response({"error": "Usuario no autenticado"}, status=status.HTTP_401_UNAUTHORIZED)
+    try:
+        profile = user.profile
+    except ProfileUser.DoesNotExist:
+        return Response({"error": "El perfil no existe"}, status=status.HTTP_404_NOT_FOUND)
+    #Obtiene todos los alimnentos del usuario
+    try:
+        alimentos = Alimentos.objects.filter(profile=profile)
+    except Alimentos.DoesNotExist:
+        return Response({"error": "Alimentos no encontrados"}, status=status.HTTP_404_NOT_FOUND)
+    
     if request.method == 'GET':
-        if not pk:
-            alimentos = Alimentos.objects.all()
-            serializer = AlimentosSerializer(alimentos, many=True)
-            return Response(serializer.data)
-        else:
-            try:
-                alimentos = Alimentos.objects.get(id=pk)
-            except Alimentos.DoesNotExist:
-                return Response({"error": "Alimento no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-            serializer = AlimentosSerializer(alimentos)
-            return Response(serializer.data)
-
+        serializer = AlimentosSerializer(alimentos, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
     if request.method == 'POST':
         serializer = AlimentosSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response({"message": "Alimento creado"}, status = status.HTTP_201_CREATED)
+            serializer.save(profile=profile)
+            return Response({"message": "Alimento creada"}, status = status.HTTP_201_CREATED)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
-    if not pk:
-        return Response({'error': 'Se necesita ID'}, status=status.HTTP_400_BAD_REQUEST)
-    
-    if request.method == 'PUT':
-        try:
-            alimentos = Alimentos.objects.get(id=pk)
-        except Alimentos.DoesNotExist:
-            return Response({"error": "Alimento no encontrado"}, status=status.HTTP_400_BAD_REQUEST)
+@api_view(['GET', 'PUT', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def AlimentosDetailView(request, pk):
+    user = request.user
+    if user.is_anonymous:
+        return Response({"error": "Usuario no autenticado"}, status=status.HTTP_401_UNAUTHORIZED)
 
+    try:
+        profile = user.profile
+    except ProfileUser.DoesNotExist:
+        return Response({"error": "El perfil no existe"}, status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        alimentos = Alimentos.objects.get(pk=pk, profile=profile)
+    except Alimentos.DoesNotExist:
+        return Response({"error": "Alimento no encontrada"}, status=status.HTTP_404_NOT_FOUND)
+    
+    if request.method == 'GET':
+        serializer = AlimentosSerializer(alimentos)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    if request.method == 'PUT':
         serializer = AlimentosSerializer(alimentos, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response({"message": "Alimento actualizado"}, status = status.HTTP_201_CREATED)
-        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     if request.method == 'DELETE':
-        try:
-            alimentos = Alimentos.objects.get(id=pk)
-        except Alimentos.DoesNotExist:
-            return Response({"error": "Alimento no encontrado"}, status=status.HTTP_404_NOT_FOUND)
         alimentos.delete()
-        return Response({"message": "Alimento eliminado"}, status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 #CRUD Medicamentos
-@api_view(['GET', 'POST', 'PUT', 'DELETE'])
+@api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
-def MedicamentosView(request, pk=None):
+def MedicamentosView(request):
+    user = request.user
+    if user.is_anonymous:
+        return Response({"error": "Usuario no autenticado"}, status=status.HTTP_401_UNAUTHORIZED)
+    try:
+        profile = user.profile
+    except ProfileUser.DoesNotExist:
+        return Response({"error": "El perfil no existe"}, status=status.HTTP_404_NOT_FOUND)
+    #Obtiene todos los medicamentos del usuario
+    try:
+        medicamentos = Medicamentos.objects.filter(user=profile)
+    except Medicamentos.DoesNotExist:
+        return Response({"error": "Medicamentos no encontrados"}, status=status.HTTP_404_NOT_FOUND)
+    
     if request.method == 'GET':
-        if not pk:
-            medicamentos = Medicamentos.objects.select_related('alimento').all()
-            serializer = MedicamentosSerializer(medicamentos, many=True)
-            return Response(serializer.data)
-        else:
-            try:
-                medicamentos = Medicamentos.objects.select_related('alimento').get(id=pk)
-            except Medicamentos.DoesNotExist:
-                return Response({"error": "Medicamento no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-            serializer = MedicamentosSerializer(medicamentos)
-            return Response(serializer.data)
-
+        serializer = MedicamentosSerializer(medicamentos, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
     if request.method == 'POST':
         serializer = MedicamentosSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response({"message": "Medicamento creado"}, status = status.HTTP_201_CREATED)
+            serializer.save(user=profile)
+            return Response({"message": "Medicamento creada"}, status = status.HTTP_201_CREATED)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
-    if not pk:
-        return Response({'error': 'Se necesita ID'}, status=status.HTTP_400_BAD_REQUEST)
-  
-    if request.method == 'PUT':
-        try:
-            medicamentos = Medicamentos.objects.get(id=pk)
-        except Medicamentos.DoesNotExist:
-            return Response({"error": "Medicamento no encontrado"}, status=status.HTTP_400_BAD_REQUEST)
+@api_view(['GET', 'PUT', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def MedicamentosDetailView(request, pk):
+    user = request.user
+    if user.is_anonymous:
+        return Response({"error": "Usuario no autenticado"}, status=status.HTTP_401_UNAUTHORIZED)
 
+    try:
+        profile = user.profile
+    except ProfileUser.DoesNotExist:
+        return Response({"error": "El perfil no existe"}, status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        medicamentos = Medicamentos.objects.get(pk=pk, user=profile)
+    except Medicamentos.DoesNotExist:
+        return Response({"error": "Medicamento no encontrada"}, status=status.HTTP_404_NOT_FOUND)
+    
+    if request.method == 'GET':
+        serializer = MedicamentosSerializer(medicamentos)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    if request.method == 'PUT':
         serializer = MedicamentosSerializer(medicamentos, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response({"message": "Medicamento actualizado"}, status = status.HTTP_201_CREATED)
-        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     if request.method == 'DELETE':
-        try:
-            medicamentos = Medicamentos.objects.get(id=pk)
-        except Medicamentos.DoesNotExist:
-            return Response({"error": "Medicamento no encontrado"}, status=status.HTTP_404_NOT_FOUND)
         medicamentos.delete()
-        return Response({"message": "Medicamento eliminado"}, status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+# CRUD Medicamentos Programados
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+def MedicamentosProgramadosView(request):
+    user = request.user
+    if user.is_anonymous:
+        return Response({"error": "Usuario no autenticado"}, status=status.HTTP_401_UNAUTHORIZED)
+    try:
+        profile = user.profile
+    except ProfileUser.DoesNotExist:
+        return Response({"error": "El perfil no existe"}, status=status.HTTP_404_NOT_FOUND)
+    
+    if request.method == 'GET':
+        medicamentos = MedicamentosProgramados.objects.filter(user=profile)
+        serializer = MedicamentosProgramadosSerializer(medicamentos, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    if request.method == 'POST':
+        serializer = MedicamentosProgramadosSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=profile)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'PUT', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def MedicamentosProgramadosDetailView(request, pk):
+    user = request.user
+    if user.is_anonymous:
+        return Response({"error": "Usuario no autenticado"}, status=status.HTTP_401_UNAUTHORIZED)
+
+    try:
+        profile = user.profile
+    except ProfileUser.DoesNotExist:
+        return Response({"error": "El perfil no existe"}, status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        medicamento = MedicamentosProgramados.objects.get(pk=pk, user=profile)
+    except MedicamentosProgramados.DoesNotExist:
+        return Response({"error": "Medicamento programado no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+    
+    if request.method == 'GET':
+        serializer = MedicamentosProgramadosSerializer(medicamento)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    if request.method == 'PUT':
+        serializer = MedicamentosProgramadosSerializer(medicamento, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    if request.method == 'DELETE':
+        medicamento.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+@api_view(['GET', 'PUT', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def MedicamentosProgramadosList(request, pk):
+    user = request.user
+    if user.is_anonymous:
+        return Response({"error": "Usuario no autenticado"}, status=status.HTTP_401_UNAUTHORIZED)
+
+    # Obtenemos el perfil del usuario
+    try:
+        profile = user.profile
+    except ProfileUser.DoesNotExist:
+        return Response({"error": "El perfil no existe"}, status=status.HTTP_404_NOT_FOUND)
+
+    # Buscamos el medicamento programado con pk y del usuario
+    try:
+        medicamento = MedicamentosProgramados.objects.get(pk=pk, user=profile)
+    except MedicamentosProgramados.DoesNotExist:
+        return Response({"error": "Medicamento programado no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+    
+    # ===================== GET =====================
+    if request.method == 'GET':
+        serializer = MedicamentosProgramadosSerializer(medicamento)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    # ===================== PUT =====================
+    if request.method == 'PUT':
+        # Actualizamos campos de medicamento, parcial=True permite actualizar solo algunos campos
+        serializer = MedicamentosProgramadosSerializer(medicamento, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # ===================== DELETE =====================
+    if request.method == 'DELETE':
+        medicamento.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    
+
+#============ TEST CONEXIÓN WHATSAPP =============
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def test_whatsapp(request):
+    
+    try:       
+        telefono = request.data.get('telefonoCompleto')
+        print("TELÉFONO USADO REAL:", request)
+        if not telefono:
+            return Response({"error": "No tienes un número de teléfono guardado"}, status=400)
+
+        # Inicializar cliente Twilio
+        client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+
+        mensaje = client.messages.create(
+            from_='whatsapp:+14155238886',
+            body='🔔 Prueba de conexión\n\nEste es un mensaje de prueba desde tu aplicación MediAcción.',
+            to=f'whatsapp:{telefono}'
+        )
+
+        return Response({
+            "success": True,
+            "message_sid": mensaje.sid,
+            "telefono_usado": telefono,
+            "status": mensaje.status,
+        }, status=200)
+
+    except Exception as e:
+        logger.error(f"[TWILIO ERROR] {str(e)}")
+        return Response({
+            "success": False,
+            "error": str(e)
+        }, status=500)
+
+
+#============ MODELOS GRAFICOS ============
+@api_view(['GET', 'POST'])
+def SexoedadView(request):
+    if request.method == 'GET':
+        sexoedad = Sexoedad.objects.all()
+        serializer = SexoedadSerializer(sexoedad, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    if request.method == 'POST':
+        serializer = SexoedadSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message':'Perfil guardado para vender datos😈'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'POST'])
+def MedicamentosMasRegistradosView(request):
+    if request.method == 'GET':
+        meds_mas_registrados = MedicamentosMasRegistrados.objects.all()
+        serializer = MedicamentosMasRegistradosSerializer(meds_mas_registrados, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    if request.method == 'POST':
+        serializer = MedicamentosMasRegistradosSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message':'Medicamento guardado para vender datos😈 '}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'POST'])
+def BusquedasChatView(request):
+    if request.method == 'GET':
+        busquedas_chat = BusquedasChat.objects.all()
+        serializer = BusquedasChatSerializer(busquedas_chat, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK) 
+
+    if request.method == 'POST':
+        serializer = BusquedasChatSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message':'Búsqueda guardada para vender datos😈'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

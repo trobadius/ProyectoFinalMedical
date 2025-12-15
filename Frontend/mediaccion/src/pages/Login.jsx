@@ -1,60 +1,56 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
+import api from "../api";
+import { ACCES_TOKEN, REFRESH_TOKEN } from "../constants";
+import { useNavigate } from "react-router-dom";
+import logoimg from "../assets/logo_svg.svg";
+import { Link } from "react-router-dom";
+import '../styles/Login.css';
+import '../App.css';
 
-
-const Login = ({ onLogin }) => {
-  const [email, setEmail] = useState("");
+function Login(){
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [recordar, setRecordar] = useState(false);
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  // Cargar datos guardados (si el usuario eligió "recordar sesión")
-  useEffect(() => {
-    const savedEmail = localStorage.getItem("userEmail");
-    const savedPassword = localStorage.getItem("userPassword");
-    if (savedEmail && savedPassword) {
-      setEmail(savedEmail);
-      setPassword(savedPassword);
-      setRecordar(true);
-    }
-  }, []);
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
+    setLoading(true);
     e.preventDefault();
 
-    // Validación simple
-    if (!email.trim() || !password.trim()) {
-      setError("Por favor completa ambos campos.");
-      return;
+    try{
+      const res = await api.post("/api/token/",{username, password})
+        localStorage.setItem(ACCES_TOKEN, res.data.access);
+        localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
+        // Persist the username so Home can show a personalized greeting
+        localStorage.setItem('username', username);
+        navigate("/")
+    }catch(error){
+      alert(error)
+    }finally{
+      setLoading(false)
     }
-
-    // Guardar credenciales si el usuario elige recordarlas
-    if (recordar) {
-      localStorage.setItem("userEmail", email);
-      localStorage.setItem("userPassword", password);
-    } else {
-      localStorage.removeItem("userEmail");
-      localStorage.removeItem("userPassword");
-    }
-
-    // Simular login exitoso (puedes integrar Firebase o tu backend aquí)
-    setError("");
-    onLogin?.(email);
-  };
-
+  }
   return (
+    <>
+    <div className="waves"></div>
     <div className="login-container">
       <div className="login-card">
-        <h1 className="login-title">MediAcción 💊</h1>
+        <h1 className="login-title">MedicAcción</h1>
+            <img
+                src={logoimg}
+                alt="MediAccion Logo"
+                style={{ height: "100px", marginRight: "8px" }}
+            />
         <p className="login-subtitle">Tu calendario médico personal</p>
 
+        <h2>{username}</h2>
         <form className="login-form" onSubmit={handleSubmit}>
-          <label htmlFor="email">Correo electrónico</label>
+          <label htmlFor="user">Usuario</label>
           <input
-            type="email"
-            id="email"
-            placeholder="usuario@correo.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type="text"
+            id="user"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           />
 
           <label htmlFor="password">Contraseña</label>
@@ -66,28 +62,19 @@ const Login = ({ onLogin }) => {
             onChange={(e) => setPassword(e.target.value)}
           />
 
-          <div className="remember-row">
-            <input
-              type="checkbox"
-              id="recordar"
-              checked={recordar}
-              onChange={() => setRecordar(!recordar)}
-            />
-            <label htmlFor="recordar">Recordar sesión</label>
-          </div>
-
-          {error && <p className="error-msg">{error}</p>}
-
           <button type="submit" className="login-btn">
             Iniciar sesión
           </button>
         </form>
-
+        <p className="register-footer">
+          ¿No tienes cuenta? <Link className="register-link" to="/register">Registrate!</Link>
+        </p>
         <footer className="login-footer">
-          <small>© {new Date().getFullYear()} MediAcción</small>
+          <small>© {new Date().getFullYear()} MedicAcción</small>
         </footer>
       </div>
     </div>
+    </>
   );
 };
 
