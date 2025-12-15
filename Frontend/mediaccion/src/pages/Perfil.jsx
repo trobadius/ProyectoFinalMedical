@@ -49,7 +49,7 @@ export default function Perfil() {
 
   const [editing, setEditing] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
-  const [testingWhatsApp, setTestingWhatsApp] = useState(false);
+
 
   // Recuperamos el perfil del usuario
   const fetchUserData = async () => {
@@ -147,57 +147,7 @@ export default function Perfil() {
     }
   };
 
-  // Probar conexión de WhatsApp (primero intenta ejecutar script servidor, luego fallback API directa)
-  const handleTestWhatsApp = async () => {
-    // Validar que haya teléfono
-    if (!userProfile.telefono) {
-      alert('⚠️ Primero debes guardar un número de teléfono');
-      return;
-    }
-    if (!userProfile.pais) {
-      alert('⚠️ Primero debes guardar un prefijo de teléfono');
-      return;
-    }
-
-    const telefonoCompleto = userProfile.pais + userProfile.telefono;
-
-    setTestingWhatsApp(true);
-    try {
-      console.log('[WhatsApp Test] Enviando a:', userProfile.telefono);
-
-      // Usar solo el endpoint directo que funciona
-      const response = await api.post('/api/notificaciones/whats/', { telefonoCompleto });
-      const data = response.data || {};
-
-      console.log('[WhatsApp Test] Respuesta:', data);
-
-      if (data.success) {
-        alert(
-          '✅ Mensaje de prueba enviado!\n\n' +
-          `📱 Número: ${data.telefono_usado || userProfile.telefono}\n` +
-          `📬 SID: ${data.message_sid || '—'}\n` +
-          `📊 Estado: ${data.status || '—'}\n\n` +
-          'Revisa tu WhatsApp en unos segundos.'
-        );
-      } else {
-        alert(`❌ Error: ${data.error || data.message || 'Error desconocido'}`);
-      }
-    } catch (error) {
-      console.error('[WhatsApp Test] Error:', error);
-      const status = error?.response?.status;
-      const serverMsg = error?.response?.data?.error || error?.response?.data?.message || error.message;
-
-      if (status === 401) {
-        alert('🔐 Sesión expirada. Inicia sesión nuevamente.');
-      } else if (status === 403) {
-        alert('🛡️ CSRF inválido. Recarga la página.');
-      } else {
-        alert(`❌ Error al conectar:\n\n${serverMsg}`);
-      }
-    } finally {
-      setTestingWhatsApp(false);
-    }
-  };
+ 
 
   return (
     <>
@@ -237,25 +187,6 @@ export default function Perfil() {
                 <p><strong>Genero:</strong> {userProfile.genero || '—'}</p>
                 <p><strong>Pais:</strong> {userProfile.pais || '—'}</p>
                 <p><strong>Telefono:</strong> {userProfile.telefono || '—'}</p>
-                {userProfile.telefono && (
-                  <button
-                    className="whatsapp-test-btn"
-                    onClick={handleTestWhatsApp}
-                    disabled={testingWhatsApp}
-                    style={{
-                      backgroundColor: '#25D366',
-                      color: 'white',
-                      padding: '10px 20px',
-                      border: 'none',
-                      borderRadius: '5px',
-                      cursor: testingWhatsApp ? 'not-allowed' : 'pointer',
-                      marginTop: '10px',
-                      fontSize: '14px'
-                    }}
-                  >
-                    {testingWhatsApp ? '⏳ Enviando...' : '📱 Probar Conexión WhatsApp'}
-                  </button>
-                )}
 
                 <button className="edit-btn" onClick={() => setEditing(true)}>
                   <FaPencilAlt /> Editar perfil
@@ -264,6 +195,7 @@ export default function Perfil() {
             ) : (
               <>
                 <p><strong>Usuario:</strong> {userProfile.username || '—'}</p>
+                
                 <p><strong>Nombre:</strong></p>
                 <input
                   type="text"
@@ -293,34 +225,22 @@ export default function Perfil() {
                     {errors.last_name}
                   </label>
                 )}
-                <p><strong>Email:</strong> {userProfile.email || '—'}</p>
+
+                <p><strong>Email:</strong></p>
                 <input
-                  type="date"
-                  name="date_birth"
-                  value={userProfileCopy.date_birth}
+                  type="email"
+                  name="email"
+                  value={userProfileCopy.email}
                   onChange={handleChange}
+                  placeholder="ejemplo@correo.com"
                   required
                 />
-                {errors.date_birth && (
+                {errors.email && (
                   <label style={{ color: "red", fontSize: "12px", display: "block", marginTop: "4px" }}>
-                    {errors.date_birth}
+                    {errors.email}
                   </label>
                 )}
-                <p><strong>Apellidos:</strong></p>
-                <input
-                  type="text"
-                  name="last_name"
-                  value={userProfileCopy.last_name}
-                  onChange={handleChange}
-                  placeholder="Tus apellidos"
-                  required
-                />
-                {errors.last_name && (
-                  <label style={{ color: "red", fontSize: "12px", display: "block", marginTop: "4px" }}>
-                    {errors.last_name}
-                  </label>
-                )}
-                <p><strong>Email:</strong> {userProfile.email || '—'}</p>
+
                 <p><strong>Fecha de nacimiento:</strong></p>
                 <input
                   type="date"
@@ -336,6 +256,7 @@ export default function Perfil() {
                 )}
 
                 <p><strong>Roles:</strong> {userProfile.roles || '—'}</p>
+                
                 <p><strong>Genero:</strong></p>
                 <select
                   className="genero"
@@ -349,20 +270,7 @@ export default function Perfil() {
                   <option value="mujer">Mujer</option>
                   <option value="no_decir">Prefiero no decirlo</option>
                 </select>
-                <p><strong>Email:</strong></p>
-                <input
-                  type="email"
-                  name="email"
-                  value={userProfileCopy.email}
-                  onChange={handleChange}
-                  placeholder="ejemplo@correo.com"
-                  required
-                />
-                {errors.email && (
-                  <label style={{ color: "red", fontSize: "12px", display: "block", marginTop: "4px" }}>
-                    {errors.email}
-                  </label>
-                )}
+
                 <p><strong>Telefono:</strong></p>
                 <div className="phone-combo" id="phone">
                   <div className="select-wrap" aria-hidden="false">
@@ -386,14 +294,15 @@ export default function Perfil() {
                     required
                   />
                 </div>
-                {/* Mensaje de error debajo del input */}
                 {errors.telefono && (
                   <label style={{ color: "red", fontSize: "12px", display: "block", marginTop: "4px" }}>
                     {errors.telefono}
                   </label>
                 )}
 
-                <button className="save-btn" id="enviar" onClick={handleSave} disabled={isDisabled}>Guardar cambios</button>
+                <button className="save-btn" id="enviar" onClick={handleSave} disabled={isDisabled}>
+                  Guardar cambios
+                </button>
                 <button className="edit-btn" onClick={() => setEditing(false)}>
                   Cancelar
                 </button>

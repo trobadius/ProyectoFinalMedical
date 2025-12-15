@@ -14,6 +14,8 @@ const Calendario = () => {
   const { medicamentos, setMedicamentos } = useContext(MedContext);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [testingWhatsApp, setTestingWhatsApp] = useState(false);
+
 
   const [nuevoMed, setNuevoMed] = useState({
     nombre: "",
@@ -26,6 +28,7 @@ const Calendario = () => {
   const [error, setError] = useState(null);
 
   // --- Cargar medicamentos
+
   useEffect(() => {
     fetchMedicamentos();
   }, []);
@@ -37,6 +40,45 @@ const Calendario = () => {
     }
   }, []);
 
+  // --- Enviar notificación de WhatsApp personalizada
+  const enviarNotificacionWhatsAppPersonalizada = async () => {
+    try {
+      const fechaInicio = selectedDate.toLocaleDateString("es-ES", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+      });
+
+      const mensaje = `🩺 *MediAcción - Medicamento Registrado*
+
+✅ Has añadido: *${nuevoMed.nombre}*
+
+📅 Inicio: ${fechaInicio}
+⏱️ Cada ${nuevoMed.intervalo} hora(s)
+� ${nuevoMed.total_tomas} toma(s) al día
+🗓️ Durante ${nuevoMed.duracion_dias} día(s)
+
+Te ayudaremos a no olvidar ninguna dosis 💙`;
+
+      console.log('[WhatsApp] Enviando mensaje personalizado...');
+
+      const response = await api.post("/api/notificaciones/whats/", {
+        mensaje: mensaje
+      });
+
+      if (response.data?.success) {
+        toast.success(`📱 Recordatorio enviado por WhatsApp para ${nuevoMed.nombre}`, {
+          position: "top-right",
+          autoClose: 3000,
+          theme: "colored"
+        });
+      }
+    } catch (error) {
+      console.error('[WhatsApp] Error:', error);
+      // No mostramos error al usuario para no interrumpir el flujo
+    }
+  };
 
   const fetchMedicamentos = async () => {
     try {
@@ -59,6 +101,7 @@ const Calendario = () => {
   // --- Guardar medicamento varios días
   const guardarMedicamento = async () => {
     if (!nuevoMed.nombre.trim()) return;
+
     try {
       setLoading(true);
       const baseDate = new Date(selectedDate);
@@ -80,6 +123,15 @@ const Calendario = () => {
         });
       }
 
+      // Enviar notificación de WhatsApp con mensaje personalizado
+      await enviarNotificacionWhatsAppPersonalizada();
+
+      toast.success(`Medicamento "${nuevoMed.nombre}" agregado correctamente`, {
+        position: "top-right",
+        autoClose: 3000,
+        theme: "colored"
+      });
+
       setNuevoMed({
         nombre: "",
         intervalo: 8,
@@ -92,10 +144,17 @@ const Calendario = () => {
 
     } catch (err) {
       setError("Error al guardar medicamento");
+      toast.error("Error al guardar medicamento", {
+        position: "top-right",
+        autoClose: 3000,
+        theme: "colored"
+      });
     } finally {
       setLoading(false);
     }
   };
+
+
 
   // --- Registrar una toma de medicamento
   const registrarToma = async (med) => {
@@ -346,6 +405,19 @@ const Calendario = () => {
                 disabled={loading}>
                 <Plus size={20} color="white" />
               </button>
+            </div>
+            <div>
+              <button
+                onClick={async () => {
+                  localStorage.removeItem("medicamentoActual");
+                  await guardarMedicamento();
+                  await handleTestWhatsApp(); // 👈 nueva funcionalidad
+                }}
+                disabled={loading || testingWhatsApp}
+              >
+                <Plus size={20} color="white" />
+              </button>
+
             </div>
 
 

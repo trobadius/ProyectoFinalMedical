@@ -1,10 +1,11 @@
+import { useEffect, useRef, useState, useContext } from "react";
 
 import React, { useEffect, useRef, useState, useContext } from "react";
 import RemedioModal from '../components/RemedioModal';
 import AguaModal from '../components/Agua';
 import HigadoModal from '../components/Higado';
 import { useNavigate, Link } from "react-router-dom";
-import { Pill, Star, Stethoscope, MessageCircle, LogOut, Camera } from 'lucide-react';
+import { Pill, Star, Stethoscope, MessageCircle, LogOut, Camera, Heart, Activity } from 'lucide-react';
 import '../App.css'
 import '../styles/Home.css';
 import '../styles/Premium.css';
@@ -16,6 +17,8 @@ import { MedContext } from "../context/MedContext.jsx";
 import { claseDia } from "../utils/calendarioColors";
 import { ToastContainer, toast } from "react-toastify";
 import api from "../api";
+import recomendacionesData from "../data/Recomendaciones.json";
+
 
 // Función para obtener los datos del mes
 const getMonthData = () => {
@@ -68,6 +71,8 @@ export default function Home() {
     const [showRemedioModal, setShowRemedioModal] = useState(false);
     const [showAguaModal, setShowAguaModal] = useState(false);
     const [showHigadoModal, setShowHigadoModal] = useState(false);
+    const [selectedRecomendacion, setSelectedRecomendacion] = useState(null);
+    const [mostrarPlanes, setMostrarPlanes] = useState(false);
 
     const calendarRef = useRef(null);
 
@@ -189,6 +194,92 @@ export default function Home() {
         } catch (err) {
             toast.error("Error al registrar la toma");
         }
+    };
+
+    // 1. OBTENER PERFIL DEL USUARIO
+    const [profile, setProfile] = useState(null);
+    const [articulos, setArticulos] = useState([]);
+    const [loadingProfile, setLoadingProfile] = useState(true);
+
+    // 1.5 OBTENER PERFIL DEL USUARIO
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                setLoadingProfile(true);
+                const res = await api.get("/api/users/profile/me/");
+                setProfile(res.data);
+                console.log("✅ Perfil obtenido:", res.data);
+            } catch (err) {
+                console.error("❌ Error obteniendo perfil:", err);
+                console.error("Detalles del error:", err.response?.data);
+                // Si hay error, las recomendaciones simplemente no se mostrarán
+            } finally {
+                setLoadingProfile(false);
+            }
+        };
+
+        fetchProfile();
+    }, []);
+
+    function calcularEdad(fechaNacimiento) {
+        const hoy = new Date();
+        const nacimiento = new Date(fechaNacimiento);
+        let edad = hoy.getFullYear() - nacimiento.getFullYear();
+        const mes = hoy.getMonth() - nacimiento.getMonth();
+        if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
+            edad--;
+        }
+        return edad;
+    }
+
+    // Función para obtener el rango de edad
+    function obtenerRangoEdad(edad) {
+        if (edad <= 12) return "0-12";
+        if (edad >= 13 && edad <= 18) return "13-18";
+        if (edad >= 19 && edad <= 39) return "19-39";
+        if (edad >= 40 && edad <= 64) return "40-64";
+        return "65+";
+    }
+
+    // 2. FILTRAR ARTÍCULOS SEGÚN PERFIL
+    useEffect(() => {
+        if (!profile || !profile.date_birth || !profile.genero) return;
+
+        const edad = calcularEdad(profile.date_birth);
+        const genero = profile.genero; // "hombre", "mujer", "no_decir"
+        const rangoEdad = obtenerRangoEdad(edad);
+
+        // Si el genero es "no_decir", mostrar recomendaciones generales (combinamos ambos)
+        let recomendaciones = [];
+
+        if (recomendacionesData[rangoEdad]) {
+            if (genero === "no_decir") {
+                // Combinar recomendaciones de hombre y mujer
+                recomendaciones = [
+                    ...(recomendacionesData[rangoEdad].hombre || []),
+                    ...(recomendacionesData[rangoEdad].mujer || [])
+                ];
+            } else {
+                // Obtener recomendaciones específicas del género
+                recomendaciones = recomendacionesData[rangoEdad][genero] || [];
+            }
+        }
+
+        // Tomar solo las primeras 3 recomendaciones para mostrar en las tarjetas
+        const articulosFinales = recomendaciones.slice(0, 3);
+        setArticulos(articulosFinales);
+        console.log("📋 Recomendaciones cargadas:", articulosFinales);
+        console.log("Edad:", edad, "Género:", genero, "Rango:", rangoEdad);
+    }, [profile]);
+
+    // Función para obtener el icono según el índice
+    const getIconoRecomendacion = (index) => {
+        const iconos = [
+            { Icon: Activity, color: "#10b981" },
+            { Icon: Pill, color: "#4f46e5" },
+            { Icon: Stethoscope, color: "#ef4444" }
+        ];
+        return iconos[index % iconos.length];
     };
 
     return (
@@ -342,19 +433,19 @@ export default function Home() {
 
                     {/* Sugerencias */}
                     <section className="cycle-section">
-                        <h4>Según tus búsquedas</h4>
+                        <h4>Recomendados para ti </h4>
                         <div className="cycle-scroll">
                             <div className="cycle-card" onClick={() => setShowHigadoModal(true)} style={{ cursor: 'pointer' }}>
                                 <img src={higado2} alt="Sugerencia hígado" className="card-img" style={{ objectFit: 'cover' }} />
-                                <p>Sugerencia alimenticia para el hígado🌟</p>
+                                <p>Sugerencia alimenticia para el hígado. 🌟</p>
                             </div>
                             <div className="cycle-card" onClick={() => setShowAguaModal(true)} style={{ cursor: 'pointer' }}>
                                 <img src={agua} alt="Aumenta tu ingesta de agua" className="card-img" style={{ objectFit: 'cover' }} />
-                                <p>Aumenta tu ingesta de agua💧</p>
+                                <p>Aumenta tu ingesta de agua. <br /> 💧</p>
                             </div>
                             <div className="cycle-card" onClick={() => setShowRemedioModal(true)} style={{ cursor: 'pointer' }}>
                                 <img src={remedio} alt="Remedios naturales" className="card-img" style={{ objectFit: 'cover' }} />
-                                <p>Remedios naturales comprobados🥬</p>
+                                <p>Remedios naturales comprobados. 🥬</p>
                             </div>
                             <div className="cycle-card">
                                 <div className="card-img placeholder-premium">
@@ -368,43 +459,99 @@ export default function Home() {
                     </section>
                 </section>
 
-                {/* Noticias */}
-                <section className="delay-extras">
-                    <h4>Puede interesarte...</h4>
-                    <div className="extras-row">
-                        <div className="extra">
-                            <Star size={24} color="#f59e0b" />
-                            <p>Noticia sobre salud infantil</p>
-                        </div>
-                        <div className="extra">
-                            <Pill size={24} color="#4f46e5" />
-                            <p>Nuevos estudios de farmacéutica</p>
-                        </div>
-                        <div className="extra">
-                            <Stethoscope size={24} color="#ef4444" />
-                            <p>Guía de primeros auxilios</p>
-                        </div>
-                    </div>
-                </section>
 
-                {/* Premium */}
+                {/* Recomendaciones personalizadas */}
+                {loadingProfile ? (
+                    <section className="delay-extras">
+                        <h4>Artículos que pueden interesarte...</h4>
+                        <p style={{ color: '#6b7280', fontStyle: 'italic', textAlign: 'center' }}>
+                            Cargando recomendaciones...
+                        </p>
+                    </section>
+                ) : articulos.length > 0 ? (
+                    <section className="delay-extras">
+                        <h4>Artículos que pueden interesarte...</h4>
+                        <div className="extras-row">
+                            {articulos.map((articulo, index) => {
+                                const { Icon, color } = getIconoRecomendacion(index);
+                                return (
+                                    <div
+                                        key={index}
+                                        className="extra"
+                                        onClick={() => setSelectedRecomendacion(articulo)}
+                                        style={{ cursor: 'pointer' }}
+                                    >
+                                        <Icon size={24} color={color} />
+                                        <p>{articulo.title}</p>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </section>
+                ) : null}
+
+                {/* TARJETA PREMIUM */}
                 <div className="premium-card-1">
                     <div className="title-premium">
-                        <Star size={24} color="white" fill="white" style={{ rotate: "45deg" }} />
-                        ¡Pásate a Premium!
-                        <Star size={24} color="white" fill="white" style={{ rotate: "90deg" }} />
+                        <Star size={24} color="white" fill="white" style={{ rotate: '45deg' }} />
+                        ¡Pásate a Premium! <Star size={24} color="white" fill="white" style={{ rotate: '90deg' }} />
                     </div>
                     <p className="subtitle-premium">
                         Desbloquea historial ilimitado, notificaciones inteligentes y planifica el cuidado de tu familia.
                     </p>
-                    <button className="action-btn">
-                        Mejorar mi plan
+                    <button
+                        className="action-btn"
+                        onClick={() => setMostrarPlanes(prev => !prev)}
+                    >
+                        Mejorar mi plan ⭐
                     </button>
+                    {mostrarPlanes && (
+                        <div className="planes-wrapper">
+
+                            <div className="plan-card">
+                                <h3>PRO</h3>
+                                <p className="precio">6,99 € / mes</p>
+                                <ul>
+                                    <li>⌚ Conexión con smartwatch</li>
+                                    <li>🍎 Dietas personalizadas</li>
+                                    <li>📊 Estadísticas avanzadas</li>
+                                </ul>
+                                <button className="plan-btn">Elegir PRO</button>
+                            </div>
+
+                            <div className="plan-card destacado">
+                                <h3>ADVANCED</h3>
+                                <p className="precio">17,99 € / 3 meses</p>
+                                <ul>
+                                    <li>⚠️ Aviso incompatibilidad medicamentos</li>
+                                    <li>📷 Escaneo de recetas médicas</li>
+                                    <li>🧠 Recomendaciones inteligentes</li>
+                                </ul>
+                                <button className="plan-btn">Elegir ADVANCED</button>
+                            </div>
+
+                            <div className="plan-card">
+                                <h3>PREMIUM</h3>
+                                <p className="precio">59,99 € / año</p>
+                                <ul>
+                                    <li>📈 Informes médicos en PDF</li>
+                                    <li>🩺 Seguimiento médico</li>
+                                    <li>⚡ Acceso prioritario a nuevas funciones</li>
+                                </ul>
+                                <button className="plan-btn">Elegir PREMIUM</button>
+                            </div>
+
+                        </div>
+                    )}
+
+
                 </div>
 
-                <div style={{ height: "80px" }}></div>
+                {/* Espacio extra en la parte inferior para que la barra de navegación no cubra el contenido */}
 
-                {/* Modales */}
+                <div style={{ height: '80px' }}></div>
+
+                {/* MODAL FUERA DE CUALQUIER CONTENEDOR */}
                 {showRemedioModal && (
                     <RemedioModal onClose={() => setShowRemedioModal(false)}>
                         <h2>🥬 Remedios naturales comprobados</h2><br />
@@ -415,6 +562,7 @@ export default function Home() {
                         </p>
                     </RemedioModal>
                 )}
+
 
                 {showAguaModal && (
                     <AguaModal onClose={() => setShowAguaModal(false)}>
@@ -436,6 +584,15 @@ export default function Home() {
                             Pequeños cambios diarios pueden mejorar notablemente tu bienestar hepático.
                         </p>
                     </HigadoModal>
+                )}
+
+                {selectedRecomendacion && (
+                    <RemedioModal onClose={() => setSelectedRecomendacion(null)}>
+                        <h2>📋 {selectedRecomendacion.title}</h2><br />
+                        <p>
+                            {selectedRecomendacion.content}
+                        </p>
+                    </RemedioModal>
                 )}
             </div>
 
