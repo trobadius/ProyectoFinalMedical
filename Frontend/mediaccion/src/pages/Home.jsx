@@ -82,13 +82,48 @@ export default function Home() {
         setGreeting(getGreeting());
     }, []);
 
-    // Scroll al día actual
     useEffect(() => {
-        if (days.length > 0 && calendarRef.current) {
-            const todayItem = calendarRef.current.querySelector(`.calendar-day.today`);
-            if (todayItem) todayItem.scrollIntoView({ behavior: "smooth", inline: "center" });
+        const container = calendarRef.current;
+        if (!container) return;
+
+        const todayItem = container.querySelector(".calendar-day.today");
+        if (!todayItem) return;
+
+        // Coordenadas reales
+        const containerRect = container.getBoundingClientRect();
+        const itemRect = todayItem.getBoundingClientRect();
+
+        const diff = itemRect.left - containerRect.left;
+        const targetScroll =
+            container.scrollLeft +
+            diff -
+            containerRect.width / 2 +
+            itemRect.width / 2;
+
+        // 🔥 ANIMACIÓN DE CARRUSEL (suave horizontal)
+        const duration = 450; // ms
+        const start = container.scrollLeft;
+        const distance = targetScroll - start;
+        let startTime = null;
+
+        function animateScroll(timestamp) {
+            if (!startTime) startTime = timestamp;
+
+            const progress = Math.min((timestamp - startTime) / duration, 1);
+
+            // Easing estilo carrusel
+            const ease =
+                0.5 - Math.cos(progress * Math.PI) / 2; // easeInOut
+
+            container.scrollLeft = start + distance * ease;
+
+            if (progress < 1) {
+                requestAnimationFrame(animateScroll);
+            }
         }
-    }, [days, medicamentos]);
+
+        requestAnimationFrame(animateScroll);
+    }, [days]);
 
 
     const medsHoy = medicamentos[todayKey] || [];
@@ -305,46 +340,22 @@ export default function Home() {
                     <h2 className="delay-title">
                         {greeting} <span>{userName}</span>
                     </h2>
-
-                    <button
-                        className="btn-register"
-                        onClick={() => navigate("/calendario")}
-                        style={{
-                            display: "inline-flex",
-                            alignItems: "center",
-                            gap: "8px",
-                            padding: "8px 16px",
-                            backgroundColor: "#659FA6",
-                            color: "#000",
-                            borderRadius: "8px",
-                            fontWeight: "bold",
-                            border: "none",
-                            cursor: "pointer",
-                            marginBottom: "10px",
-                        }}
-                    >
-                        <Pill size={20} />
-                        <span>Registrar nuevo medicamento</span>
-                    </button>
-                    <button
-                        className="btn-register"
-                        onClick={() => navigate("/TesseractOCR")}
-                        style={{
-                            display: "inline-flex",
-                            alignItems: "center",
-                            gap: "8px",
-                            padding: "8px 16px",
-                            backgroundColor: "#659FA6",
-                            color: "#000",
-                            borderRadius: "8px",
-                            fontWeight: "bold",
-                            border: "none",
-                            cursor: "pointer",
-                        }}
-                    >
-                        <Camera size={20} />
-                        <span>Escanear nuevo medicamento</span>
-                    </button>
+                    <div className="botones-home">
+                        <button
+                            className="btn-register"
+                            onClick={() => navigate("/calendario")}
+                        >
+                            <Pill size={20} color="white" />
+                            <span>Registrar nuevo medicamento</span>
+                        </button>
+                        <button
+                            className="btn-register"
+                            onClick={() => navigate("/TesseractOCR")}
+                        >
+                            <Camera size={20} color="white" />
+                            <span>Escanear nuevo medicamento</span>
+                        </button>
+                    </div>
                 </section>
 
                 {/* MEDICAMENTOS DE HOY */}
@@ -356,58 +367,61 @@ export default function Home() {
                             const diaCompletado = (med.tomadas || 0) >= med.total_tomas;
 
                             return (
-                                <div key={med.id} className="tip-card" style={{ borderLeftColor: '#3b82f6' }}>
-                                    <p style={{ fontWeight: 600 }}>
-                                        {med.nombre} <Pill size={16} color="#3b82f6" />
-                                    </p>
-
-                                    {diaCompletado ? (
-                                        <p style={{ fontSize: '0.8rem', fontWeight: 600, color: '#4ade80' }}>
-                                            Día completado
+                                <div className="prueba">
+                                    <div key={med.id} className="tip-card" style={{ borderLeftColor: '#3b82f6' }}>
+                                        <p style={{ fontWeight: 600 }}>
+                                            {med.nombre} <Pill size={16} color="#3b82f6" />
                                         </p>
-                                    ) : (
-                                        <p style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: 5 }}>
-                                            Dosis: {med.tomadas || 0} / {med.total_tomas}
-                                        </p>
-                                    )}
 
-                                    {!diaCompletado && (
-                                        <button
-                                            onClick={() => registrarTomaHome(med)}
-                                            style={{
-                                                marginTop: 5,
-                                                padding: "6px 12px",
-                                                backgroundColor: "#4ade80",
-                                                color: "#000",
-                                                borderRadius: "6px",
-                                                fontWeight: "bold",
-                                                border: "none",
-                                                cursor: "pointer",
-                                            }}
-                                        >
-                                            Tomar dosis
-                                        </button>
-                                    )}
 
-                                    {med.desbloquearPremio && (
-                                        <button
-                                            onClick={() => navigate("/Progresos")}
-                                            style={{
-                                                marginTop: "10px",
-                                                padding: "10px 14px",
-                                                backgroundColor: "#f5e500ff",
-                                                borderRadius: "8px",
-                                                border: "1px solid #f8ef03ff",
-                                                fontWeight: "bold",
-                                                cursor: "pointer",
-                                                width: "100%",
-                                                textAlign: "center",
-                                            }}
-                                        >
-                                            ¡Desbloquear premio!
+                                        {diaCompletado ? (
+                                            <p style={{ fontSize: '0.8rem', fontWeight: 600, color: '#4ade80' }}>
+                                                Día completado
+                                            </p>
+                                        ) : (
+                                            <p style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: 5 }}>
+                                                Dosis: {med.tomadas || 0} / {med.total_tomas}
+                                            </p>
+                                        )}
 
-                                        </button>
-                                    )}
+                                        {!diaCompletado && (
+                                            <button
+                                                onClick={() => registrarTomaHome(med)}
+                                                style={{
+                                                    marginTop: 5,
+                                                    padding: "6px 12px",
+                                                    backgroundColor: "#4ade80",
+                                                    color: "#000",
+                                                    borderRadius: "6px",
+                                                    fontWeight: "bold",
+                                                    border: "none",
+                                                    cursor: "pointer",
+                                                }}
+                                            >
+                                                Tomar dosis
+                                            </button>
+                                        )}
+
+                                        {med.desbloquearPremio && (
+                                            <button
+                                                onClick={() => navigate("/Progresos")}
+                                                style={{
+                                                    marginTop: "10px",
+                                                    padding: "10px 14px",
+                                                    backgroundColor: "#f5e500ff",
+                                                    borderRadius: "8px",
+                                                    border: "1px solid #f8ef03ff",
+                                                    fontWeight: "bold",
+                                                    cursor: "pointer",
+                                                    width: "100%",
+                                                    textAlign: "center",
+                                                }}
+                                            >
+                                                ¡Desbloquear premio!
+
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
                             );
                         })

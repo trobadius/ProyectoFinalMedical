@@ -101,7 +101,7 @@ Te ayudaremos a no olvidar ninguna dosis 💙`;
   // --- Guardar medicamento varios días
   const guardarMedicamento = async () => {
     if (!nuevoMed.nombre.trim()) return;
-    
+
     try {
       setLoading(true);
       const baseDate = new Date(selectedDate);
@@ -398,6 +398,15 @@ Te ayudaremos a no olvidar ninguna dosis 💙`;
                 disabled={loading}
               />
 
+              <button onClick={() => {
+                localStorage.removeItem("medicamentoActual");
+                guardarMedicamento();
+              }}
+                disabled={loading}>
+                <Plus size={20} color="white" />
+              </button>
+            </div>
+            <div>
               <button
                 onClick={async () => {
                   localStorage.removeItem("medicamentoActual");

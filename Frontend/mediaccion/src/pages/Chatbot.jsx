@@ -2,108 +2,186 @@
 import React, { useState, useRef, useEffect } from "react";
 import StickyButton from "../components/StickyButton.jsx";
 import { FaUmbraco } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import '../App.css';
 import { ArrowLeft, LogOut } from 'lucide-react';
 import logo from "../assets/logo.svg";
 import '../styles/Chatbox.css';
-import { useNavigate, useLocation } from "react-router-dom";
 
 export default function Chatbot() {
   const location = useLocation();
   const navigate = useNavigate();
-
   const from = location.state?.from || "/";
 
   const [messages, setMessages] = useState([
-    { from: "bot", text: "Hola 👋 ¿Qué síntoma tienes?" }
+    { from: "bot", text: "Hola 🖐️, cuéntame tus síntomas de hoy" }
   ]);
   const [userInput, setUserInput] = useState("");
   const chatBoxRef = useRef(null);
 
-  // Base de datos simple de síntomas → alimentos recomendados
-  const recomendaciones = {
-    dolor_garganta: "Bebe té caliente con miel 🍯☕, come sopa 🍲, mastica jengibre 🌿 y evita alimentos fríos 🥶.",
-    dolor_cabeza: "Bebe agua 💧, consume frutos secos 🥜, come plátano 🍌 y descansa evitando pantallas 📵.",
-    fiebre: "Hidrátate con agua o suero 💧, ingiere frutas como sandía 🍉 y come comidas ligeras 🍽️.",
-    diarrea: "Come arroz blanco 🍚, plátano 🍌, pollo hervido 🍗 y evita lácteos 🥛🚫.",
-    estreñimiento: "Consume avena 🥣, come kiwi 🥝, bebe agua 💧, incluye verduras verdes 🥬 y evita harinas 🍞🚫.",
-    acidez: "Come manzana 🍎, ingiere avena 🥣 y yogurt natural 🥛, y evita café ☕🚫 y fritos 🍟🚫.",
-    resfriado: "Bebe té de limón con miel 🍯🍋, come sopa de pollo 🍲🐔, mastica jengibre 🌿 y consume frutas cítricas 🍊.",
-    fatiga: "Consume avena 🥣, come huevos 🥚, frutos secos 🥜 y espinaca 🥬, e incluye frutas cítricas 🍊.",
-    ansiedad: "Come chocolate negro 🍫, bebe té de manzanilla 🍵, ingiere nueces 🌰 y plátano 🍌.",
-    inflamacion: "Agrega cúrcuma 🌕 y jengibre 🌿 a tus comidas, come frutas rojas 🍓, pescado 🐟 y usa aceite de oliva 🫒.",
-    gripe: "Consume sopa de verduras 🍲🥕, toma miel 🍯, bebe limón 🍋 y descansa 😴.",
-    dolor_muscular: "Come plátano 🍌, nueces 🥜 y pescado 🐟, hidrátate 💧 y realiza estiramientos 🤸.",
-    nauseas: "Come galletas saladas 🍘, bebe té de jengibre 🌿🍵, ingiere arroz blanco 🍚 e hidrátate 💧.",
-    insomnio: "Bebe leche tibia 🥛, toma té de manzanilla 🍵, come plátano 🍌 y evita café ☕🚫.",
-    hipotension: "Bebe agua 💧, agrega sal moderada 🧂 a tus comidas, consume frutos secos 🥜 y come comidas frecuentes 🍽️.",
-    hipertension: "Consume frutas y verduras 🍎🥦, come avena 🥣 y pescado 🐟, y reduce sal 🧂🚫.",
-    dolor_espalda: "Come plátano 🍌 y almendras 🌰, incluye pescado 🐟 y realiza estiramientos 🤸.",
-    mareos: "Bebe agua 💧, come galletas saladas 🍘, ingiere frutas 🍎 y descansa 😴.",
-    dolor_estomacal: "Come arroz blanco 🍚, zanahoria 🥕 y plátano 🍌, y bebe té de manzanilla 🍵.",
-    resfriado_alergico: "Bebe agua 💧, toma miel 🍯, realiza inhalación de vapor 🌫️ y consume frutas cítricas 🍊.",
-    tos: "Bebe té de miel 🍯🍵, mastica jengibre 🌿, evita lácteos 🥛🚫 y descansa 😴.",
-    deshidratacion: "Bebe agua 💧, consume frutas con agua 🍉, come sopa ligera 🍲 y evita alcohol 🍺🚫.",
-    dolor_ojos: "Come zanahoria 🥕 y espinaca 🥬, descansa los ojos 😌 y limita pantallas 📵.",
-    ansiedad_digestiva: "Come plátano 🍌 y avena 🥣, ingiere yogurt 🥛, bebe té de menta 🍃🍵 y mantente hidratado 💧.",
-    dolor_articular: "Consume pescado 🐟 y nueces 🥜, agrega cúrcuma 🌕 y bebe agua 💧, realiza movimientos suaves 🤸.",
-    fatiga_visual: "Come frutas 🍎, hidrátate 💧, descansa la vista 😌 y realiza ejercicios de enfoque 👀.",
-    resfriado_fuerte: "Consume sopa de pollo 🍲🐔, toma miel 🍯, bebe limón 🍋, inhala vapor 🌫️ y descansa 😴.",
-    infeccion_urinaria: "Bebe agua 💧, consume arándanos 🍒, yogurt natural 🥛 y evita azúcares 🍬🚫.",
-    dolor_migraña: "Bebe agua 💧, toma té de jengibre 🌿🍵, come almendras 🌰 y descansa 😴.",
-    cansancio: "Consume frutas 🍎 y frutos secos 🥜, come avena 🥣 y mantente hidratado 💧.",
-    falta_apetito: "Come frutas 🍎 y yogur 🥛, ingiere sopas 🍲 y realiza pequeñas comidas 🍽️.",
-    acne: "Bebe agua 💧, consume frutas y verduras 🥦🍎, evita fritos 🍟🚫 y azúcares 🍬🚫, y lava tu cara 🧼.",
-    irritacion_piel: "Come aguacate 🥑, usa aceite de oliva 🫒, ingiere frutos secos 🥜 y alimentos con omega-3 🐟.",
-    dolor_muscular_post_ejercicio: "Come plátano 🍌 y frutos secos 🥜, hidrátate 💧 y estira 🤸.",
-    calambres: "Consume plátano 🍌, bebe agua 💧, come nueces 🌰 y estira 🤸.",
-    resfriado_congestion: "Bebe té de jengibre con miel 🌿🍯, inhala vapor 🌫️, come cítricos 🍊 y descansa 😴.",
-    dolor_cuello: "Aplica compresas calientes 🔥, estira suavemente 🤸‍♂️ y consume alimentos antiinflamatorios 🐟🫒.",
-    irritacion_gastrica: "Bebe agua 💧, come avena 🥣 y yogurt natural 🥛, evita picante 🌶️🚫 y reduce café ☕⬇️.",
-    colicos_menstruales: "Bebe infusiones calientes ☕, come magnesio (nueces, espinaca) 🌰🥬 y estira suavemente 🤸.",
-    dolor_rodilla: "Hidrátate 💧, aplica frío ❄️ o calor 🔥 y realiza movilidad 🤸.",
-    dolor_hombro: "Aplica calor 🔥, estira 🤸 y consume antiinflamatorios 🫒🐟.",
-    inflamacion_mano: "Hidrátate 💧, aplica frío ❄️ y consume omega-3 🐟.",
-    estreñimiento_leve: "Bebe agua 💧, come frutas con fibra 🍎🥝, avena 🥣 y camina 🚶.",
-    anemia: "Consume espinaca 🥬, lentejas 🍛, carne magra 🥩, huevos 🥚 y vitamina C 🍊.",
-    colon_irritable: "Come avena 🥣, plátano 🍌, arroz 🍚, verduras cocidas 🥕 y evita irritantes 🌶️☕🚫.",
-    dolor_estomago_leve: "Come arroz blanco 🍚, manzana rallada 🍎, plátano 🍌, yogurt 🥛 y evita pesado 🍔🚫.",
-    resfriado_leve: "Bebe agua 💧, toma miel 🍯, come sopa 🍲 y cítricos 🍊.",
-    dolor_articulaciones_leve: "Hidrátate 💧, estira 🤸, come frutos secos 🥜 y pescado 🐟.",
-    ansiedad_leve: "Bebe manzanilla 🍵, respira profundo 😮‍💨, come chocolate negro 🍫 y frutas 🍎.",
-    fatiga_leve: "Hidrátate 💧, come frutas 🍎 y frutos secos 🥜, y camina 🚶.",
-    insomnio_leve: "Bebe leche tibia 🥛, respira profundo 😮‍💨 y evita pantallas 📵.",
-    dolor_muscular_leve: "Hidrátate 💧, come plátano 🍌 y frutos secos 🥜, y estira 🤸.",
-    mareos_leves: "Bebe agua 💧, come frutas 🍎, descansa 😴 y evita movimientos bruscos ⚠️.",
-    congestion_nasal: "Inhala vapor 🌫️, bebe líquidos calientes ☕, come sopas ligeras 🍲 y fruta con vitamina C 🍊.",
-    dolor_estomacal_leve: "Bebe manzanilla 🍵, come arroz 🍚 y plátano 🍌, y evita comidas pesadas 🍔🚫.",
-    acidez_dia: "Bebe agua 💧, come manzana 🍎 o avena 🥣, evita café ☕🚫, alcohol 🍺🚫 y picantes 🌶️🚫.",
-    acne_moderado: "Lava tu cara 🧼, hidrátate 💧, come frutas 🥝 y verduras 🥦, reduce azúcares 🍬🚫 y fritos 🍟🚫.",
-    problemas_digestion: "Come avena 🥣, arroz 🍚, vegetales cocidos 🥕, yogurt 🥛 y evita fritos 🍟🚫.",
-    resfriado_ninos: "Bebe agua 💧, consume sopa 🍲, come frutas 🍌🍎 y descansa 😴.",
-    fiebre_ninos: "Hidrátate 💧, come sopas ligeras 🍲, frutas 🍉 y descansa 😴.",
-    vomito: "Bebe agua 💧, come arroz blanco 🍚, plátano 🍌 y galletas saladas 🍘.",
-    dolor_mandibula: "Aplica calor 🔥, estira suavemente 🤸‍♂️ y consume alimentos blandos 🍲.",
-    dolor_codos: "Aplica frío ❄️ o calor 🔥, estira 🤸‍♂️ y mantente hidratado 💧.",
-    dolor_pies: "Descansa 😌, eleva los pies 🦶⬆️, aplica compresas ❄️🔥 y come antiinflamatorios 🐟🫒."
+  // ---------- Funciones de envío de mensajes ----------
 
+  const handleSend = () => {
+    if (!userInput.trim()) return;
+
+    const newMessage = { from: "user", text: userInput };
+    const botResponse = continuarChat(userInput);
+
+    // Evitamos duplicar el mensaje
+    setMessages((prev) => [...prev, newMessage, { from: "bot", text: botResponse }]);
+    setUserInput("");
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSend();
+    }
+  };
 
-  // ---------- Helpers ML/NLP (fuzzy matching) ----------
+  // ---------- Scroll automático ----------
+  useEffect(() => {
+    if (chatBoxRef.current) {
+      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+    }
+  }, [messages]);
 
-  // Normaliza: trim, minusculas, quitar tildes, signos y múltiples espacios
+  // Base de datos simple de síntomas → alimentos recomendados
+  const recomendaciones = {
+
+    dolor_garganta: "Bebe té caliente con miel 🍯☕ (el calor suaviza la garganta y la miel recubre la mucosa para reducir irritación), come sopa 🍲 (hidrata y aporta nutrientes que facilitan la recuperación del tejido), mastica jengibre 🌿 (antiinflamatorio natural que disminuye inflamación y dolor), evita alimentos fríos 🥶 (el frío puede contraer vasos sanguíneos y aumentar dolor).",
+
+    dolor_cabeza: "Bebe agua 💧 (previene deshidratación que reduce el flujo sanguíneo cerebral y puede causar dolor), consume frutos secos 🥜 (aportan magnesio que relaja vasos sanguíneos y músculos), come plátano 🍌 (alto en potasio para equilibrio electrolítico y función muscular), descansa evitando pantallas 📵 (reduce tensión ocular y fatiga visual).",
+
+    fiebre: "Hidrátate con agua o suero 💧 (reemplaza líquidos y electrolitos perdidos), consume frutas como sandía 🍉 (aportan agua y vitaminas, ayudan a mantener hidratación), come comidas ligeras 🍽️ (facilitan digestión y evitan gasto energético excesivo).",
+
+    diarrea: "Come arroz blanco 🍚 (absorbe líquidos y facilita formación de heces), plátano 🍌 (aporta potasio perdido), pollo hervido 🍗 (proteína fácil de digerir), evita lácteos 🥛🚫 (la lactosa puede empeorar diarrea).",
+
+    estreñimiento: "Consume avena 🥣 (fibra soluble que ablanda heces), come kiwi 🥝 (fibra insoluble que estimula tránsito intestinal), bebe agua 💧 (hidrata y facilita función de fibra), incluye verduras verdes 🥬 (aportan fibra y nutrientes), evita harinas 🍞🚫 (ralentizan digestión).",
+
+    acidez: "Come manzana 🍎 (absorbe exceso de ácido), ingiere avena 🥣 (forma capa protectora en estómago), consume yogurt natural 🥛 (equilibra flora intestinal), evita café ☕🚫 y fritos 🍟🚫 (aumentan ácido y retrasan vaciado gástrico).",
+
+    resfriado: "Bebe té de limón con miel 🍯🍋 (calma la garganta y aporta vitamina C), come sopa de pollo 🍲🐔 (reduce congestión y aporta nutrientes), mastica jengibre 🌿 (antiinflamatorio natural), consume cítricos 🍊 (refuerzan defensas).",
+
+    fatiga: "Consume avena 🥣 (proporciona energía sostenida), come huevos 🥚 (proteína de fácil absorción), frutos secos 🥜 (magnesio para función muscular), espinaca 🥬 (hierro para oxigenación), frutas cítricas 🍊 (vitamina C que combate fatiga).",
+
+    ansiedad: "Come chocolate negro 🍫 (estimula serotonina y sensación de bienestar), bebe té de manzanilla 🍵 (efecto calmante), ingiere nueces 🌰 (grasas saludables que apoyan sistema nervioso), come plátano 🍌 (magnesio y triptófano que ayudan a relajación).",
+
+    inflamacion: "Agrega cúrcuma 🌕 (curcumina reduce inflamación), consume jengibre 🌿 (antiinflamatorio), come frutas rojas 🍓 (antioxidantes que combaten radicales libres), pescado 🐟 (omega-3 que disminuye inflamación), usa aceite de oliva 🫒 (grasas saludables antiinflamatorias).",
+
+    gripe: "Consume sopa de verduras 🍲🥕 (hidrata y aporta nutrientes), toma miel 🍯 (calma garganta y suaviza mucosa), bebe limón 🍋 (vitamina C que fortalece sistema inmune), descansa 😴 (favorece recuperación).",
+
+    dolor_muscular: "Come plátano 🍌 (potasio que previene calambres), nueces 🥜 (magnesio que relaja músculos), pescado 🐟 (omega-3 que reduce inflamación), hidrátate 💧 (previene deshidratación muscular), estira 🤸 (disminuye rigidez).",
+
+    nauseas: "Come galletas saladas 🍘 (suaves para estómago y estabilizan electrolitos), bebe té de jengibre 🌿🍵 (reduce náuseas mediante acción antiemética), ingiere arroz blanco 🍚 (digestion fácil), hidrátate 💧 (evita descompensación).",
+
+    insomnio: "Bebe leche tibia 🥛 (triptofano ayuda a sintetizar melatonina), toma manzanilla 🍵 (sedante natural), come plátano 🍌 (magnesio que relaja músculos), evita café ☕🚫 (cafeína estimula sistema nervioso).",
+
+    hipotension: "Bebe agua 💧 (aumenta volumen sanguíneo), agrega sal moderada 🧂 (ayuda a subir presión), consume frutos secos 🥜 (energía y minerales), come comidas frecuentes 🍽️ (evita bajadas bruscas de presión).",
+
+    hipertension: "Consume frutas y verduras 🍎🥦 (potasio ayuda a regular presión arterial), avena 🥣 (reduce colesterol), pescado 🐟 (omega-3 protege corazón), reduce sal 🧂🚫 (evita retención de líquidos y sobrecarga vascular).",
+
+    dolor_espalda: "Come plátano 🍌 (magnesio relaja músculos), almendras 🌰 (previenen calambres), incluye pescado 🐟 (omega-3 reduce inflamación), realiza estiramientos 🤸 (alivia tensión muscular).",
+
+    mareos: "Bebe agua 💧 (mantiene presión y volumen sanguíneo), come galletas saladas 🍘 (aumenta sodio para presión), consume frutas 🍎 (glucosa para energía), descansa 😴 (evita caídas por mareo).",
+
+    dolor_estomacal: "Come arroz blanco 🍚 (protege mucosa), zanahoria 🥕 (fibra soluble fácil de digerir), plátano 🍌 (regula tránsito), bebe manzanilla 🍵 (reduce espasmos).",
+
+    resfriado_alergico: "Bebe agua 💧 (mantiene mucosas hidratadas), toma miel 🍯 (suaviza garganta), inhala vapor 🌫️ (despeja vías respiratorias), consume cítricos 🍊 (vitamina C refuerza defensas).",
+
+    tos: "Bebe té con miel 🍯🍵 (alivia irritación y recubre mucosa), mastica jengibre 🌿 (reduce inflamación), evita lácteos 🥛🚫 (aumentan mucosidad), descansa 😴 (favorece recuperación).",
+
+    deshidratacion: "Bebe agua 💧 (reposición principal de líquidos), consume frutas con agua 🍉 (aportan agua y electrolitos), come sopa ligera 🍲 (hidratación y nutrientes), evita alcohol 🍺🚫 (provoca deshidratación).",
+
+    dolor_ojos: "Come zanahoria 🥕 (vitamina A mejora visión), espinaca 🥬 (antioxidantes que protegen retina), descansa los ojos 😌 (reduce fatiga), limita pantallas 📵 (evita sobrecarga visual).",
+
+    ansiedad_digestiva: "Come plátano 🍌 y avena 🥣 (calman el sistema digestivo y aportan fibra), yogurt 🥛 (regula flora intestinal), bebe té de menta 🍃🍵 (relajante estomacal), mantente hidratado 💧 (favorece digestión).",
+
+    dolor_articular: "Consume pescado 🐟 (omega-3 reduce inflamación), nueces 🥜 (grasas saludables), agrega cúrcuma 🌕 (antiinflamatoria), bebe agua 💧 (lubrica articulaciones), realiza movimientos suaves 🤸 (mantiene movilidad).",
+
+    fatiga_visual: "Come frutas 🍎 (antioxidantes que protegen ojos), hidrátate 💧 (mantiene líquidos oculares), descansa la vista 😌 (reduce fatiga), realiza ejercicios de enfoque 👀 (mejora acomodación visual).",
+
+    resfriado_fuerte: "Consume sopa de pollo 🍲🐔 (hidrata y aporta nutrientes), toma miel 🍯 (calma garganta), bebe limón 🍋 (vitamina C), inhala vapor 🌫️ (despeja vías respiratorias), descansa 😴 (favorece recuperación).",
+
+    infeccion_urinaria: "Bebe agua 💧 (aumenta diuresis y elimina bacterias), consume arándanos 🍒 (antioxidantes y proantocianidinas que reducen adhesión bacteriana), yogurt natural 🥛 (flora intestinal saludable), evita azúcares 🍬🚫 (favorecen crecimiento bacteriano).",
+
+    dolor_migraña: "Bebe agua 💧 (previene deshidratación que provoca migraña), toma té de jengibre 🌿🍵 (reduce inflamación y dolor), come almendras 🌰 (magnesio que relaja vasos sanguíneos), descansa 😴 (disminuye estímulos que generan dolor).",
+
+    cansancio: "Consume frutas 🍎 (azúcares naturales para energía rápida), frutos secos 🥜 (magnesio y proteínas), come avena 🥣 (energía sostenida), mantente hidratado 💧 (previene fatiga por deshidratación).",
+
+    falta_apetito: "Come frutas 🍎 y yogur 🥛 (ligeros y fáciles de digerir), ingiere sopas 🍲 (hidratan y aportan nutrientes), realiza pequeñas comidas 🍽️ (estimula apetito sin sobrecargar digestión).",
+
+    acne: "Bebe agua 💧 (elimina toxinas y mantiene piel hidratada), consume frutas y verduras 🥦🍎 (vitaminas y antioxidantes que reducen inflamación), evita fritos 🍟🚫 y azúcares 🍬🚫 (disminuyen brotes), lava tu cara 🧼 (elimina exceso de sebo y bacterias).",
+
+    irritacion_piel: "Come aguacate 🥑 (grasas saludables que mejoran barrera cutánea), usa aceite de oliva 🫒 (nutre piel), ingiere frutos secos 🥜 (omega-3 que reduce inflamación), alimentos con omega-3 🐟 (disminuyen irritación).",
+
+    dolor_muscular_post_ejercicio: "Come plátano 🍌 (reposición de potasio), frutos secos 🥜 (magnesio y proteína), hidrátate 💧 (evita deshidratación), estira 🤸 (reduce rigidez muscular).",
+
+    calambres: "Consume plátano 🍌 (potasio), bebe agua 💧 (hidrata y previene contracciones), come nueces 🌰 (magnesio), estira 🤸 (relaja músculo).",
+
+    resfriado_congestion: "Bebe té de jengibre con miel 🌿🍯 (reduce inflamación y suaviza garganta), inhala vapor 🌫️ (despeja vías respiratorias), come cítricos 🍊 (vitamina C fortalece defensas), descansa 😴 (favorece recuperación).",
+
+    dolor_cuello: "Aplica compresas calientes 🔥 (relajan músculos tensos), estira suavemente 🤸‍♂️ (mejora movilidad), consume alimentos antiinflamatorios 🐟🫒 (reducen inflamación).",
+
+    irritacion_gastrica: "Bebe agua 💧 (hidrata mucosa), come avena 🥣 (protege estómago y regula tránsito), yogurt natural 🥛 (equilibra flora), evita picante 🌶️🚫 y reduce café ☕⬇️ (minimizan irritación).",
+
+    colicos_menstruales: "Bebe infusiones calientes ☕ (relajan músculos y reducen dolor), come magnesio (nueces, espinaca) 🌰🥬 (favorece relajación muscular), estira suavemente 🤸 (alivia tensión).",
+
+    dolor_rodilla: "Hidrátate 💧 (lubrica articulaciones), aplica frío ❄️ o calor 🔥 (reduce dolor y tensión), realiza movilidad 🤸 (mantiene flexibilidad).",
+
+    dolor_hombro: "Aplica calor 🔥 (relaja músculos), estira 🤸 (aumenta movilidad), consume antiinflamatorios 🫒🐟 (reducen inflamación).",
+
+    inflamacion_mano: "Hidrátate 💧 (mantiene líquidos en tejidos), aplica frío ❄️ (reduce inflamación y dolor), consume omega-3 🐟 (disminuye inflamación).",
+
+    estreñimiento_leve: "Bebe agua 💧 (ayuda a ablandar heces), come frutas con fibra 🍎🥝 (estimulan tránsito), avena 🥣 (fibra soluble), camina 🚶 (estimula intestino).",
+
+    anemia: "Consume espinaca 🥬 (hierro vegetal), lentejas 🍛 (hierro y proteína), carne magra 🥩 (hierro hemo de fácil absorción), huevos 🥚 (vitamina B12), vitamina C 🍊 (mejora absorción de hierro).",
+
+    colon_irritable: "Come avena 🥣, plátano 🍌, arroz 🍚, verduras cocidas 🥕 (fáciles de digerir y suaves para intestino), evita irritantes 🌶️☕🚫 (minimizan inflamación intestinal).",
+
+    dolor_estomago_leve: "Come arroz blanco 🍚 (protege mucosa), manzana rallada 🍎 (fibra soluble suave), plátano 🍌 (regula tránsito), yogurt 🥛 (flora intestinal), evita comidas pesadas 🍔🚫 (reduce sobrecarga).",
+
+    resfriado_leve: "Bebe agua 💧 (hidrata), toma miel 🍯 (suaviza garganta), come sopa 🍲 (aporta líquidos y nutrientes), consume cítricos 🍊 (vitamina C fortalece defensas).",
+
+    dolor_articulaciones_leve: "Hidrátate 💧 (lubrica articulaciones), estira 🤸 (mantiene movilidad), come frutos secos 🥜 (omega-3 reduce inflamación), pescado 🐟 (antiinflamatorio).",
+
+    ansiedad_leve: "Bebe manzanilla 🍵 (calma sistema nervioso), respira profundo 😮‍💨 (reduce estrés), come chocolate negro 🍫 (estimula serotonina), frutas 🍎 (vitaminas y antioxidantes).",
+
+    fatiga_leve: "Hidrátate 💧 (previene cansancio por deshidratación), come frutas 🍎 (azúcares naturales), frutos secos 🥜 (magnesio y proteína), camina 🚶 (estimula circulación y energía).",
+
+    insomnio_leve: "Bebe leche tibia 🥛 (triptofano ayuda a sintetizar melatonina), respira profundo 😮‍💨 (relaja cuerpo y mente), evita pantallas 📵 (disminuye estimulación visual).",
+
+    dolor_muscular_leve: "Hidrátate 💧 (previene deshidratación), come plátano 🍌 (potasio), frutos secos 🥜 (magnesio), estira 🤸 (reduce rigidez).",
+
+    mareos_leves: "Bebe agua 💧 (mantiene presión sanguínea), come frutas 🍎 (glucosa para energía), descansa 😴 (evita caída), evita movimientos bruscos ⚠️ (previene vértigo).",
+
+    congestion_nasal: "Inhala vapor 🌫️ (despeja vías respiratorias), bebe líquidos calientes ☕ (hidratación y alivio), come sopas ligeras 🍲 (nutrientes y líquidos), frutas con vitamina C 🍊 (refuerzan sistema inmune).",
+
+    dolor_estomacal_leve: "Bebe manzanilla 🍵 (reduce espasmos), come arroz 🍚 (protege mucosa), plátano 🍌 (regula tránsito), evita comidas pesadas 🍔🚫 (reduce irritación).",
+
+    acidez_dia: "Bebe agua 💧 (diluye ácido gástrico), come manzana 🍎 o avena 🥣 (absorbe ácido y protege estómago), evita café ☕🚫, alcohol 🍺🚫 y picantes 🌶️🚫 (disminuyen irritación).",
+
+    acne_moderado: "Lava tu cara 🧼 (elimina sebo y bacterias), hidrátate 💧 (mantiene piel sana), come frutas 🥝 y verduras 🥦 (antioxidantes), reduce azúcares 🍬🚫 y fritos 🍟🚫 (disminuyen inflamación).",
+
+    problemas_digestion: "Come avena 🥣, arroz 🍚, vegetales cocidos 🥕 (fáciles de digerir), yogurt 🥛 (flora intestinal), evita fritos 🍟🚫 (minimiza irritación).",
+
+    resfriado_ninos: "Bebe agua 💧 (mantiene hidratación), consume sopa 🍲 (aporta líquidos y nutrientes), come frutas 🍌🍎 (vitaminas y energía), descansa 😴 (favorece recuperación).",
+
+    fiebre_ninos: "Hidrátate 💧 (reposición de líquidos), come sopas ligeras 🍲 (nutrientes fáciles de digerir), frutas 🍉 (hidratan y aportan vitaminas), descansa 😴 (favorece recuperación).",
+
+    vomito: "Bebe agua 💧 (evita deshidratación), come arroz blanco 🍚 (protege mucosa), plátano 🍌 (reposición de potasio), galletas saladas 🍘 (aportan sodio y ayudan a estabilizar estómago).",
+
+    dolor_mandibula: "Aplica calor 🔥 (relaja músculos tensos), estira suavemente 🤸‍♂️ (reduce rigidez), consume alimentos blandos 🍲 (evita sobrecargar mandíbula).",
+  }
+
+  // ---------- Helpers ML/NLP ----------
   const normalize = (str) =>
-    str
-      .toLowerCase()
+    str.toLowerCase()
       .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "") // quita acentos
-      .replace(/[^a-z0-9\s]/g, " ") // sustituye puntuación por espacio
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9\s]/g, " ")
       .replace(/\s+/g, " ")
       .trim();
 
-  // Implementación simple de distancia Levenshtein (iterativa)
   const levenshtein = (a, b) => {
     if (a === b) return 0;
     if (!a.length) return b.length;
@@ -111,7 +189,6 @@ export default function Chatbot() {
 
     const v0 = Array(b.length + 1).fill(0);
     const v1 = Array(b.length + 1).fill(0);
-
     for (let i = 0; i <= b.length; i++) v0[i] = i;
 
     for (let i = 0; i < a.length; i++) {
@@ -125,7 +202,6 @@ export default function Chatbot() {
     return v1[b.length];
   };
 
-  // Similitud basada en Levenshtein (0..1)
   const similarity = (a, b) => {
     if (!a.length && !b.length) return 1;
     const dist = levenshtein(a, b);
@@ -133,110 +209,61 @@ export default function Chatbot() {
     return 1 - dist / maxLen;
   };
 
-  // Convierte las claves de recomendaciones a una lista usable
   const keysList = Object.keys(recomendaciones);
 
-  // Función que intenta mapear el texto del usuario al "key" correcto
   const matchSymptomKey = (textoUsuario) => {
     const norm = normalize(textoUsuario);
-
-    // 1) Intento exacto directo (espacios -> guion bajo)
     const exactKey = norm.replace(/\s+/g, "_");
     if (recomendaciones[exactKey]) return { key: exactKey, score: 1 };
 
-    // 2) Intento por tokens: si alguna key contiene la mayoría de tokens del input
     const tokens = norm.split(" ").filter(Boolean);
     if (tokens.length > 0) {
-      // Recorremos keys y evaluamos match por tokens + similitud de string completa
       let best = { key: null, score: 0 };
       for (const k of keysList) {
         const keyPlain = k.replace(/_/g, " ");
         const keyTokens = keyPlain.split(" ");
-
-        // tokenMatch = proporción de tokens del user que aparecen en la key
         const matchedTokens = tokens.filter((t) => keyTokens.includes(t)).length;
         const tokenScore = matchedTokens / Math.max(tokens.length, keyTokens.length);
-
-        // similarityScore = similitud entre strings completos
         const sim = similarity(norm, keyPlain);
-
-        // combinación heurística: damos más peso a sim pero también al tokenScore
         const combined = 0.65 * sim + 0.35 * tokenScore;
-
         if (combined > best.score) best = { key: k, score: combined };
       }
-
-      // Umbral para aceptar la mejor coincidencia
-      if (best.score >= 0.60) return best; // 0.60 es conservador; ajústalo si quieres más permisivo
+      if (best.score >= 0.6) return best;
     }
 
-    // 3) Si falló, intentar comparación por similitud con cada key (caso de faltas de ortografía largas)
     let bestSim = { key: null, score: 0 };
     for (const k of keysList) {
       const keyPlain = k.replace(/_/g, " ");
       const sim = similarity(norm, keyPlain);
       if (sim > bestSim.score) bestSim = { key: k, score: sim };
     }
-    if (bestSim.score >= 0.55) return bestSim; // un poco más laxo aquí
+    if (bestSim.score >= 0.55) return bestSim;
 
-    // 4) No encontrado
     return { key: null, score: 0 };
   };
 
-  // ---------- Responder usando el matcher ----------
   const responder = (texto) => {
     const match = matchSymptomKey(texto);
-
     if (match.key && recomendaciones[match.key]) {
-      // Puedes añadir información adicional: por ejemplo, informar la confianza
-      if (match.score < 0.8) {
-        // cuando la confianza es media, avisamos al usuario que interpretamos su entrada
-        return `Interpreto que te refieres a "${match.key.replace(/_/g, " ")}" (confianza ${(
-          match.score * 100
-        ).toFixed(0)}%).\n\n${recomendaciones[match.key]}`;
-      }
-      return recomendaciones[match.key];
+      const mensaje = match.score < 0.8
+        ? `Interpreto que te refieres a "${match.key.replace(/_/g, " ")}".\n\n${recomendaciones[match.key]}`
+        : `${recomendaciones[match.key]}`;
+      return `${mensaje}\n\n¿Tienes algún otro síntoma?`;
     }
 
-    // Sugerencias útiles (lista corta)
-    const sugerencias = [
-      "dolor garganta",
-      "dolor cabeza",
-      "fiebre",
-      "diarrea",
-      "estreñimiento",
-      "acidez",
-    ].join(", ");
-
-    return `No tengo ese síntoma registrado 😕. Prueba con ejemplos: ${sugerencias}. También revisa la ortografía o intenta describirlo con otras palabras (ej. "dolor de garganta", "fiebre alta", "mareo").`;
+    const sugerencias = ["dolor garganta", "dolor cabeza", "fiebre", "diarrea", "estreñimiento", "acidez"].join(", ");
+    return `No tengo ese síntoma registrado 😕. Prueba con ejemplos: ${sugerencias}.`;
   };
 
-  // ---------- Envío / UI ----------
-  const handleSend = () => {
-    if (!userInput.trim()) return;
-
-    const userMsg = { from: "user", text: userInput };
-    const botMsg = { from: "bot", text: responder(userInput) };
-
-    setMessages((prev) => [...prev, userMsg, botMsg]);
-    setUserInput("");
-  };
-
-  // Enter para enviar
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      handleSend();
+  const continuarChat = (respuestaUsuario) => {
+    if (respuestaUsuario.toLowerCase() === "no") {
+      return "¡Gracias por usar nuestro chatbot! No olvides cuidar de ti y mantener hábitos saludables 🍀.";
+    } else {
+      return responder(respuestaUsuario);
     }
   };
 
-  // Scroll automático al final
-  useEffect(() => {
-    if (chatBoxRef.current) {
-      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
-    }
-  }, [messages]);
-
+  // ---------- Render ----------
   return (
     <>
       <div className="waves"></div>
@@ -246,13 +273,7 @@ export default function Chatbot() {
             <button
               onClick={() => navigate(from)}
               className="header-icon-chat"
-              style={{
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                position: "relative",
-                left: "-20px"
-              }}
+              style={{ background: "none", border: "none", cursor: "pointer", left: "-20px", position: "relative" }}
             >
               <ArrowLeft size={26} className="flecha-atras" />
             </button>
@@ -271,10 +292,7 @@ export default function Chatbot() {
 
         <div className="chatBox" ref={chatBoxRef}>
           {messages.map((msg, i) => (
-            <div
-              key={i}
-              className={`message ${msg.from === "user" ? "user-msg" : "bot-msg"}`}
-            >
+            <div key={i} className={`message ${msg.from === "user" ? "user-msg" : "bot-msg"}`}>
               {msg.text}
             </div>
           ))}
@@ -289,9 +307,7 @@ export default function Chatbot() {
             onChange={(e) => setUserInput(e.target.value)}
             onKeyDown={handleKeyDown}
           />
-          <button className="button" onClick={handleSend}>
-            Enviar
-          </button>
+          <button className="button" onClick={handleSend}>Enviar</button>
         </div>
 
         <StickyButton />
@@ -299,4 +315,3 @@ export default function Chatbot() {
     </>
   );
 }
-
