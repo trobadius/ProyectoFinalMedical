@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import api from "../api";
 import { validarCamposRepetidos } from "../utils/Validaciones";
 import { FaUserCircle, FaPencilAlt } from 'react-icons/fa';
@@ -7,6 +7,44 @@ import { Link } from "react-router-dom";
 import '../App.css';
 import { MessageCircle, LogOut } from 'lucide-react';
 import logo from "../assets/logo.svg";
+import { useLanguage } from "../context/LanguageContext.jsx";
+
+function LanguageSelector() {
+  const { language, setLanguage } = useLanguage();
+  return (
+    <div style={{ display: 'flex', gap: 8 }}>
+      <button
+        onClick={() => setLanguage('es')}
+        aria-pressed={language === 'es'}
+        style={{
+          padding: '8px 12px',
+          borderRadius: 8,
+          border: language === 'es' ? '2px solid #3b82f6' : '1px solid #e5e7eb',
+          background: language === 'es' ? '#e0f2ff' : 'transparent',
+          cursor: 'pointer',
+          fontWeight: language === 'es' ? 700 : 500
+        }}
+      >
+        Español
+      </button>
+
+      <button
+        onClick={() => setLanguage('ca')}
+        aria-pressed={language === 'ca'}
+        style={{
+          padding: '8px 12px',
+          borderRadius: 8,
+          border: language === 'ca' ? '2px solid #3b82f6' : '1px solid #e5e7eb',
+          background: language === 'ca' ? '#e0f2ff' : 'transparent',
+          cursor: 'pointer',
+          fontWeight: language === 'ca' ? 700 : 500
+        }}
+      >
+        Català
+      </button>
+    </div>
+  );
+}
 
 export default function Perfil() {
   const [loading, setLoading] = useState(false);
@@ -50,6 +88,7 @@ export default function Perfil() {
   const [editing, setEditing] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
   const [testingWhatsApp, setTestingWhatsApp] = useState(false);
+  const { t } = useLanguage();
 
   // Recuperamos el perfil del usuario
   const fetchUserData = async () => {
@@ -151,11 +190,11 @@ export default function Perfil() {
   const handleTestWhatsApp = async () => {
     // Validar que haya teléfono
     if (!userProfile.telefono) {
-      alert('⚠️ Primero debes guardar un número de teléfono');
+      alert(t('numero_no_guardado'));
       return;
     }
     if (!userProfile.pais) {
-      alert('⚠️ Primero debes guardar un prefijo de teléfono');
+      alert(t('prefijo_no_guardado'));
       return;
     }
 
@@ -222,21 +261,22 @@ export default function Perfil() {
         <div className="perfil-card">
           <div className="perfil-header">
             <FaUserCircle className="perfil-icon" />
-            <h2 className="perfil-title">Mi Perfil</h2>
+            <h2 className="perfil-title">{t('mi_perfil')}</h2>
           </div>
 
           <div className="perfil-section">
             {!editing ? (
               <>
                 <p><strong>Usuario:</strong> {userProfile.username || '—'}</p>
-                <p><strong>Nombre:</strong> {userProfile.first_name || '—'}</p>
-                <p><strong>Apellidos:</strong> {userProfile.last_name || '—'}</p>
-                <p><strong>Email:</strong> {userProfile.email || '—'}</p>
-                <p><strong>Fecha nacimiento:</strong> {userProfile.date_birth || '—'}</p>
-                <p><strong>Roles:</strong> {userProfile.roles || '—'}</p>
-                <p><strong>Genero:</strong> {userProfile.genero || '—'}</p>
-                <p><strong>Pais:</strong> {userProfile.pais || '—'}</p>
-                <p><strong>Telefono:</strong> {userProfile.telefono || '—'}</p>
+                <p><strong>{t('usuario')}:</strong> {userProfile.username || '—'}</p>
+                <p><strong>{t('nombre')}:</strong> {userProfile.first_name || '—'}</p>
+                <p><strong>{t('apellidos')}:</strong> {userProfile.last_name || '—'}</p>
+                <p><strong>{t('email')}:</strong> {userProfile.email || '—'}</p>
+                <p><strong>{t('fecha_nacimiento')}:</strong> {userProfile.date_birth || '—'}</p>
+                <p><strong>{t('roles')}:</strong> {userProfile.roles || '—'}</p>
+                <p><strong>{t('genero')}:</strong> {userProfile.genero || '—'}</p>
+                <p><strong>{t('pais')}:</strong> {userProfile.pais || '—'}</p>
+                <p><strong>{t('telefono')}:</strong> {userProfile.telefono || '—'}</p>
                 {userProfile.telefono && (
                   <button
                     className="whatsapp-test-btn"
@@ -254,17 +294,24 @@ export default function Perfil() {
                     }}
                   >
                     {testingWhatsApp ? '⏳ Enviando...' : '📱 Probar Conexión WhatsApp'}
+                    {testingWhatsApp ? t('enviando') : t('probar_whatsapp')}
                   </button>
                 )}
 
                 <button className="edit-btn" onClick={() => setEditing(true)}>
-                  <FaPencilAlt /> Editar perfil
+                  <FaPencilAlt /> {t('editar_perfil')}
                 </button>
+
+                {/* Selector de idioma */}
+                <div style={{marginTop:12}}>
+                  <label style={{display:'block', marginBottom:6, fontWeight:700}}>{t('cambiar_idioma')}</label>
+                  <LanguageSelector />
+                </div>
               </>
             ) : (
               <>
                 <p><strong>Usuario:</strong> {userProfile.username || '—'}</p>
-                <p><strong>Nombre:</strong></p>
+                <p><strong>{t('nombre')}:</strong></p>
                 <input
                   type="text"
                   name="first_name"
@@ -280,6 +327,8 @@ export default function Perfil() {
                 )}
 
                 <p><strong>Apellidos:</strong></p>
+                                <p><strong>{t('apellidos')}:</strong></p>
+                                <p><strong>{t('email')}:</strong> {userProfile.email || '—'}</p>
                 <input
                   type="text"
                   name="last_name"
@@ -322,6 +371,7 @@ export default function Perfil() {
                 )}
                 <p><strong>Email:</strong> {userProfile.email || '—'}</p>
                 <p><strong>Fecha de nacimiento:</strong></p>
+                                <p><strong>{t('fecha_nacimiento')}:</strong></p>
                 <input
                   type="date"
                   name="date_birth"
@@ -336,7 +386,8 @@ export default function Perfil() {
                 )}
 
                 <p><strong>Roles:</strong> {userProfile.roles || '—'}</p>
-                <p><strong>Genero:</strong></p>
+                <p><strong>{t('roles')}:</strong> {userProfile.roles || '—'}</p>
+                <p><strong>{t('genero')}:</strong></p>
                 <select
                   className="genero"
                   name="genero"
@@ -345,9 +396,9 @@ export default function Perfil() {
                   onChange={handleChange}
                 >
                   <option value="" disabled>Selecciona genero...</option>
-                  <option value="hombre">Hombre</option>
-                  <option value="mujer">Mujer</option>
-                  <option value="no_decir">Prefiero no decirlo</option>
+                  <option value="hombre">{t('hombre')}</option>
+                  <option value="mujer">{t('mujer')}</option>
+                  <option value="no_decir">{t('prefiero_no_decir')}</option>
                 </select>
                 <p><strong>Email:</strong></p>
                 <input
@@ -363,7 +414,7 @@ export default function Perfil() {
                     {errors.email}
                   </label>
                 )}
-                <p><strong>Telefono:</strong></p>
+                <p><strong>{t('telefono')}:</strong></p>
                 <div className="phone-combo" id="phone">
                   <div className="select-wrap" aria-hidden="false">
                     <select
@@ -393,9 +444,9 @@ export default function Perfil() {
                   </label>
                 )}
 
-                <button className="save-btn" id="enviar" onClick={handleSave} disabled={isDisabled}>Guardar cambios</button>
+                <button className="save-btn" id="enviar" onClick={handleSave} disabled={isDisabled}>{t('guardar_cambios')}</button>
                 <button className="edit-btn" onClick={() => setEditing(false)}>
-                  Cancelar
+                  {t('cancelar')}
                 </button>
               </>
             )}

@@ -7,30 +7,7 @@ import Fuse from "fuse.js";
  * Lista base de medicamentos comunes en España.
  */
 const MEDICAMENTOS_ESPANA = [
-  'paracetamol', 'ibuprofeno', 'aspirina', 'amoxicilina', 'omeprazol',
-  'losartan', 'metformina', 'atorvastatina', 'simvastatina', 'enalapril',
-  'captopril', 'diclofenaco', 'naproxeno', 'cetirizina', 'loratadina',
-  'salbutamol', 'insulina', 'levotiroxina', 'prednisona', 'dexametasona',
-  'ranitidina', 'clonazepam', 'diazepam', 'fluoxetina', 'sertralina',
-  'amlodipino', 'carvedilol', 'furosemida', 'hidroclorotiazida', 'tramadol',
-  'ketorolaco', 'acetaminofen', 'dipirona', 'metamizol', 'ciprofloxacino',
-  'azitromicina', 'claritromicina', 'doxiciclina', 'levofloxacino',
-  'pantoprazol', 'esomeprazol', 'lansoprazol', 'sucralfato', 'domperidona',
-  'metoclopramida', 'ondansetron', 'loperamida', 'betametasona', 'hidrocortisona',
-  'mometasona', 'budesonida', 'montelukast', 'formoterol', 'tiotropio',
-  'acetilsalicilico', 'clopidogrel', 'warfarina', 'apixaban', 'rivaroxaban',
-  'heparina', 'insulina_glargina', 'insulina_lispro', 'gabapentina',
-  'pregabalina', 'lamotrigina', 'valproato', 'carbamazepina', 'quetiapina',
-  'risperidona', 'olanzapina', 'aripiprazol', 'haloperidol', 'mirtazapina',
-  'venlafaxina', 'duloxetina', 'bupropion', 'tamsulosina', 'finasterida',
-  'dutasterida', 'sildenafil', 'tadalafil', 'alopurinol', 'colchicina',
-  'ferro_fumarato', 'ferro_gluconato', 'hierro_sulfato', 'acido_folico',
-  'vitamina_b12', 'vitamina_d', 'calcitriol', 'alendronato', 'ibandronato',
-  'ketoconazol', 'fluconazol', 'itraconazol', 'amoxicilina_clavulanico',
-  'ceftriaxona', 'cefalexina', 'cefuroxima', 'meropenem', 'piperacilina_tazobactam',
-  'aciclovir', 'valaciclovir', 'oseltamivir', 'clotrimazol', 'nistatina',
-  'lorazepam', 'alprazolam', 'midazolam', 'propranolol', 'atenolol',
-  'bisoprolol', 'ivermectina', 'nitrofurantoina'
+  'omeprazol'
 ];
 
 /**
