@@ -297,6 +297,7 @@ export default function TesseractOCR() {
             </div>
 
             <canvas ref={canvasRef} className="camera-ocr-canvas" />
+            {!scanned && (
             <div className="instrucciones">
               <h3 className="h3">Instrucciones para escanear su medicamento correctamente:</h3>
               <ol>
@@ -307,6 +308,7 @@ export default function TesseractOCR() {
                 <li>Enfoca la caja correctamente, asegurándote de que el nombre y el texto se vean nítidos.</li>
               </ol>
             </div>
+            )}
             <div className="modal-buttons">
               {!cameraActive ? (
                 <button onClick={() => handleActivateCamera("environment")} className="camera-ocr-button-activate">
@@ -325,7 +327,7 @@ export default function TesseractOCR() {
                   </button>
                   {!scanned ? (
                     <button onClick={() => setAutoScanOnce(true)} className="camera-ocr-button">
-                      Escaneo automático
+                      Escanear
                     </button>
                   ) : (
                     <button
@@ -356,7 +358,11 @@ export default function TesseractOCR() {
                     <button onClick={() => buscarMecicamento()} className="camera-ocr-button">
                       Aceptar
                     </button>
-                    <button onClick={() => setShowResultModal(false)} className="camera-ocr-button">
+                    <button onClick={() => {
+                      setShowResultModal(false)
+                      setScanned(false);
+                    }} 
+                    className="camera-ocr-button">
                       Cancelar
                     </button>
                   </div>

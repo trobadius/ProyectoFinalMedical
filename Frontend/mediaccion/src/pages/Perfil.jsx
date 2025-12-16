@@ -7,9 +7,10 @@ import { Link } from "react-router-dom";
 import '../App.css';
 import { MessageCircle, LogOut } from 'lucide-react';
 import logo from "../assets/logo.svg";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Perfil() {
-  const [loading, setLoading] = useState(false);
   const [userProfile, setGetUserData] = useState({
     id_user: '',
     username: '',
@@ -54,13 +55,11 @@ export default function Perfil() {
   // Recuperamos el perfil del usuario
   const fetchUserData = async () => {
     try {
-      const res = await api.get("/api/users/profile/me");
+      const res = await api.get("/api/users/profile/me/");
       setGetUserData(res.data)
       setGetUserDataCopy(res.data)
     } catch (error) {
       alert(error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -72,8 +71,8 @@ export default function Perfil() {
     const hasErrors = Object.values(errors).some(e => e !== "");
     const hasChanges = JSON.stringify(userProfile) !== JSON.stringify(userProfileCopy);
 
-    setIsDisabled(hasErrors || !hasChanges || loading);
-  }, [errors, userProfileCopy, loading, userProfile]);
+    setIsDisabled(hasErrors || !hasChanges);
+  }, [errors, userProfileCopy, userProfile]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -113,8 +112,6 @@ export default function Perfil() {
   const handleSave = async () => {
 
     try {
-      setLoading(true);
-
       // Construimos el formData usando userProfileCopy
       const formData = {
         username: userProfileCopy.username,
@@ -131,19 +128,22 @@ export default function Perfil() {
       };
 
       // ---- Enviar a la API ----
-      const res = await api.put("/api/users/profile/me", formData);
-
-      // Actualizamos los datos originales
-      setGetUserData(userProfileCopy);
-
-      setEditing(false);
-      alert('Datos actualizados correctamente 🩺');
-
+      const res = await api.put("/api/users/profile/me/", formData);
+      if (res.status === 200) {
+        setGetUserData(userProfileCopy);
+        setEditing(false);
+        toast.success(`Datos actualizados correctamente 🩺`, {
+          position: "top-right",
+          autoClose: 3000,
+          theme: "colored"
+        });
+      }
     } catch (error) {
-      console.log(error);
-      alert("Error al guardar los cambios ❌");
-    } finally {
-      setLoading(false);
+      toast.error("Error al guardar los cambios ❌", {
+        position: "top-right",
+        autoClose: 3000,
+        theme: "colored"
+      });
     }
   };
 
@@ -311,6 +311,7 @@ export default function Perfil() {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </>
   );
 }

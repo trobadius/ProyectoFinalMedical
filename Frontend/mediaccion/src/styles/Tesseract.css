@@ -10,22 +10,11 @@
   --border-radius-sm-custom: 8px;
 }
 
-.tesseract-titulo {
-  text-align: center;
-  margin-top: 1rem;
-}
-
-.camera-ocr-select {
-  padding: 10px;
-  margin-bottom: 15px;
-  border-radius: var(--border-radius-sm-custom);
-  border: 1px solid var(--medium-grey-custom);
-}
-
 .camera-ocr-video-container {
   position: relative;
   width: 100%;
   max-width: 600px;
+  height: 200px;
 }
 
 .camera-ocr-video {
@@ -38,6 +27,7 @@
   padding: 10px;
   width: 100%;
   word-wrap: break-word;
+  margin-top: 30px;
 }
 
 .camera-ocr-canvas {
