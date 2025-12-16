@@ -3,7 +3,7 @@ import Home from './pages/Home.jsx';
 import Calendario from './pages/Calendario.jsx';
 import Perfil from './pages/Perfil.jsx';
 import Login from './pages/Login.jsx';
-import Progresos from "./pages/Progresos.jsx";
+import Progresos, { ProgresosIndex, PremiosView } from "./pages/Progresos.jsx";
 import Logout from './components/Logout.jsx';
 import NotFound from './pages/NotFound.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
@@ -15,8 +15,8 @@ import Chatbot from './pages/Chatbot.jsx';
 
 export default function App() {
   return (
-      <div>
-        <main>
+    <div>
+      <main>
         <Routes>
           <Route element={<ProtectedRoute />} >
             <Route element={<NavbarOutlet />} >
@@ -24,7 +24,10 @@ export default function App() {
               <Route path="/calendario" element={<Calendario />} />
               <Route path="/tesseractOCR" element={<TesseractOCR />} />
               <Route path="/perfil" element={<Perfil />} />
-              <Route path="/progresos" element={<Progresos />} />
+              <Route path="/progresos" element={<Progresos />}>
+                <Route index element={<ProgresosIndex />} />
+                <Route path="premios" element={<PremiosView />} />
+              </Route>
               <Route path="/chatbot" element={<Chatbot />} />
             </Route>
           </Route>
@@ -36,7 +39,7 @@ export default function App() {
         </Routes>
       </main>
 
-      </div>
+    </div>
   );
 }
 
