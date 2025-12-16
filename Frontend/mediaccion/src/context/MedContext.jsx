@@ -66,7 +66,6 @@ export const MedProvider = ({ children }) => {
             autoClose: 3000,
             theme: "colored"
          });
-         console.error("Error al registrar toma:", err);
       }
    };
 

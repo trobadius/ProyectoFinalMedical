@@ -27,7 +27,6 @@ export function LanguageProvider({ children }) {
   }, [language]);
 
   const setLanguage = (lang) => {
-    console.log('[Language] setLanguage ->', lang);
     setLanguageState(lang);
   };
 

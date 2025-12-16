@@ -8,7 +8,6 @@ import Logout from './components/Logout.jsx';
 import NotFound from './pages/NotFound.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import Register from './pages/Register.jsx';
-import NavbarOutlet from './components/NavbarOutlet.jsx';
 import TesseractOCR from './pages/TesseractOCR.jsx';
 import Chatbot from './pages/Chatbot.jsx';
 
@@ -19,17 +18,15 @@ export default function App() {
       <main>
         <Routes>
           <Route element={<ProtectedRoute />} >
-            <Route element={<NavbarOutlet />} >
-              <Route path="/" element={<Home />} />
-              <Route path="/calendario" element={<Calendario />} />
-              <Route path="/tesseractOCR" element={<TesseractOCR />} />
-              <Route path="/perfil" element={<Perfil />} />
-              <Route path="/progresos" element={<Progresos />}>
-                <Route index element={<ProgresosIndex />} />
-                <Route path="premios" element={<PremiosView />} />
-              </Route>
-              <Route path="/chatbot" element={<Chatbot />} />
+            <Route path="/" element={<Home />} />
+            <Route path="/calendario" element={<Calendario />} />
+            <Route path="/tesseractOCR" element={<TesseractOCR />} />
+            <Route path="/perfil" element={<Perfil />} />
+            <Route path="/progresos" element={<Progresos />}>
+              <Route index element={<ProgresosIndex />} />
+              <Route path="premios" element={<PremiosView />} />
             </Route>
+            <Route path="/chatbot" element={<Chatbot />} />
           </Route>
           <Route path="/login" element={<Login />} />
           <Route path="/logout" element={<Logout />} />

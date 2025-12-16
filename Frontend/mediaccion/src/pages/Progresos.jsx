@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Menu, Pill, Star, Stethoscope, ChevronRight } from 'lucide-react';
+import { Menu, Pill, Star, Stethoscope, ChevronRight, House, CalendarDays, Camera, ChartNoAxesCombined, UserRound } from 'lucide-react';
 import '../styles/Progresos.css';
 import '../App.css';
 import { MessageCircle, LogOut } from 'lucide-react';
 import logo from "../assets/logo.svg";
-import { Link, NavLink, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { MedContext } from "../context/MedContext.jsx";
 import api from '../api';
-// Componente utilitario para premios y progresos
-
+import '../styles/Stickybutton.css';
 
 // Componente Tarjeta de Premio Reutilizable
 const AwardCard = ({ title, description, code, onClick }) => {
@@ -49,6 +48,23 @@ const AwardModal = ({ prizeTitle, prizeCode, onClose }) => {
 
 // Layout principal para /progresos con rutas anidadas
 const ProgresosLayout = () => {
+    /*Boton footer*/
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const [hidden, setHidden] = useState(false);
+    const isActive = (path) => location.pathname === path;
+
+    // 🔥 Cada vez que cambia la ruta, reiniciamos todo
+    useEffect(() => {
+        setHidden(false);
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: "smooth", // puedes quitarlo si no quieres animación
+        });
+    }, [location.pathname]);
+
     return (
         <>
             <div className="waves"></div>
@@ -78,6 +94,53 @@ const ProgresosLayout = () => {
                     <main className="progress-container-custom">
                         <Outlet />
                     </main>
+                </div>
+
+                {/* BOTÓN DE NAVEGACIÓN INFERIOR */}
+                <div
+                    className={`sticky-button-container ${hidden ? "hide" : ""}`}
+                    >
+                    <button
+                        className={`sticky-btn ${isActive("/") ? "active" : ""}`}
+                        onClick={() => navigate("/")}
+                        aria-label="Inicio"
+                    >
+                        <House />
+                    </button>
+
+                    <button
+                        className={`sticky-btn ${isActive("/calendario") ? "active" : ""}`}
+                        onClick={() => navigate("/calendario")}
+                        aria-label="Calendario"
+                    >
+                        <CalendarDays />
+                    </button>
+
+                    <button
+                        className={`sticky-btn camera-btn ${isActive("/tesseractOCR") ? "active" : ""}`}
+                        onClick={() => navigate("/tesseractOCR")}
+                        aria-label="Cámara"
+                    >
+                        <Camera />
+                        <span className="corner-bl"></span>
+                        <span className="corner-br"></span>
+                    </button>
+
+                    <button
+                        className={`sticky-btn ${isActive("/progresos") ? "active" : ""}`}
+                        onClick={() => navigate("/progresos")}
+                        aria-label="Progresos"
+                    >
+                        <ChartNoAxesCombined />
+                    </button>
+
+                    <button
+                        className={`sticky-btn ${isActive("/perfil") ? "active" : ""}`}
+                        onClick={() => navigate("/perfil")}
+                        aria-label="Perfil"
+                    >
+                        <UserRound />
+                    </button>
                 </div>
             </div>
         </>

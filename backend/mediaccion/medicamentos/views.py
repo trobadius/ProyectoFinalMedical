@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from .models import ProfileUser, Notificaciones, RecetasMedicas, Alimentos, Medicamentos, MedicamentosProgramados
-from .serializers import ProfileUserSerializer, NotificacionesSerializer, RecetasMedicasSerializer, AlimentosSerializer, MedicamentosSerializer, RegisterSerializer, MedicamentosProgramadosSerializer
+from .models import ProfileUser, Notificaciones, RecetasMedicas, Alimentos, Medicamentos, MedicamentosProgramados, Sexoedad, MedicamentosMasRegistrados, BusquedasChat
+from .serializers import ProfileUserSerializer, NotificacionesSerializer, RecetasMedicasSerializer, AlimentosSerializer, MedicamentosSerializer, RegisterSerializer, MedicamentosProgramadosSerializer, SexoedadSerializer, MedicamentosMasRegistradosSerializer, BusquedasChatsSerializer  
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.utils import timezone
@@ -487,11 +487,11 @@ def MedicamentosMasRegistradosView(request):
 def BusquedasChatView(request):
     if request.method == 'GET':
         busquedas_chat = BusquedasChat.objects.all()
-        serializer = BusquedasChatSerializer(busquedas_chat, many=True)
+        serializer = BusquedasChatsSerializer(busquedas_chat, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK) 
 
     if request.method == 'POST':
-        serializer = BusquedasChatSerializer(data=request.data)
+        serializer = BusquedasChatsSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response({'message':'Búsqueda guardada para vender datos😈'}, status=status.HTTP_201_CREATED)

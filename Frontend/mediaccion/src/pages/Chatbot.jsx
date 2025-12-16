@@ -1,12 +1,11 @@
 
-import React, { useState, useRef, useEffect } from "react";
-import StickyButton from "../components/StickyButton.jsx";
-import { FaUmbraco } from "react-icons/fa";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useState, useRef, useEffect } from "react";
+import { Link, useNavigate, useLocation} from "react-router-dom";
 import '../App.css';
-import { ArrowLeft, LogOut } from 'lucide-react';
+import { ArrowLeft, LogOut, House, CalendarDays, Camera, ChartNoAxesCombined, UserRound  } from 'lucide-react';
 import logo from "../assets/logo.svg";
 import '../styles/Chatbox.css';
+import '../styles/Stickybutton.css';
 
 export default function Chatbot() {
   const location = useLocation();
@@ -18,6 +17,20 @@ export default function Chatbot() {
   ]);
   const [userInput, setUserInput] = useState("");
   const chatBoxRef = useRef(null);
+
+  /*Boton footer*/
+  const [hidden, setHidden] = useState(false);
+  const isActive = (path) => location.pathname === path;
+
+  // 🔥 Cada vez que cambia la ruta, reiniciamos todo
+  useEffect(() => {
+      setHidden(false);
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "smooth", // puedes quitarlo si no quieres animación
+      });
+  }, [location.pathname]);
 
   // ---------- Funciones de envío de mensajes ----------
 
@@ -288,8 +301,6 @@ export default function Chatbot() {
           </div>
         </header>
 
-
-
         <div className="chatBox" ref={chatBoxRef}>
           {messages.map((msg, i) => (
             <div key={i} className={`message ${msg.from === "user" ? "user-msg" : "bot-msg"}`}>
@@ -310,7 +321,52 @@ export default function Chatbot() {
           <button className="button" onClick={handleSend}>Enviar</button>
         </div>
 
-        <StickyButton />
+        {/* BOTÓN DE NAVEGACIÓN INFERIOR */}
+          <div
+              className={`sticky-button-container ${hidden ? "hide" : ""}`}
+              >
+              <button
+                  className={`sticky-btn ${isActive("/") ? "active" : ""}`}
+                  onClick={() => navigate("/")}
+                  aria-label="Inicio"
+              >
+                  <House />
+              </button>
+
+              <button
+                  className={`sticky-btn ${isActive("/calendario") ? "active" : ""}`}
+                  onClick={() => navigate("/calendario")}
+                  aria-label="Calendario"
+              >
+                  <CalendarDays />
+              </button>
+
+              <button
+                  className={`sticky-btn camera-btn ${isActive("/tesseractOCR") ? "active" : ""}`}
+                  onClick={() => navigate("/tesseractOCR")}
+                  aria-label="Cámara"
+              >
+                  <Camera />
+                  <span className="corner-bl"></span>
+                  <span className="corner-br"></span>
+              </button>
+
+              <button
+                  className={`sticky-btn ${isActive("/progresos") ? "active" : ""}`}
+                  onClick={() => navigate("/progresos")}
+                  aria-label="Progresos"
+              >
+                  <ChartNoAxesCombined />
+              </button>
+
+              <button
+                  className={`sticky-btn ${isActive("/perfil") ? "active" : ""}`}
+                  onClick={() => navigate("/perfil")}
+                  aria-label="Perfil"
+              >
+                  <UserRound />
+              </button>
+          </div>
       </div>
     </>
   );
