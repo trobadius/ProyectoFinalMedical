@@ -75,8 +75,6 @@ class MedicamentosProgramadosSerializer(serializers.ModelSerializer):
         model = MedicamentosProgramados
         fields = '__all__'
 
-
-
 class SexoedadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sexoedad

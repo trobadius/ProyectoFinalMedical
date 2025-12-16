@@ -1,53 +1,17 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import api from "../api";
 import { validarCamposRepetidos } from "../utils/Validaciones";
 import { FaUserCircle, FaPencilAlt } from 'react-icons/fa';
 import '../styles/Perfil.css';
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import '../App.css';
-import { MessageCircle, LogOut } from 'lucide-react';
+import { MessageCircle, LogOut, House, CalendarDays, Camera, ChartNoAxesCombined, UserRound } from 'lucide-react';
 import logo from "../assets/logo.svg";
-import { useLanguage } from "../context/LanguageContext.jsx";
-
-function LanguageSelector() {
-  const { language, setLanguage } = useLanguage();
-  return (
-    <div style={{ display: 'flex', gap: 8 }}>
-      <button
-        onClick={() => setLanguage('es')}
-        aria-pressed={language === 'es'}
-        style={{
-          padding: '8px 12px',
-          borderRadius: 8,
-          border: language === 'es' ? '2px solid #3b82f6' : '1px solid #e5e7eb',
-          background: language === 'es' ? '#e0f2ff' : 'transparent',
-          cursor: 'pointer',
-          fontWeight: language === 'es' ? 700 : 500
-        }}
-      >
-        Español
-      </button>
-
-      <button
-        onClick={() => setLanguage('ca')}
-        aria-pressed={language === 'ca'}
-        style={{
-          padding: '8px 12px',
-          borderRadius: 8,
-          border: language === 'ca' ? '2px solid #3b82f6' : '1px solid #e5e7eb',
-          background: language === 'ca' ? '#e0f2ff' : 'transparent',
-          cursor: 'pointer',
-          fontWeight: language === 'ca' ? 700 : 500
-        }}
-      >
-        Català
-      </button>
-    </div>
-  );
-}
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import '../styles/Stickybutton.css';
 
 export default function Perfil() {
-  const [loading, setLoading] = useState(false);
   const [userProfile, setGetUserData] = useState({
     id_user: '',
     username: '',
@@ -87,18 +51,32 @@ export default function Perfil() {
 
   const [editing, setEditing] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
-  const { t } = useLanguage();
+
+  /*Boton footer*/
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const [hidden, setHidden] = useState(false);
+  const isActive = (path) => location.pathname === path;
+
+  // 🔥 Cada vez que cambia la ruta, reiniciamos todo
+  useEffect(() => {
+      setHidden(false);
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "smooth", // puedes quitarlo si no quieres animación
+      });
+  }, [location.pathname]);
 
   // Recuperamos el perfil del usuario
   const fetchUserData = async () => {
     try {
-      const res = await api.get("/api/users/profile/me");
+      const res = await api.get("/api/users/profile/me/");
       setGetUserData(res.data)
       setGetUserDataCopy(res.data)
     } catch (error) {
       alert(error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -110,8 +88,8 @@ export default function Perfil() {
     const hasErrors = Object.values(errors).some(e => e !== "");
     const hasChanges = JSON.stringify(userProfile) !== JSON.stringify(userProfileCopy);
 
-    setIsDisabled(hasErrors || !hasChanges || loading);
-  }, [errors, userProfileCopy, loading, userProfile]);
+    setIsDisabled(hasErrors || !hasChanges);
+  }, [errors, userProfileCopy, userProfile]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -151,8 +129,6 @@ export default function Perfil() {
   const handleSave = async () => {
 
     try {
-      setLoading(true);
-
       // Construimos el formData usando userProfileCopy
       const formData = {
         username: userProfileCopy.username,
@@ -169,26 +145,31 @@ export default function Perfil() {
       };
 
       // ---- Enviar a la API ----
-      const res = await api.put("/api/users/profile/me", formData);
-
-      // Actualizamos los datos originales
-      setGetUserData(userProfileCopy);
-
-      setEditing(false);
-      alert('Datos actualizados correctamente 🩺');
-
+      const res = await api.put("/api/users/profile/me/", formData);
+      if (res.status === 200) {
+        setGetUserData(userProfileCopy);
+        setEditing(false);
+        toast.success(`Datos actualizados correctamente 🩺`, {
+          position: "top-right",
+          autoClose: 3000,
+          theme: "colored"
+        });
+      }
     } catch (error) {
-      console.log(error);
-      alert("Error al guardar los cambios ❌");
-    } finally {
-      setLoading(false);
+      toast.error("Error al guardar los cambios ❌", {
+        position: "top-right",
+        autoClose: 3000,
+        theme: "colored"
+      });
     }
   };
+
+ 
 
   return (
     <>
       <div className="waves"></div>
-      <div className="main-app">
+      <div className="main-app-perfil">
         <header className="main-header">
           <div className="header-components">
             <Link to="/Chatbot"
@@ -208,37 +189,31 @@ export default function Perfil() {
         <div className="perfil-card">
           <div className="perfil-header">
             <FaUserCircle className="perfil-icon" />
-            <h2 className="perfil-title">{t('mi_perfil')}</h2>
+            <h2 className="perfil-title">Mi Perfil</h2>
           </div>
 
           <div className="perfil-section">
             {!editing ? (
               <>
                 <p><strong>Usuario:</strong> {userProfile.username || '—'}</p>
-                <p><strong>{t('usuario')}:</strong> {userProfile.username || '—'}</p>
-                <p><strong>{t('nombre')}:</strong> {userProfile.first_name || '—'}</p>
-                <p><strong>{t('apellidos')}:</strong> {userProfile.last_name || '—'}</p>
-                <p><strong>{t('email')}:</strong> {userProfile.email || '—'}</p>
-                <p><strong>{t('fecha_nacimiento')}:</strong> {userProfile.date_birth || '—'}</p>
-                <p><strong>{t('roles')}:</strong> {userProfile.roles || '—'}</p>
-                <p><strong>{t('genero')}:</strong> {userProfile.genero || '—'}</p>
-                <p><strong>{t('pais')}:</strong> {userProfile.pais || '—'}</p>
-                <p><strong>{t('telefono')}:</strong> {userProfile.telefono || '—'}</p>
+                <p><strong>Nombre:</strong> {userProfile.first_name || '—'}</p>
+                <p><strong>Apellidos:</strong> {userProfile.last_name || '—'}</p>
+                <p><strong>Email:</strong> {userProfile.email || '—'}</p>
+                <p><strong>Fecha nacimiento:</strong> {userProfile.date_birth || '—'}</p>
+                <p><strong>Roles:</strong> {userProfile.roles || '—'}</p>
+                <p><strong>Genero:</strong> {userProfile.genero || '—'}</p>
+                <p><strong>Pais:</strong> {userProfile.pais || '—'}</p>
+                <p><strong>Telefono:</strong> {userProfile.telefono || '—'}</p>
 
                 <button className="edit-btn" onClick={() => setEditing(true)}>
-                  <FaPencilAlt /> {t('editar_perfil')}
+                  <FaPencilAlt /> Editar perfil
                 </button>
-
-                {/* Selector de idioma */}
-                <div style={{ marginTop: 12 }}>
-                  <label style={{ display: 'block', marginBottom: 6, fontWeight: 700 }}>{t('cambiar_idioma')}</label>
-                  <LanguageSelector />
-                </div>
               </>
             ) : (
               <>
                 <p><strong>Usuario:</strong> {userProfile.username || '—'}</p>
-                <p><strong>{t('nombre')}:</strong></p>
+                
+                <p><strong>Nombre:</strong></p>
                 <input
                   type="text"
                   name="first_name"
@@ -254,8 +229,6 @@ export default function Perfil() {
                 )}
 
                 <p><strong>Apellidos:</strong></p>
-                <p><strong>{t('apellidos')}:</strong></p>
-                <p><strong>{t('email')}:</strong> {userProfile.email || '—'}</p>
                 <input
                   type="text"
                   name="last_name"
@@ -267,66 +240,9 @@ export default function Perfil() {
                 {errors.last_name && (
                   <label style={{ color: "red", fontSize: "12px", display: "block", marginTop: "4px" }}>
                     {errors.last_name}
-                  </label>
-                )}
-                <p><strong>Email:</strong> {userProfile.email || '—'}</p>
-                <input
-                  type="date"
-                  name="date_birth"
-                  value={userProfileCopy.date_birth}
-                  onChange={handleChange}
-                  required
-                />
-                {errors.date_birth && (
-                  <label style={{ color: "red", fontSize: "12px", display: "block", marginTop: "4px" }}>
-                    {errors.date_birth}
-                  </label>
-                )}
-                <p><strong>Apellidos:</strong></p>
-                <input
-                  type="text"
-                  name="last_name"
-                  value={userProfileCopy.last_name}
-                  onChange={handleChange}
-                  placeholder="Tus apellidos"
-                  required
-                />
-                {errors.last_name && (
-                  <label style={{ color: "red", fontSize: "12px", display: "block", marginTop: "4px" }}>
-                    {errors.last_name}
-                  </label>
-                )}
-                <p><strong>Email:</strong> {userProfile.email || '—'}</p>
-                <p><strong>Fecha de nacimiento:</strong></p>
-                <p><strong>{t('fecha_nacimiento')}:</strong></p>
-                <input
-                  type="date"
-                  name="date_birth"
-                  value={userProfileCopy.date_birth}
-                  onChange={handleChange}
-                  required
-                />
-                {errors.date_birth && (
-                  <label style={{ color: "red", fontSize: "12px", display: "block", marginTop: "4px" }}>
-                    {errors.date_birth}
                   </label>
                 )}
 
-                <p><strong>Roles:</strong> {userProfile.roles || '—'}</p>
-                <p><strong>{t('roles')}:</strong> {userProfile.roles || '—'}</p>
-                <p><strong>{t('genero')}:</strong></p>
-                <select
-                  className="genero"
-                  name="genero"
-                  id="genero"
-                  value={(userProfileCopy.genero ?? "") || "no_decir"}
-                  onChange={handleChange}
-                >
-                  <option value="" disabled>Selecciona genero...</option>
-                  <option value="hombre">{t('hombre')}</option>
-                  <option value="mujer">{t('mujer')}</option>
-                  <option value="no_decir">{t('prefiero_no_decir')}</option>
-                </select>
                 <p><strong>Email:</strong></p>
                 <input
                   type="email"
@@ -341,7 +257,38 @@ export default function Perfil() {
                     {errors.email}
                   </label>
                 )}
-                <p><strong>{t('telefono')}:</strong></p>
+
+                <p><strong>Fecha de nacimiento:</strong></p>
+                <input
+                  type="date"
+                  name="date_birth"
+                  value={userProfileCopy.date_birth}
+                  onChange={handleChange}
+                  required
+                />
+                {errors.date_birth && (
+                  <label style={{ color: "red", fontSize: "12px", display: "block", marginTop: "4px" }}>
+                    {errors.date_birth}
+                  </label>
+                )}
+
+                <p><strong>Roles:</strong> {userProfile.roles || '—'}</p>
+                
+                <p><strong>Genero:</strong></p>
+                <select
+                  className="genero"
+                  name="genero"
+                  id="genero"
+                  value={(userProfileCopy.genero ?? "") || "no_decir"}
+                  onChange={handleChange}
+                >
+                  <option value="" disabled>Selecciona genero...</option>
+                  <option value="hombre">Hombre</option>
+                  <option value="mujer">Mujer</option>
+                  <option value="no_decir">Prefiero no decirlo</option>
+                </select>
+
+                <p><strong>Telefono:</strong></p>
                 <div className="phone-combo" id="phone">
                   <div className="select-wrap" aria-hidden="false">
                     <select
@@ -364,22 +311,71 @@ export default function Perfil() {
                     required
                   />
                 </div>
-                {/* Mensaje de error debajo del input */}
                 {errors.telefono && (
                   <label style={{ color: "red", fontSize: "12px", display: "block", marginTop: "4px" }}>
                     {errors.telefono}
                   </label>
                 )}
 
-                <button className="save-btn" id="enviar" onClick={handleSave} disabled={isDisabled}>{t('guardar_cambios')}</button>
+                <button className="save-btn" id="enviar" onClick={handleSave} disabled={isDisabled}>
+                  Guardar cambios
+                </button>
                 <button className="edit-btn" onClick={() => setEditing(false)}>
-                  {t('cancelar')}
+                  Cancelar
                 </button>
               </>
             )}
           </div>
         </div>
+
+        {/* BOTÓN DE NAVEGACIÓN INFERIOR */}
+          <div
+              className={`sticky-button-container ${hidden ? "hide" : ""}`}
+              >
+              <button
+                  className={`sticky-btn ${isActive("/") ? "active" : ""}`}
+                  onClick={() => navigate("/")}
+                  aria-label="Inicio"
+              >
+                  <House />
+              </button>
+
+              <button
+                  className={`sticky-btn ${isActive("/calendario") ? "active" : ""}`}
+                  onClick={() => navigate("/calendario")}
+                  aria-label="Calendario"
+              >
+                  <CalendarDays />
+              </button>
+
+              <button
+                  className={`sticky-btn camera-btn ${isActive("/tesseractOCR") ? "active" : ""}`}
+                  onClick={() => navigate("/tesseractOCR")}
+                  aria-label="Cámara"
+              >
+                  <Camera />
+                  <span className="corner-bl"></span>
+                  <span className="corner-br"></span>
+              </button>
+
+              <button
+                  className={`sticky-btn ${isActive("/progresos") ? "active" : ""}`}
+                  onClick={() => navigate("/progresos")}
+                  aria-label="Progresos"
+              >
+                  <ChartNoAxesCombined />
+              </button>
+
+              <button
+                  className={`sticky-btn ${isActive("/perfil") ? "active" : ""}`}
+                  onClick={() => navigate("/perfil")}
+                  aria-label="Perfil"
+              >
+                  <UserRound />
+              </button>
+         </div>
       </div>
+      <ToastContainer />
     </>
   );
 }

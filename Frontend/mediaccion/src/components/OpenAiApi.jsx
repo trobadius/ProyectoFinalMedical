@@ -41,7 +41,6 @@ export async function chatCerrado(prompt) {
     });
 
     const outputText = result.choices?.[0]?.message?.content || "Sin respuesta";
-    console.log("Respuesta de OpenAI cruda:", outputText);
 
     // Extraemos el JSON del bloque ```json ... ```
     const match = outputText.match(/```json([\s\S]*?)```/i);
@@ -56,7 +55,6 @@ export async function chatCerrado(prompt) {
 
     return outputJSON;
   } catch (error) {
-    console.error(error);
     return { error: "Error al consultar la API" };
   }
 }

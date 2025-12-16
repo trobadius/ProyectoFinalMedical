@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from .models import ProfileUser, Notificaciones, RecetasMedicas, Alimentos, Medicamentos, MedicamentosProgramados
-from .serializers import ProfileUserSerializer, NotificacionesSerializer, RecetasMedicasSerializer, AlimentosSerializer, MedicamentosSerializer, RegisterSerializer, MedicamentosProgramadosSerializer
+from .models import ProfileUser, Notificaciones, RecetasMedicas, Alimentos, Medicamentos, MedicamentosProgramados, Sexoedad, MedicamentosMasRegistrados, BusquedasChat
+from .serializers import ProfileUserSerializer, NotificacionesSerializer, RecetasMedicasSerializer, AlimentosSerializer, MedicamentosSerializer, RegisterSerializer, MedicamentosProgramadosSerializer, SexoedadSerializer, MedicamentosMasRegistradosSerializer, BusquedasChatsSerializer  
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.utils import timezone
@@ -400,26 +400,50 @@ def MedicamentosProgramadosList(request, pk):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def test_whatsapp(request):
-    
-    try:       
-        telefono = request.data.get('telefonoCompleto')
-        print("TELÉFONO USADO REAL:", request)
-        if not telefono:
-            return Response({"error": "No tienes un número de teléfono guardado"}, status=400)
+    try:
+        user = request.user
+        # Obtener el perfil del usuario
+        try:
+            profile = user.profile
+        except ProfileUser.DoesNotExist:
+            return Response(
+                {"error": "El perfil no existe"},
+                status=404
+            )
+        
+        # Obtener teléfono del perfil
+        telefono_completo = request.data.get('telefonoCompleto')
+        
+        # Si no viene en el body, construirlo desde el perfil
+        if not telefono_completo:
+            if not profile.telefono or not profile.pais:
+                return Response(
+                    {"error": "No tienes un número de teléfono guardado"},
+                    status=400
+                )
+            telefono_completo = f"{profile.pais}{profile.telefono}"
 
-        # Inicializar cliente Twilio
-        client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+        # Mensaje personalizado o por defecto
+        mensaje_personalizado = request.data.get(
+            "mensaje",
+            "🔔 MediAcción\n\nRecordatorio de medicación."
+        )
+
+        client = Client(
+            settings.TWILIO_ACCOUNT_SID,
+            settings.TWILIO_AUTH_TOKEN
+        )
 
         mensaje = client.messages.create(
             from_='whatsapp:+14155238886',
-            body='🔔 Prueba de conexión\n\nEste es un mensaje de prueba desde tu aplicación MediAcción.',
-            to=f'whatsapp:{telefono}'
+            body=mensaje_personalizado,
+            to=f'whatsapp:{telefono_completo}'
         )
 
         return Response({
             "success": True,
             "message_sid": mensaje.sid,
-            "telefono_usado": telefono,
+            "telefono_usado": telefono_completo,
             "status": mensaje.status,
         }, status=200)
 
@@ -429,7 +453,6 @@ def test_whatsapp(request):
             "success": False,
             "error": str(e)
         }, status=500)
-
 
 #============ MODELOS GRAFICOS ============
 @api_view(['GET', 'POST'])
@@ -464,11 +487,11 @@ def MedicamentosMasRegistradosView(request):
 def BusquedasChatView(request):
     if request.method == 'GET':
         busquedas_chat = BusquedasChat.objects.all()
-        serializer = BusquedasChatSerializer(busquedas_chat, many=True)
+        serializer = BusquedasChatsSerializer(busquedas_chat, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK) 
 
     if request.method == 'POST':
-        serializer = BusquedasChatSerializer(data=request.data)
+        serializer = BusquedasChatsSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response({'message':'Búsqueda guardada para vender datos😈'}, status=status.HTTP_201_CREATED)

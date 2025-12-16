@@ -2,8 +2,8 @@ import { useEffect, useRef, useState, useContext } from "react";
 import RemedioModal from '../components/RemedioModal';
 import AguaModal from '../components/Agua';
 import HigadoModal from '../components/Higado';
-import { useNavigate, Link } from "react-router-dom";
-import { Pill, Star, Stethoscope, MessageCircle, LogOut, Camera, Heart, Activity } from 'lucide-react';
+import { useNavigate, useLocation, Link } from "react-router-dom";
+import { Pill, Star, Stethoscope, MessageCircle, LogOut, Camera, Activity, House, CalendarDays, ChartNoAxesCombined, UserRound } from 'lucide-react';
 import '../App.css'
 import '../styles/Home.css';
 import '../styles/Premium.css';
@@ -16,7 +16,7 @@ import { claseDia } from "../utils/calendarioColors";
 import { ToastContainer, toast } from "react-toastify";
 import api from "../api";
 import recomendacionesData from "../data/Recomendaciones.json";
-
+import '../styles/Stickybutton.css';
 
 // Función para obtener los datos del mes
 const getMonthData = () => {
@@ -73,6 +73,22 @@ export default function Home() {
     const [mostrarPlanes, setMostrarPlanes] = useState(false);
 
     const calendarRef = useRef(null);
+
+    /*Boton footer*/
+    const location = useLocation();
+
+    const [hidden, setHidden] = useState(false);
+    const isActive = (path) => location.pathname === path;
+
+    // 🔥 Cada vez que cambia la ruta, reiniciamos todo
+    useEffect(() => {
+        setHidden(false);
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: "smooth", // puedes quitarlo si no quieres animación
+        });
+    }, [location.pathname]);
 
     // Cargar datos
     useEffect(() => {
@@ -206,11 +222,12 @@ export default function Home() {
                 setLoadingProfile(true);
                 const res = await api.get("/api/users/profile/me/");
                 setProfile(res.data);
-                console.log("✅ Perfil obtenido:", res.data);
             } catch (err) {
-                console.error("❌ Error obteniendo perfil:", err);
-                console.error("Detalles del error:", err.response?.data);
-                // Si hay error, las recomendaciones simplemente no se mostrarán
+                toast.error(`❌ Error obteniendo perfil: ${err}`, {
+                    position: "top-right",
+                    autoClose: 3000,
+                    theme: "colored"
+                });
             } finally {
                 setLoadingProfile(false);
             }
@@ -266,8 +283,6 @@ export default function Home() {
         // Tomar solo las primeras 3 recomendaciones para mostrar en las tarjetas
         const articulosFinales = recomendaciones.slice(0, 3);
         setArticulos(articulosFinales);
-        console.log("📋 Recomendaciones cargadas:", articulosFinales);
-        console.log("Edad:", edad, "Género:", genero, "Rango:", rangoEdad);
     }, [profile]);
 
     // Función para obtener el icono según el índice
@@ -404,7 +419,7 @@ export default function Home() {
 
                                         {med.desbloquearPremio && (
                                             <button
-                                                onClick={() => navigate("/Progresos")}
+                                                onClick={() => navigate("/progresos/premios")}
                                                 style={{
                                                     marginTop: "10px",
                                                     padding: "10px 14px",
@@ -457,7 +472,6 @@ export default function Home() {
                     </section>
                 </section>
 
-
                 {/* Recomendaciones personalizadas */}
                 {loadingProfile ? (
                     <section className="delay-extras">
@@ -495,7 +509,7 @@ export default function Home() {
                         ¡Pásate a Premium! <Star size={24} color="white" fill="white" style={{ rotate: '90deg' }} />
                     </div>
                     <p className="subtitle-premium">
-                        Desbloquea historial ilimitado, notificaciones inteligentes y planifica el cuidado de tu familia.
+                        Desbloquea dietas personalizadas, conexión con tu smartwatch y mucho más.
                     </p>
                     <button
                         className="action-btn"
@@ -508,10 +522,10 @@ export default function Home() {
 
                             <div className="plan-card">
                                 <h3>PRO</h3>
-                                <p className="precio">6,99 € / mes</p>
+                                <p className="precio">2,99 € / mes <br></br> 24,99 € / 12 meses</p>
                                 <ul>
                                     <li>⌚ Conexión con smartwatch</li>
-                                    <li>🍎 Dietas personalizadas</li>
+                                    <li>🍎 Recetas personalizadas</li>
                                     <li>📊 Estadísticas avanzadas</li>
                                 </ul>
                                 <button className="plan-btn">Elegir PRO</button>
@@ -519,26 +533,18 @@ export default function Home() {
 
                             <div className="plan-card destacado">
                                 <h3>ADVANCED</h3>
-                                <p className="precio">17,99 € / 3 meses</p>
+                                <p className="precio">4,99 € / mes <br></br>29,99 € / 12 meses</p>
                                 <ul>
+                                    <li>⌚ Conexión con smartwatch</li>
+                                    <li>🍎 Recetas personalizadas</li>
+                                    <li>📊 Estadísticas avanzadas</li>
+
                                     <li>⚠️ Aviso incompatibilidad medicamentos</li>
                                     <li>📷 Escaneo de recetas médicas</li>
-                                    <li>🧠 Recomendaciones inteligentes</li>
+
                                 </ul>
                                 <button className="plan-btn">Elegir ADVANCED</button>
                             </div>
-
-                            <div className="plan-card">
-                                <h3>PREMIUM</h3>
-                                <p className="precio">59,99 € / año</p>
-                                <ul>
-                                    <li>📈 Informes médicos en PDF</li>
-                                    <li>🩺 Seguimiento médico</li>
-                                    <li>⚡ Acceso prioritario a nuevas funciones</li>
-                                </ul>
-                                <button className="plan-btn">Elegir PREMIUM</button>
-                            </div>
-
                         </div>
                     )}
 
@@ -592,6 +598,52 @@ export default function Home() {
                         </p>
                     </RemedioModal>
                 )}
+                {/* BOTÓN DE NAVEGACIÓN INFERIOR */}
+                <div
+                    className={`sticky-button-container ${hidden ? "hide" : ""}`}
+                    >
+                    <button
+                        className={`sticky-btn ${isActive("/") ? "active" : ""}`}
+                        onClick={() => navigate("/")}
+                        aria-label="Inicio"
+                    >
+                        <House />
+                    </button>
+
+                    <button
+                        className={`sticky-btn ${isActive("/calendario") ? "active" : ""}`}
+                        onClick={() => navigate("/calendario")}
+                        aria-label="Calendario"
+                    >
+                        <CalendarDays />
+                    </button>
+
+                    <button
+                        className={`sticky-btn camera-btn ${isActive("/tesseractOCR") ? "active" : ""}`}
+                        onClick={() => navigate("/tesseractOCR")}
+                        aria-label="Cámara"
+                    >
+                        <Camera />
+                        <span className="corner-bl"></span>
+                        <span className="corner-br"></span>
+                    </button>
+
+                    <button
+                        className={`sticky-btn ${isActive("/progresos") ? "active" : ""}`}
+                        onClick={() => navigate("/progresos")}
+                        aria-label="Progresos"
+                    >
+                        <ChartNoAxesCombined />
+                    </button>
+
+                    <button
+                        className={`sticky-btn ${isActive("/perfil") ? "active" : ""}`}
+                        onClick={() => navigate("/perfil")}
+                        aria-label="Perfil"
+                    >
+                        <UserRound />
+                    </button>
+                </div>
             </div>
 
             <ToastContainer />

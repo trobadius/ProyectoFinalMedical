@@ -7,9 +7,10 @@ import api from "../api";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import '../App.css';
 import '../styles/tesseract.css'
-import { MessageCircle, LogOut } from 'lucide-react';
+import { MessageCircle, LogOut, House, CalendarDays, Camera, ChartNoAxesCombined, UserRound } from 'lucide-react';
 import logo from "../assets/logo.svg";
 import { toast } from "react-toastify";
+import '../styles/Stickybutton.css';
 
 export default function TesseractOCR() {
   const videoRef = useRef(null);
@@ -38,7 +39,22 @@ export default function TesseractOCR() {
   });
 
   const navigate = useNavigate();
+  /*Boton footer*/
+  const location = useLocation();
 
+  const [hidden, setHidden] = useState(false);
+  const isActive = (path) => location.pathname === path;
+
+  // 🔥 Cada vez que cambia la ruta, reiniciamos todo
+  useEffect(() => {
+      setHidden(false);
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "smooth", // puedes quitarlo si no quieres animación
+      });
+  }, [location.pathname]);
+  
   // ============================================================
   // Inicializar worker
   // ============================================================
@@ -47,7 +63,6 @@ export default function TesseractOCR() {
       const worker = await createWorker();
       workerRef.current = worker;
       setWorkerReady(true);
-      console.log("Worker listo");
     };
 
     initWorker();
@@ -100,7 +115,6 @@ export default function TesseractOCR() {
       setStarted(true);
     } catch (err) {
       alert("Error al activar la cámara");
-      console.error(err);
     }
   };
 
@@ -229,7 +243,6 @@ export default function TesseractOCR() {
       const laiaJSON = await chatCerrado(texto);
       setChatText(laiaJSON);
     } catch (error) {
-      console.error("Error al buscar medicamento:", error);
       setChatText("Ocurrió un error al procesar la información.");
     }
 
@@ -297,6 +310,7 @@ export default function TesseractOCR() {
             </div>
 
             <canvas ref={canvasRef} className="camera-ocr-canvas" />
+            {!scanned && (
             <div className="instrucciones">
               <h3 className="h3">Instrucciones para escanear su medicamento correctamente:</h3>
               <ol>
@@ -307,6 +321,7 @@ export default function TesseractOCR() {
                 <li>Enfoca la caja correctamente, asegurándote de que el nombre y el texto se vean nítidos.</li>
               </ol>
             </div>
+            )}
             <div className="modal-buttons">
               {!cameraActive ? (
                 <button onClick={() => handleActivateCamera("environment")} className="camera-ocr-button-activate">
@@ -325,7 +340,7 @@ export default function TesseractOCR() {
                   </button>
                   {!scanned ? (
                     <button onClick={() => setAutoScanOnce(true)} className="camera-ocr-button">
-                      Escaneo automático
+                      Escanear
                     </button>
                   ) : (
                     <button
@@ -344,7 +359,7 @@ export default function TesseractOCR() {
             </div>
 
             {showResultModal && (
-              <div className="camera-ocr-video-container">
+              <div className="camera-ocr-video-container-result">
                 <div className="camera-ocr-result">
                   <p>Resultado:</p>
                   <p>{ocrResult.medicamento}</p>
@@ -356,7 +371,11 @@ export default function TesseractOCR() {
                     <button onClick={() => buscarMecicamento()} className="camera-ocr-button">
                       Aceptar
                     </button>
-                    <button onClick={() => setShowResultModal(false)} className="camera-ocr-button">
+                    <button onClick={() => {
+                      setShowResultModal(false)
+                      setScanned(false);
+                    }} 
+                    className="camera-ocr-button">
                       Cancelar
                     </button>
                   </div>
@@ -367,7 +386,7 @@ export default function TesseractOCR() {
         )}
 
         {showResultChat && (
-          <div className="camera-ocr-video-container">
+          <div className="camera-ocr-video-container-informe">
             <div className="camera-ocr-result">
               {isLoading ? (
                 <p>Cargando...</p>
@@ -434,6 +453,53 @@ export default function TesseractOCR() {
             </div>
           </div>
         )}
+
+        {/* BOTÓN DE NAVEGACIÓN INFERIOR */}
+          <div
+              className={`sticky-button-container ${hidden ? "hide" : ""}`}
+              >
+              <button
+                  className={`sticky-btn ${isActive("/") ? "active" : ""}`}
+                  onClick={() => navigate("/")}
+                  aria-label="Inicio"
+              >
+                  <House />
+              </button>
+
+              <button
+                  className={`sticky-btn ${isActive("/calendario") ? "active" : ""}`}
+                  onClick={() => navigate("/calendario")}
+                  aria-label="Calendario"
+              >
+                  <CalendarDays />
+              </button>
+
+              <button
+                  className={`sticky-btn camera-btn ${isActive("/tesseractOCR") ? "active" : ""}`}
+                  onClick={() => navigate("/tesseractOCR")}
+                  aria-label="Cámara"
+              >
+                  <Camera />
+                  <span className="corner-bl"></span>
+                  <span className="corner-br"></span>
+              </button>
+
+              <button
+                  className={`sticky-btn ${isActive("/progresos") ? "active" : ""}`}
+                  onClick={() => navigate("/progresos")}
+                  aria-label="Progresos"
+              >
+                  <ChartNoAxesCombined />
+              </button>
+
+              <button
+                  className={`sticky-btn ${isActive("/perfil") ? "active" : ""}`}
+                  onClick={() => navigate("/perfil")}
+                  aria-label="Perfil"
+              >
+                  <UserRound />
+              </button>
+         </div>
 
       </div>
     </>
