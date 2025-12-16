@@ -115,7 +115,6 @@ export default function TesseractOCR() {
       setStarted(true);
     } catch (err) {
       alert("Error al activar la cámara");
-      console.error(err);
     }
   };
 
@@ -244,7 +243,6 @@ export default function TesseractOCR() {
       const laiaJSON = await chatCerrado(texto);
       setChatText(laiaJSON);
     } catch (error) {
-      console.error("Error al buscar medicamento:", error);
       setChatText("Ocurrió un error al procesar la información.");
     }
 

@@ -91,8 +91,11 @@ const Calendario = () => {
         });
       }
     } catch (error) {
-      console.error('[WhatsApp] Error:', error);
-      // No mostramos error al usuario para no interrumpir el flujo
+      toast.error(`[WhatsApp] Error: ${error}`, {
+            position: "top-right",
+            autoClose: 3000,
+            theme: "colored"
+      });
     }
   };
 

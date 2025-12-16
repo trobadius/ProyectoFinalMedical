@@ -222,11 +222,12 @@ export default function Home() {
                 setLoadingProfile(true);
                 const res = await api.get("/api/users/profile/me/");
                 setProfile(res.data);
-                console.log("✅ Perfil obtenido:", res.data);
             } catch (err) {
-                console.error("❌ Error obteniendo perfil:", err);
-                console.error("Detalles del error:", err.response?.data);
-                // Si hay error, las recomendaciones simplemente no se mostrarán
+                toast.error(`❌ Error obteniendo perfil: ${err}`, {
+                    position: "top-right",
+                    autoClose: 3000,
+                    theme: "colored"
+                });
             } finally {
                 setLoadingProfile(false);
             }
@@ -282,8 +283,6 @@ export default function Home() {
         // Tomar solo las primeras 3 recomendaciones para mostrar en las tarjetas
         const articulosFinales = recomendaciones.slice(0, 3);
         setArticulos(articulosFinales);
-        console.log("📋 Recomendaciones cargadas:", articulosFinales);
-        console.log("Edad:", edad, "Género:", genero, "Rango:", rangoEdad);
     }, [profile]);
 
     // Función para obtener el icono según el índice
