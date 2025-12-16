@@ -1,4 +1,5 @@
 # ProyectoFinalMedical
 Proyecto final medical
 -Rama dev
--Nueva rama mateofront
+-Rama backend
+-Rama frontend
