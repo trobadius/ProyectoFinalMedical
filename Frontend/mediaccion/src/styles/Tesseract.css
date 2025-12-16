@@ -15,6 +15,23 @@
   width: 100%;
   max-width: 600px;
   height: 200px;
+  margin-bottom: 20px;
+}
+
+.camera-ocr-video-container-result{
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  height: 35vh;
+  margin-bottom: 20px;
+}
+
+.camera-ocr-video-container-informe{
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  height: 90vh;
+  margin-bottom: 20px;
 }
 
 .camera-ocr-video {
@@ -42,7 +59,6 @@
 }
 
 .camera-ocr-button-activate {
-  margin-top: 3rem;
   width: 10vw;
   padding: 10px 15px;
   border-radius: 1rem;
@@ -51,6 +67,7 @@
   color: white;
   cursor: pointer;
   text-align: center;
+  margin-bottom: 20px;
 }
 
 .camera-ocr-button-activate:hover {

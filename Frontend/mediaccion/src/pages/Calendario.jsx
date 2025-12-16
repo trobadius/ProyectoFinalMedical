@@ -1,14 +1,15 @@
 
 import { useState, useEffect, useContext } from "react";
-import { Pill, Plus, MessageCircle, LogOut } from 'lucide-react';
+import { Pill, Plus, MessageCircle, LogOut, House, CalendarDays, Camera, ChartNoAxesCombined, UserRound } from 'lucide-react';
 import api from '../api';
 import '../styles/Calendario.css';
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { MedContext } from "../context/MedContext.jsx";
 import '../App.css';
 import logo from "../assets/logo.svg";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import '../styles/Stickybutton.css';
 
 const Calendario = () => {
   const { medicamentos, setMedicamentos } = useContext(MedContext);
@@ -26,6 +27,23 @@ const Calendario = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  /*Boton footer*/
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const [hidden, setHidden] = useState(false);
+  const isActive = (path) => location.pathname === path;
+
+  // 🔥 Cada vez que cambia la ruta, reiniciamos todo
+  useEffect(() => {
+      setHidden(false);
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "smooth", // puedes quitarlo si no quieres animación
+      });
+  }, [location.pathname]);
 
   // --- Cargar medicamentos
 
@@ -492,8 +510,55 @@ const Calendario = () => {
           </div>
         )
         }
-        <ToastContainer />
+
+        {/* BOTÓN DE NAVEGACIÓN INFERIOR */}
+            <div
+                className={`sticky-button-container ${hidden ? "hide" : ""}`}
+                >
+                <button
+                    className={`sticky-btn ${isActive("/") ? "active" : ""}`}
+                    onClick={() => navigate("/")}
+                    aria-label="Inicio"
+                >
+                    <House />
+                </button>
+
+                <button
+                    className={`sticky-btn ${isActive("/calendario") ? "active" : ""}`}
+                    onClick={() => navigate("/calendario")}
+                    aria-label="Calendario"
+                >
+                    <CalendarDays />
+                </button>
+
+                <button
+                    className={`sticky-btn camera-btn ${isActive("/tesseractOCR") ? "active" : ""}`}
+                    onClick={() => navigate("/tesseractOCR")}
+                    aria-label="Cámara"
+                >
+                    <Camera />
+                    <span className="corner-bl"></span>
+                    <span className="corner-br"></span>
+                </button>
+
+                <button
+                    className={`sticky-btn ${isActive("/progresos") ? "active" : ""}`}
+                    onClick={() => navigate("/progresos")}
+                    aria-label="Progresos"
+                >
+                    <ChartNoAxesCombined />
+                </button>
+
+                <button
+                    className={`sticky-btn ${isActive("/perfil") ? "active" : ""}`}
+                    onClick={() => navigate("/perfil")}
+                    aria-label="Perfil"
+                >
+                    <UserRound />
+                </button>
+            </div>
       </div >
+       <ToastContainer />
     </>
   );
 };

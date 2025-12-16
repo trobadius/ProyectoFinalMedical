@@ -3,12 +3,13 @@ import api from "../api";
 import { validarCamposRepetidos } from "../utils/Validaciones";
 import { FaUserCircle, FaPencilAlt } from 'react-icons/fa';
 import '../styles/Perfil.css';
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import '../App.css';
-import { MessageCircle, LogOut } from 'lucide-react';
+import { MessageCircle, LogOut, House, CalendarDays, Camera, ChartNoAxesCombined, UserRound } from 'lucide-react';
 import logo from "../assets/logo.svg";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import '../styles/Stickybutton.css';
 
 export default function Perfil() {
   const [userProfile, setGetUserData] = useState({
@@ -51,6 +52,22 @@ export default function Perfil() {
   const [editing, setEditing] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
 
+  /*Boton footer*/
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const [hidden, setHidden] = useState(false);
+  const isActive = (path) => location.pathname === path;
+
+  // 🔥 Cada vez que cambia la ruta, reiniciamos todo
+  useEffect(() => {
+      setHidden(false);
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "smooth", // puedes quitarlo si no quieres animación
+      });
+  }, [location.pathname]);
 
   // Recuperamos el perfil del usuario
   const fetchUserData = async () => {
@@ -152,7 +169,7 @@ export default function Perfil() {
   return (
     <>
       <div className="waves"></div>
-      <div className="main-app">
+      <div className="main-app-perfil">
         <header className="main-header">
           <div className="header-components">
             <Link to="/Chatbot"
@@ -310,6 +327,53 @@ export default function Perfil() {
             )}
           </div>
         </div>
+
+        {/* BOTÓN DE NAVEGACIÓN INFERIOR */}
+          <div
+              className={`sticky-button-container ${hidden ? "hide" : ""}`}
+              >
+              <button
+                  className={`sticky-btn ${isActive("/") ? "active" : ""}`}
+                  onClick={() => navigate("/")}
+                  aria-label="Inicio"
+              >
+                  <House />
+              </button>
+
+              <button
+                  className={`sticky-btn ${isActive("/calendario") ? "active" : ""}`}
+                  onClick={() => navigate("/calendario")}
+                  aria-label="Calendario"
+              >
+                  <CalendarDays />
+              </button>
+
+              <button
+                  className={`sticky-btn camera-btn ${isActive("/tesseractOCR") ? "active" : ""}`}
+                  onClick={() => navigate("/tesseractOCR")}
+                  aria-label="Cámara"
+              >
+                  <Camera />
+                  <span className="corner-bl"></span>
+                  <span className="corner-br"></span>
+              </button>
+
+              <button
+                  className={`sticky-btn ${isActive("/progresos") ? "active" : ""}`}
+                  onClick={() => navigate("/progresos")}
+                  aria-label="Progresos"
+              >
+                  <ChartNoAxesCombined />
+              </button>
+
+              <button
+                  className={`sticky-btn ${isActive("/perfil") ? "active" : ""}`}
+                  onClick={() => navigate("/perfil")}
+                  aria-label="Perfil"
+              >
+                  <UserRound />
+              </button>
+         </div>
       </div>
       <ToastContainer />
     </>

@@ -2,6 +2,19 @@
 /* ================================
    PERFIL PAGE — MOBILE FIRST DESIGN
    ================================ */
+.main-app-perfil {
+  min-height: 100vh;
+  padding: 15px;
+  /* max-width: 450px; Limitar el ancho en pantallas grandes */
+  margin: 0 auto;
+  /* Centrar en pantallas grandes */
+
+  /*nuevo*/
+  background-color: #f9fafb;
+  max-width: 28rem;
+
+  border-radius: 20px;
+}
 
 .perfil-container {
   
@@ -35,6 +48,7 @@
   padding: 24px;
   color: #659fa6;
   animation: fadeIn 0.5s ease;
+  margin-bottom: 65px;
 }
 
 .perfil-header {

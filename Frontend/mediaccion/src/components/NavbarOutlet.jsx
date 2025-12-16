@@ -5,7 +5,6 @@ export default function LayoutConNavbar() {
   return (
     <>
       <Outlet />
-      <StickyButton />
     </>
   );
 }
