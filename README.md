@@ -121,7 +121,7 @@ ProyectoFinalMedical/
 │           │   ├── Progresos.css
 │           │   ├── Tesseract.css
 │           │   ├── Premium.css
-│           │   └── Stickybutton.css
+│           │   └── Navbar.css
 │           ├── utils/
 │           │   ├── calendarioColors.js
 │           │   └── Validaciones.js

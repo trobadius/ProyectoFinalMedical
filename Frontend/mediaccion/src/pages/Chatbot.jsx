@@ -5,7 +5,7 @@ import '../App.css';
 import { ArrowLeft, LogOut, House, CalendarDays, Camera, ChartNoAxesCombined, UserRound  } from 'lucide-react';
 import logo from "../assets/logo.svg";
 import '../styles/Chatbox.css';
-import '../styles/Stickybutton.css';
+import '../styles/Navbar.css';
 
 export default function Chatbot() {
   const location = useLocation();

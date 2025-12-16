@@ -9,7 +9,7 @@ import '../App.css';
 import logo from "../assets/logo.svg";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import '../styles/Stickybutton.css';
+import '../styles/Navbar.css';
 
 const Calendario = () => {
   const { medicamentos, setMedicamentos } = useContext(MedContext);

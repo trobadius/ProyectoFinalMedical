@@ -10,7 +10,7 @@ import '../styles/Tesseract.css'
 import { MessageCircle, LogOut, House, CalendarDays, Camera, ChartNoAxesCombined, UserRound } from 'lucide-react';
 import logo from "../assets/logo.svg";
 import { toast } from "react-toastify";
-import '../styles/Stickybutton.css';
+import '../styles/Navbar.css';
 
 export default function TesseractOCR() {
   const videoRef = useRef(null);

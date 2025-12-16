@@ -9,7 +9,7 @@ import { MessageCircle, LogOut, House, CalendarDays, Camera, ChartNoAxesCombined
 import logo from "../assets/logo.svg";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import '../styles/Stickybutton.css';
+import '../styles/Navbar.css';
 
 export default function Perfil() {
   const [userProfile, setGetUserData] = useState({

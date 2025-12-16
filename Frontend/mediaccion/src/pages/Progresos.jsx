@@ -7,7 +7,7 @@ import logo from "../assets/logo.svg";
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { MedContext } from "../context/MedContext.jsx";
 import api from '../api';
-import '../styles/Stickybutton.css';
+import '../styles/Navbar.css';
 
 // Componente Tarjeta de Premio Reutilizable
 const AwardCard = ({ title, description, code, onClick }) => {

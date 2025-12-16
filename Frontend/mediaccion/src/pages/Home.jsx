@@ -16,7 +16,7 @@ import { claseDia } from "../utils/calendarioColors";
 import { ToastContainer, toast } from "react-toastify";
 import api from "../api";
 import recomendacionesData from "../data/Recomendaciones.json";
-import '../styles/Stickybutton.css';
+import '../styles/Navbar.css';
 
 // Función para obtener los datos del mes
 const getMonthData = () => {
