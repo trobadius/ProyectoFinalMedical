@@ -27,8 +27,8 @@ export default function App() {
               <Route path="/progresos" element={<Progresos />}>
                 <Route index element={<ProgresosIndex />} />
                 <Route path="premios" element={<PremiosView />} />
-                <Route path="/chatbot" element={<Chatbot />} />
               </Route>
+              <Route path="/chatbot" element={<Chatbot />} />
             </Route>
           </Route>
           <Route path="/login" element={<Login />} />
