@@ -6,7 +6,7 @@ import { cleanOcrText } from "../components/LimpiarTexto.jsx";
 import api from "../api";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import '../App.css';
-import '../styles/tesseract.css'
+import '../styles/Tesseract.css'
 import { MessageCircle, LogOut, House, CalendarDays, Camera, ChartNoAxesCombined, UserRound } from 'lucide-react';
 import logo from "../assets/logo.svg";
 import { toast } from "react-toastify";
