@@ -309,7 +309,7 @@ const Calendario = () => {
           </div>
           <div className="app-header">
             <button onClick={prevMonth} className="nav-btn">‹</button>
-            <h2>{currentDate.toLocaleDateString("es-ES", { month: "long" })} {year}</h2>
+            <h2 style={{ textTransform: 'capitalize' }}>{currentDate.toLocaleDateString("es-ES", { month: "long" })} {year}</h2>
             <button onClick={nextMonth} className="nav-btn">›</button>
           </div>
         </header>
@@ -461,7 +461,7 @@ const Calendario = () => {
                         </button>
                       ) : med.desbloquearPremio ? (
                         <Link
-                          to="/Progresos"
+                          to="/progresos/premios"
                           style={{
                             backgroundColor: "#facc15",
                             color: "#000",

@@ -1,17 +1,22 @@
 /* --- VARIABLES DE ESTILO GLOBAL (REPLICADAS DEL CALENDARIO) --- */
 :root {
-    
-    --color-primary-violet: #5e989e;       
-    --color-accent-amber: #f59e0b;         
-    --color-card-green: #f59e0b;           
-    --color-text-gray: #6b7280;            /* Gris para texto secundario */
-    --color-bg-light: #f3f4f6;             /* Gris muy claro para fondo de tarjetas */
-    --color-gray-dark: #1f2937;            /* Gris muy oscuro para texto principal */
-    --color-gray-light: #e5e7eb;           
-    --color-red-danger: #ef4444;           /* Rojo para botones de bloqueo/peligro */
-    
+
+    --color-primary-violet: #5e989e;
+    --color-accent-amber: #f59e0b;
+    --color-card-green: #f59e0b;
+    --color-text-gray: #6b7280;
+    /* Gris para texto secundario */
+    --color-bg-light: #f3f4f6;
+    /* Gris muy claro para fondo de tarjetas */
+    --color-gray-dark: #1f2937;
+    /* Gris muy oscuro para texto principal */
+    --color-gray-light: #e5e7eb;
+    --color-red-danger: #ef4444;
+    /* Rojo para botones de bloqueo/peligro */
+
     /* Variables estructurales */
-    --border-radius-main: 16px; /* Más grande para el look de bienestar */
+    --border-radius-main: 16px;
+    /* Más grande para el look de bienestar */
     --border-radius-small: 10px;
     --shadow-light: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
     --shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -21,9 +26,9 @@
 .progress-screen-custom {
     /* Aseguramos el tamaño de "tarjeta móvil y centrado */
     min-height: 100vh;
-    max-width: 450px; 
-    margin: 0 auto; 
-    background: white; 
+    max-width: 450px;
+    margin: 0 auto;
+    background: white;
     font-size: 1.25rem;
     border-radius: 25px;
     align-items: center;
@@ -33,7 +38,7 @@
     box-shadow: var(--shadow-light);
     font-family: 'Inter', sans-serif;
     color: #374151;
-    
+
 }
 
 /* ENCABEZADO (ESQUELETO)*/
@@ -52,15 +57,17 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 1.25rem; 
-    background-color: var(--color-bg-light); /* Fondo suave */
+    font-size: 1.25rem;
+    background-color: var(--color-bg-light);
+    /* Fondo suave */
     box-shadow: var(--shadow-light);
     color: #374151;
     cursor: pointer;
 }
 
 .header-icon-right {
-    border-radius: var(--border-radius-small); /* Para el ícono de "documento" */
+    border-radius: var(--border-radius-small);
+    /* Para el ícono de "documento" */
 }
 
 /* CONTENIDO DE PROGRESO */
@@ -73,14 +80,16 @@
     font-size: 1.25rem;
     font-weight: 800;
     color: #374151;
-    margin-bottom: 10px; /* Reducido para acercar el subtítulo */
+    margin-bottom: 10px;
+    /* Reducido para acercar el subtítulo */
 }
 
 /* SUBTÍTULO --- */
 .progress-subtitle-custom {
     font-size: 1rem;
     color: var(--color-text-gray);
-    margin-bottom: 30px; /* Espacio después del subtítulo */
+    margin-bottom: 30px;
+    /* Espacio después del subtítulo */
     line-height: 1.4;
 }
 
@@ -90,22 +99,25 @@
     padding: 0 10px;
 }
 
-.progress-bar-short-custom, 
+.progress-bar-short-custom,
 .progress-bar-long-custom {
     height: 6px;
-    background-color: var(--color-gray-light); /* Color base gris claro */
+    background-color: var(--color-gray-light);
+    /* Color base gris claro */
     border-radius: 3px;
     margin-bottom: 10px;
 }
 
 .progress-bar-short-custom {
     width: 40%;
-    background-color: var(--color-primary-violet); /* Simula el progreso completado */
+    background-color: var(--color-primary-violet);
+    /* Simula el progreso completado */
 }
 
 .progress-bar-long-custom {
     width: 65%;
-    background-color: var(--color-accent-amber); /* Simula otro progreso completado */
+    background-color: var(--color-accent-amber);
+    /* Simula otro progreso completado */
 }
 
 
@@ -114,18 +126,20 @@
 .award-list {
     display: flex;
     flex-direction: column;
-    gap: 20px; /* Espacio entre las tarjetas */
+    gap: 20px;
+    /* Espacio entre las tarjetas */
 }
 
 .award-card {
-    background-color: var(--color-bg-light); 
+    background-color: var(--color-bg-light);
     padding: 20px;
     border-radius: var(--border-radius-main);
     box-shadow: var(--shadow-medium);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    min-height: 180px; /* Altura mínima para una buena presencia */
+    min-height: 180px;
+    /* Altura mínima para una buena presencia */
 }
 
 .award-info {
@@ -212,8 +226,15 @@
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 .modal-title {
@@ -259,7 +280,8 @@
 .progress-switch {
     display: flex;
     align-items: center;
-    justify-content: center; /* centra los botones horizontalmente */
+    justify-content: center;
+    /* centra los botones horizontalmente */
 }
 
 .tab-btn {
@@ -272,9 +294,11 @@
     font-weight: 700;
     color: var(--color-gray-dark);
     display: inline-flex;
-    justify-content: center; /* centra el texto dentro del botón */
+    justify-content: center;
+    /* centra el texto dentro del botón */
     align-items: center;
-    min-width: 120px; /* ancho mínimo para que los botones queden centrados visualmente */
+    min-width: 120px;
+    /* ancho mínimo para que los botones queden centrados visualmente */
     text-align: center;
 }
 
@@ -284,18 +308,35 @@
 }
 
 .tab-btn.active {
-    background: #ffffff; 
+    background: #ffffff;
     color: #000000;
     transform: translateY(-3px);
-    border-color: #4e9a99; /* mismo color que sticky-btn.active */
+    border-color: #4e9a99;
+    /* mismo color que sticky-btn.active */
 }
 
 @media (max-width: 600px) {
-    .tab-btn { padding: 6px 10px; font-size: 0.95rem; min-width: 90px; }
+    .tab-btn {
+        padding: 6px 10px;
+        font-size: 0.95rem;
+        min-width: 90px;
+    }
 }
 
 /* Pie chart styles */
-.pie-chart svg { display: block; margin: 0 auto; }
-.pie-chart .slice { transition: transform 0.18s ease; }
-.pie-chart .slice.active { filter: drop-shadow(0 6px 12px rgba(0,0,0,0.12)); }
-.pie-chart div { color: #374151; }
+.pie-chart svg {
+    display: block;
+    margin: 0 auto;
+}
+
+.pie-chart .slice {
+    transition: transform 0.18s ease;
+}
+
+.pie-chart .slice.active {
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.12));
+}
+
+.pie-chart div {
+    color: #374151;
+}

@@ -404,7 +404,7 @@ export default function Home() {
 
                                         {med.desbloquearPremio && (
                                             <button
-                                                onClick={() => navigate("/Progresos")}
+                                                onClick={() => navigate("/progresos/premios")}
                                                 style={{
                                                     marginTop: "10px",
                                                     padding: "10px 14px",
@@ -495,7 +495,7 @@ export default function Home() {
                         ¡Pásate a Premium! <Star size={24} color="white" fill="white" style={{ rotate: '90deg' }} />
                     </div>
                     <p className="subtitle-premium">
-                        Desbloquea historial ilimitado, notificaciones inteligentes y planifica el cuidado de tu familia.
+                        Desbloquea dietas personalizadas, conexión con tu smartwatch y mucho más.
                     </p>
                     <button
                         className="action-btn"
@@ -508,10 +508,10 @@ export default function Home() {
 
                             <div className="plan-card">
                                 <h3>PRO</h3>
-                                <p className="precio">6,99 € / mes</p>
+                                <p className="precio">2,99 € / mes <br></br> 24,99 € / 12 meses</p>
                                 <ul>
                                     <li>⌚ Conexión con smartwatch</li>
-                                    <li>🍎 Dietas personalizadas</li>
+                                    <li>🍎 Recetas personalizadas</li>
                                     <li>📊 Estadísticas avanzadas</li>
                                 </ul>
                                 <button className="plan-btn">Elegir PRO</button>
@@ -519,26 +519,18 @@ export default function Home() {
 
                             <div className="plan-card destacado">
                                 <h3>ADVANCED</h3>
-                                <p className="precio">17,99 € / 3 meses</p>
+                                <p className="precio">4,99 € / mes <br></br>29,99 € / 12 meses</p>
                                 <ul>
+                                    <li>⌚ Conexión con smartwatch</li>
+                                    <li>🍎  personalizadas</li>
+                                    <li>📊 Estadísticas avanzadas</li>
+
                                     <li>⚠️ Aviso incompatibilidad medicamentos</li>
                                     <li>📷 Escaneo de recetas médicas</li>
-                                    <li>🧠 Recomendaciones inteligentes</li>
+
                                 </ul>
                                 <button className="plan-btn">Elegir ADVANCED</button>
                             </div>
-
-                            <div className="plan-card">
-                                <h3>PREMIUM</h3>
-                                <p className="precio">59,99 € / año</p>
-                                <ul>
-                                    <li>📈 Informes médicos en PDF</li>
-                                    <li>🩺 Seguimiento médico</li>
-                                    <li>⚡ Acceso prioritario a nuevas funciones</li>
-                                </ul>
-                                <button className="plan-btn">Elegir PREMIUM</button>
-                            </div>
-
                         </div>
                     )}
 

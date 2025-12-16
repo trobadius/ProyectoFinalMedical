@@ -288,7 +288,7 @@ export default function Chatbot() {
           </div>
         </header>
 
-        <h2>Chatbot de Alimentación y Síntomas</h2>
+
 
         <div className="chatBox" ref={chatBoxRef}>
           {messages.map((msg, i) => (

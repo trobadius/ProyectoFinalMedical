@@ -1,4 +1,4 @@
-// LimpiarTexto.jsx
+// LimpiarTexto.jsx Tesseract OCR:
 import React from "react";
 import { remove as removeAccents } from "diacritics";
 import Fuse from "fuse.js";
