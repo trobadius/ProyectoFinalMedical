@@ -52,16 +52,14 @@ const Calendario = () => {
 
       const mensaje = `🩺 *MediAcción - Medicamento Registrado*
 
-✅ Has añadido: *${nuevoMed.nombre}*
+        ✅ Has añadido: *${nuevoMed.nombre}*
 
-📅 Inicio: ${fechaInicio}
-⏱️ Cada ${nuevoMed.intervalo} hora(s)
-� ${nuevoMed.total_tomas} toma(s) al día
-🗓️ Durante ${nuevoMed.duracion_dias} día(s)
+        📅 Inicio: ${fechaInicio}
+        ⏱️ Cada ${nuevoMed.intervalo} hora(s)
+        � ${nuevoMed.total_tomas} toma(s) al día
+        🗓️ Durante ${nuevoMed.duracion_dias} día(s)
 
-Te ayudaremos a no olvidar ninguna dosis 💙`;
-
-      console.log('[WhatsApp] Enviando mensaje personalizado...');
+        Te ayudaremos a no olvidar ninguna dosis 💙`;
 
       const response = await api.post("/api/notificaciones/whats/", {
         mensaje: mensaje

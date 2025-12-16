@@ -1,5 +1,4 @@
 import { Routes, Route } from 'react-router-dom';
-import { LanguageProvider } from './context/LanguageContext.jsx';
 import Home from './pages/Home.jsx';
 import Calendario from './pages/Calendario.jsx';
 import Perfil from './pages/Perfil.jsx';
@@ -16,7 +15,6 @@ import Chatbot from './pages/Chatbot.jsx';
 
 export default function App() {
   return (
-    <LanguageProvider>
       <div>
         <main>
         <Routes>
@@ -39,7 +37,6 @@ export default function App() {
       </main>
 
       </div>
-    </LanguageProvider>
   );
 }
 
