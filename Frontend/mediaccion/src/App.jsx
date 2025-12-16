@@ -1,5 +1,4 @@
 import { Routes, Route } from 'react-router-dom';
-import { LanguageProvider } from './context/LanguageContext.jsx';
 import Home from './pages/Home.jsx';
 import Calendario from './pages/Calendario.jsx';
 import Perfil from './pages/Perfil.jsx';
@@ -16,20 +15,8 @@ import Chatbot from './pages/Chatbot.jsx';
 
 export default function App() {
   return (
-    /*
-    <div className="app-root min-h-screen"
-      style={{
-
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        minHeight: '100vh'
-      }}
-    >
-    */
-    <LanguageProvider>
-      <div>
-        <main>
+    <div>
+      <main>
         <Routes>
           <Route element={<ProtectedRoute />} >
             <Route element={<NavbarOutlet />} >
@@ -40,6 +27,7 @@ export default function App() {
               <Route path="/progresos" element={<Progresos />}>
                 <Route index element={<ProgresosIndex />} />
                 <Route path="premios" element={<PremiosView />} />
+                <Route path="/chatbot" element={<Chatbot />} />
               </Route>
             </Route>
           </Route>
@@ -47,13 +35,11 @@ export default function App() {
           <Route path="/logout" element={<Logout />} />
           <Route path="/register" element={<Logout metodo="register" />} />
           <Route path="/registration" element={<Register />} />
-          <Route path="/chatbot" element={<Chatbot />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
 
-      </div>
-    </LanguageProvider>
+    </div>
   );
 }
 

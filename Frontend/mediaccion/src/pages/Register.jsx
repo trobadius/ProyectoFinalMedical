@@ -13,6 +13,8 @@ import {
 } from "../utils/Validaciones";
 import '../styles/Register.css';
 import '../App.css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Registration() {
   const [formData, setFormData] = useState({
@@ -37,7 +39,6 @@ export default function Registration() {
   const [passChangeMessage, setPassChangeMessage] = useState("");
   const [passChangeMessageType, setPassChangeMessageType] = useState("");
   const [phoneError, setPhoneError] = useState("");
-  const [loading, setLoading] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
 
   const navigate = useNavigate();
@@ -63,10 +64,9 @@ export default function Registration() {
       hasFieldErrors ||
         phoneError ||
         passDontMatch ||
-        missingFields ||
-        loading
+        missingFields
     );
-  }, [errors, confirmPassword, phoneError, loading, formData]);
+  }, [errors, confirmPassword, phoneError, formData]);
 
   /** 🔸 VALIDACIONES en un diccionario */
   const validators = {
@@ -135,17 +135,26 @@ export default function Registration() {
 
   /** 🔹 Submit final */
   const handleSubmit = async (e) => {
-    e.preventDefault();    setLoading(true);
-    console.log(formData);
+    e.preventDefault();
     try {
-      await api.post("/api/users/crear", formData);
+      const response = await api.post("/api/users/crear/", formData);
 
-      alert("Registro completado con éxito 🩺");
-      navigate("/login");
+       if (response.status === 201) {
+        toast.success(`Registro completado con éxito 🩺`, {
+          position: "top-right",
+          autoClose: 3000,
+          theme: "colored"
+        });
+      }
+      setTimeout(() => {
+        navigate("/login");
+      }, 999);
     } catch (error) {
-      alert("Error al registrarse");
-    } finally {
-      setLoading(false);
+      toast.error("Error al registrarse", {
+        position: "top-right",
+        autoClose: 3000,
+        theme: "colored"
+      });
     }
   };
 
@@ -293,6 +302,7 @@ export default function Registration() {
         </footer>
       </div>
     </div>
+    <ToastContainer />
     </>
   );
 }
