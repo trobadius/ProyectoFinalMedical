@@ -16,17 +16,6 @@ import Chatbot from './pages/Chatbot.jsx';
 
 export default function App() {
   return (
-    /*
-    <div className="app-root min-h-screen"
-      style={{
-
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        minHeight: '100vh'
-      }}
-    >
-    */
     <LanguageProvider>
       <div>
         <main>
@@ -38,13 +27,13 @@ export default function App() {
               <Route path="/tesseractOCR" element={<TesseractOCR />} />
               <Route path="/perfil" element={<Perfil />} />
               <Route path="/progresos" element={<Progresos />} />
+              <Route path="/chatbot" element={<Chatbot />} />
             </Route>
           </Route>
           <Route path="/login" element={<Login />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/register" element={<Logout metodo="register" />} />
           <Route path="/registration" element={<Register />} />
-          <Route path="/chatbot" element={<Chatbot />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

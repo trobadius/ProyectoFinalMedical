@@ -22,7 +22,7 @@ DEBUG = os.environ.get('DEBUG', 'False').lower() == 'false'
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://pruebaproyectofinalmedicaccion-production.up.railway.app/",
+    "https://proyectofinalmedical-production.up.railway.app/",
     "https://mediaccion.vercel.app",
 ]
 
@@ -156,7 +156,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOWED_ORIGINS = [
-    "https://mediaccion.vercel.app"
+    "https://mediaccion.vercel.app",
+    "http://localhost:5173",
 ]
 CORS_ALLOW_CREDENTIALS = True
 
