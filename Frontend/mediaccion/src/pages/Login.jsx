@@ -6,28 +6,39 @@ import logoimg from "../assets/logo_svg.svg";
 import { Link } from "react-router-dom";
 import '../styles/Login.css';
 import '../App.css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Login(){
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    setLoading(true);
     e.preventDefault();
 
     try{
       const res = await api.post("/api/token/",{username, password})
+      if (res.status === 200) {
+        toast.success(`Inicio de sesión correcto`, {
+          position: "top-right",
+          autoClose: 3000,
+          theme: "colored"
+        });
         localStorage.setItem(ACCES_TOKEN, res.data.access);
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
         // Persist the username so Home can show a personalized greeting
         localStorage.setItem('username', username);
-        navigate("/")
+        setTimeout(() => {
+          navigate("/");
+        }, 999);
+      }
     }catch(error){
-      alert(error)
-    }finally{
-      setLoading(false)
+      toast.error("Error al iniciar sesión", {
+        position: "top-right",
+        autoClose: 3000,
+        theme: "colored"
+      });
     }
   }
   return (
@@ -74,6 +85,7 @@ function Login(){
         </footer>
       </div>
     </div>
+    <ToastContainer />
     </>
   );
 };
