@@ -83,30 +83,16 @@ p {
 }
 
 /* IMPORTANTE LAS MEDIDAS DE TODA LA APP POR PANTALLA*/
+
 .main-app {
   min-height: 100vh;
   padding: 15px;
-  /* max-width: 450px; Limitar el ancho en pantallas grandes */
   margin: 0 auto;
-  /* Centrar en pantallas grandes */
-
-  /*nuevo*/
   background-color: #f9fafb;
   max-width: 28rem;
-  /*
-    background-color: var(--background-color);
-    background-image: linear-gradient(rgba(255,255,255,0.0), rgba(255,255,255,0.4)), url('/static/background.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    color: var(--color-text);
-    overflow-x: hidden;
-    */
   border-radius: 20px;
 }
 
-/* Revisar TOCA BOTONES TUS MEDICAMENTOS*/
 /* ========== BOTONES ========== */
 button,
 .btn-primary {
@@ -134,7 +120,6 @@ button:hover,
     font-size: 1.6rem;
   }
 }
-
 
 @media (min-width: 1024px) {
   #root {
@@ -178,7 +163,6 @@ button:hover,
   color: rgb(0, 0, 0);
   margin-left: 5px;
   margin-top: 1rem;
-  /* Alma-1rem para margen en top */
 }
 
 .header-icon-chat .message-circle {
@@ -193,7 +177,6 @@ button:hover,
   color: rgb(0, 0, 0);
   padding: 1px;
   margin-top: 1rem;
-  /* alma-1rem para margen en top */
 }
 
 .header-icon-logout .header-logout {

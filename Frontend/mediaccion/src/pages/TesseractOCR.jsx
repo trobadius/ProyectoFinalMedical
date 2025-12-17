@@ -45,6 +45,23 @@ export default function TesseractOCR() {
   const [hidden, setHidden] = useState(false);
   const isActive = (path) => location.pathname === path;
 
+  const handleCancelCalendario = async () => {
+    setShowResultChat(false); // oculta modal de calendario
+    setScanned(false);         // reinicia escaneo
+    setResult("");             // limpia resultado OCR
+    setOcrResult({
+      original: "",
+      limpio: "",
+      normalizado: "",
+      medicamento: "",
+      dosis: null,
+      via: null,
+    }); 
+    setCameraActive(true);       // Forzar que la cámara se considere activa
+    await startCamera();  
+  };
+
+
   // 🔥 Cada vez que cambia la ruta, reiniciamos todo
   useEffect(() => {
       setHidden(false);
@@ -93,16 +110,30 @@ export default function TesseractOCR() {
     }
   };
 
-  const apagarCamara = () => {
-    if (videoRef.current && videoRef.current.srcObject) {
-      const stream = videoRef.current.srcObject;
-      const tracks = stream.getTracks();
-      tracks.forEach(track => track.stop());
-      videoRef.current.pause();
-      videoRef.current.srcObject = null;
+    const apagarCamara = () => {
+    if (videoRef.current) {
+      const video = videoRef.current;
+
+      if (video.srcObject) {
+        const stream = video.srcObject;
+        // Detener todos los tracks
+        stream.getTracks().forEach(track => track.stop());
+        // Limpiar video con pequeño delay
+        setTimeout(() => {
+          video.srcObject = null;
+          video.pause();
+          // Resetear estados de cámara
+          setStarted(false);
+          setCameraActive(false);
+          setShowResultModal(false);
+        }, 50); // 50ms es suficiente en la mayoría de dispositivos
+      } else {
+        // Si no hay srcObject, solo resetear estados
+        setStarted(false);
+        setCameraActive(false);
+        setShowResultModal(false);
+      }
     }
-    setStarted(false);
-    setShowResultModal(false);
   };
 
   const startCamera = async (mode = "environment") => {
@@ -113,8 +144,10 @@ export default function TesseractOCR() {
       videoRef.current.srcObject = stream;
       await videoRef.current.play();
       setStarted(true);
+      setCameraActive(true);
     } catch (err) {
       alert("Error al activar la cámara");
+      setCameraActive(false);
     }
   };
 
@@ -322,42 +355,28 @@ export default function TesseractOCR() {
               </ol>
             </div>
             )}
-            <div className="modal-buttons">
-              {!cameraActive ? (
-                <button onClick={() => handleActivateCamera("environment")} className="camera-ocr-button-activate">
-                  Activar
-                </button>
-              ) : (
-                <>
-                  <button
-                    onClick={() => {
-                      apagarCamara();
-                      setCameraActive(false);
-                    }}
-                    className="camera-ocr-button"
-                  >
-                    Desactivar
+            {!scanned && (
+              <div className="modal-buttons">
+                {!cameraActive ? (
+                  <button onClick={() => handleActivateCamera("environment")} className="camera-ocr-button-activate">
+                    Activar
                   </button>
-                  {!scanned ? (
+                ) : (
+                  <>
                     <button onClick={() => setAutoScanOnce(true)} className="camera-ocr-button">
                       Escanear
                     </button>
-                  ) : (
                     <button
-                      onClick={() => {
-                        setScanned(false);
-                        setResult("");
-                        setAutoScanOnce(true);
-                      }}
+                      onClick={() => apagarCamara()}
                       className="camera-ocr-button"
                     >
-                      Volver a escanear
+                      Desactivar
                     </button>
-                  )}
-                </>
-              )}
-            </div>
 
+                  </>
+                )}
+              </div>
+            )}
             {showResultModal && (
               <div className="camera-ocr-video-container-result">
                 <div className="camera-ocr-result">
@@ -436,10 +455,7 @@ export default function TesseractOCR() {
                     <div className="modal-buttons">
                       <button onClick={() => guardarMedicamento()} className="camera-ocr-button">Aceptar</button>
                       <button
-                        onClick={() => {
-                          setShowResultChat(false);
-                          startCamera();
-                        }}
+                        onClick={handleCancelCalendario}
                         className="camera-ocr-button"
                       >
                         Cancelar
