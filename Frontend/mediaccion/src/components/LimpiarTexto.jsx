@@ -7,7 +7,7 @@ import Fuse from "fuse.js";
  * Lista base de medicamentos comunes en España.
  */
 const MEDICAMENTOS_ESPANA = [
-  'omeprazol'
+  'omeprazol', 'ibuprofeno', 'paracetamol', 'frenadol'
 ];
 
 /**
