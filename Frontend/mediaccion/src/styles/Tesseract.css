@@ -35,6 +35,14 @@
   margin: 20px auto;      
 }
 
+.camera-cargando{
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  height: 200px;
+  margin-bottom: 20px;
+}
+
 @media (max-width: 900px) {
   /* Contenedor del video principal */
   .camera-ocr-video-container {
@@ -54,9 +62,16 @@
     min-height: 50vh;    /* asegura altura mínima */
     margin: 20px auto 40px auto; /* centrado con espacio inferior */
   }
+
+  .camera-cargando{
+    position: relative;
+    width: 100%;
+    max-width: 95%;
+    height: auto;
+    min-height: 60vh;
+    margin: 20px auto 40px auto;
+  }
 }
-
-
 
 .camera-ocr-video {
   width: 100%;

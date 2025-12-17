@@ -408,7 +408,9 @@ export default function TesseractOCR() {
           <div className="camera-ocr-video-container-informe">
             <div className="camera-ocr-result">
               {isLoading ? (
-                <p>Cargando...</p>
+                <div className="camera-cargando">
+                  <p>Cargando...</p>
+                </div>
               ) : chatText ? (
                 !chatText.error ? (
                   <div style={{ whiteSpace: "pre-line" }}>
