@@ -26,6 +26,12 @@
   gap: 10px;
 }
 
+@media (max-width: 900px) {
+  .inputRow{
+    margin-bottom: 60px;
+  }
+}
+
 /* INPUT DEL USUARIO */
 .input {
   flex: 1;
